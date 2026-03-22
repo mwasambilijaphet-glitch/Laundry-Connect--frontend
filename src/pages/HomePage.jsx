@@ -7,7 +7,8 @@ import { apiGetShops } from '../api/client';
 import { SERVICE_TYPES, formatTZS } from '../data/mockData';
 import StarRating from '../components/StarRating';
 import { ScrollReveal } from '../hooks/useScrollReveal';
-import { Search, MapPin, Clock, ChevronRight, ShoppingBag, Sparkles, TrendingUp, Loader2, Star, Sun, Moon } from 'lucide-react';
+import { Search, MapPin, Clock, ChevronRight, ShoppingBag, TrendingUp, Loader2, Star, Sun, Moon } from 'lucide-react';
+import { LogoIcon } from '../components/Logo';
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -177,7 +178,7 @@ export default function HomePage() {
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="section-title">
-                      <Sparkles size={18} className="text-accent-500" /> Bora Zaidi
+                      <LogoIcon size={18} /> Bora Zaidi
                     </h2>
                     <button onClick={() => navigate('/shops')} className="text-sm text-primary-600 dark:text-primary-400 font-semibold flex items-center gap-0.5 hover:gap-1.5 transition-all duration-300">
                       View all <ChevronRight size={14} />

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
-import { Sparkles, ArrowRight, Shield, Truck, Smartphone, Star, Clock, Sun, Moon, Zap, Users, MapPin } from 'lucide-react';
+import { ArrowRight, Shield, Truck, Smartphone, Star, Clock, Sun, Moon, Zap, Users, MapPin } from 'lucide-react';
+import { LogoIcon, LogoFull } from '../components/Logo';
 import { ScrollReveal } from '../hooks/useScrollReveal';
 import Footer from '../components/Footer';
 
@@ -32,8 +33,9 @@ export default function WelcomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 flex flex-col overflow-hidden">
-      {/* Theme toggle */}
-      <div className="absolute top-12 right-6 z-20">
+      {/* Top bar */}
+      <div className="relative z-20 flex items-center justify-between px-6 pt-12 pb-4">
+        <LogoFull size="sm" />
         <button
           onClick={toggleTheme}
           className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center hover:bg-white/20 transition-all active:scale-90"
@@ -53,21 +55,21 @@ export default function WelcomePage() {
 
       {/* Hero section */}
       <div className="relative flex-1 flex flex-col items-center justify-center px-6 text-center">
-        {/* Logo & brand */}
-        <div className="mb-10 animate-fade-in">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-white dark:bg-slate-800 rounded-3xl shadow-elevated mb-5 animate-bounce-in">
-            <Sparkles className="w-10 h-10 text-primary-600" />
+        {/* Logo icon — large hero */}
+        <div className="mb-8 animate-fade-in">
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-white/10 dark:bg-white/5 backdrop-blur-md rounded-[28px] shadow-elevated mb-6 animate-bounce-in ring-1 ring-white/20">
+            <LogoIcon size={56} />
           </div>
           <h1 className="text-4xl font-extrabold text-white tracking-tight font-display">
             Laundry<span className="text-fresh-400">Connect</span>
           </h1>
-          <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full">
+          <div className="mt-3 inline-flex items-center gap-1.5 px-4 py-1.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/10">
             <Star size={12} className="text-accent-400 fill-accent-400" />
             <span className="text-xs text-white/80 font-medium">Tanzania's #1 Laundry App</span>
           </div>
         </div>
 
-        {/* Tagline with text reveal animation */}
+        {/* Tagline */}
         <div className="animate-slide-up mb-12">
           <p className="text-2xl text-white font-semibold leading-snug mb-3">
             Fresh laundry,<br />delivered to your door.
