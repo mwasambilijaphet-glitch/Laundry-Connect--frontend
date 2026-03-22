@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { apiCreateOrder } from '../api/client';
 import { formatTZS, getClothingLabel, getClothingIcon, getServiceLabel } from '../data/mockData';
-import { ArrowLeft, Plus, Minus, Trash2, MapPin, Truck, MessageSquare, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Plus, Minus, Trash2, MapPin, Truck, MessageSquare, ChevronDown, Loader2 } from 'lucide-react';
 
 export default function OrderBuilderPage() {
   const navigate = useNavigate();
@@ -13,8 +14,11 @@ export default function OrderBuilderPage() {
     updateItemQuantity, removeItem, clearCart,
     setDeliveryZone, setDeliveryAddress, setSpecialInstructions,
     subtotal, deliveryFee, totalAmount, itemCount,
+    setOrderId,
   } = useCart();
   const [showAddressInput, setShowAddressInput] = useState(false);
+  const [placingOrder, setPlacingOrder] = useState(false);
+  const [orderError, setOrderError] = useState('');
 
   if (!cartShop || cartItems.length === 0) {
     return (
@@ -186,32 +190,66 @@ export default function OrderBuilderPage() {
       </div>
 
       {/* Bottom checkout bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-6 py-4 z-20">
+      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 px-6 py-4 z-20">
+        {orderError && (
+          <div className="mb-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-600 dark:text-red-400 font-medium">
+            {orderError}
+          </div>
+        )}
         <div className="space-y-1 mb-3">
           <div className="flex justify-between text-sm">
-            <span className="text-slate-500">Subtotal ({itemCount} items)</span>
-            <span className="font-semibold text-slate-700 text-price">{formatTZS(subtotal)}</span>
+            <span className="text-slate-500 dark:text-slate-400">Subtotal ({itemCount} items)</span>
+            <span className="font-semibold text-slate-700 dark:text-slate-200 text-price">{formatTZS(subtotal)}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-slate-500">Delivery Fee</span>
-            <span className="font-semibold text-slate-700 text-price">
+            <span className="text-slate-500 dark:text-slate-400">Delivery Fee</span>
+            <span className="font-semibold text-slate-700 dark:text-slate-200 text-price">
               {deliveryZone ? formatTZS(deliveryFee) : 'Select zone'}
             </span>
           </div>
-          <div className="flex justify-between text-base pt-1 border-t border-slate-100">
-            <span className="font-bold text-slate-800">Total</span>
-            <span className="font-bold text-primary-600 text-price text-lg">{formatTZS(totalAmount)}</span>
+          <div className="flex justify-between text-base pt-1 border-t border-slate-100 dark:border-slate-700">
+            <span className="font-bold text-slate-800 dark:text-white">Total</span>
+            <span className="font-bold text-primary-600 dark:text-primary-400 text-price text-lg">{formatTZS(totalAmount)}</span>
           </div>
         </div>
         <button
-          onClick={() => {
-            if (!deliveryAddress) { alert('Please select a delivery address'); return; }
-            if (!deliveryZone) { alert('Please select a delivery zone'); return; }
-            navigate('/order/pay');
+          onClick={async () => {
+            if (!deliveryAddress) { setOrderError('Please enter a delivery address'); return; }
+            if (!deliveryZone) { setOrderError('Please select a delivery zone'); return; }
+
+            setOrderError('');
+            setPlacingOrder(true);
+            try {
+              const data = await apiCreateOrder({
+                shop_id: cartShop.id,
+                items: cartItems.map(item => ({
+                  service_id: item.service_id,
+                  quantity: item.quantity,
+                })),
+                delivery_zone_id: deliveryZone.id,
+                delivery_address: deliveryAddress,
+                special_instructions: specialInstructions || undefined,
+              });
+
+              // Store order ID for payment page
+              setOrderId(data.order?.id || data.id);
+              navigate('/order/pay');
+            } catch (err) {
+              setOrderError(err.message || 'Failed to place order. Please try again.');
+            } finally {
+              setPlacingOrder(false);
+            }
           }}
-          className="btn-primary w-full py-4 text-base"
+          disabled={placingOrder}
+          className="btn-primary w-full py-4 text-base disabled:opacity-50"
         >
-          Proceed to Payment — Lipa Sasa
+          {placingOrder ? (
+            <span className="flex items-center justify-center gap-2">
+              <Loader2 size={18} className="animate-spin" /> Placing Order...
+            </span>
+          ) : (
+            'Proceed to Payment — Lipa Sasa'
+          )}
         </button>
       </div>
     </div>
