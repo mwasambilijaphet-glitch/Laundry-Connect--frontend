@@ -220,6 +220,34 @@ export async function apiOwnerUpdateShop(data) {
   });
 }
 
+// ── MESSAGES API ──────────────────────────────────────────
+
+export async function apiGetConversations() {
+  return request('/messages/conversations');
+}
+
+export async function apiGetUnreadCount() {
+  return request('/messages/unread-count');
+}
+
+export async function apiStartConversation(shop_id, order_id) {
+  return request('/messages/start', {
+    method: 'POST',
+    body: JSON.stringify({ shop_id, order_id }),
+  });
+}
+
+export async function apiGetMessages(conversationId) {
+  return request(`/messages/${conversationId}`);
+}
+
+export async function apiSendMessage(conversationId, content) {
+  return request(`/messages/${conversationId}`, {
+    method: 'POST',
+    body: JSON.stringify({ content }),
+  });
+}
+
 // ── ADMIN API ─────────────────────────────────────────────
 
 export async function apiAdminGetDashboard() {
