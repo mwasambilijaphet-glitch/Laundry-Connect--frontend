@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { apiInitiatePayment } from '../api/client';
 import { formatTZS } from '../data/mockData';
-import { ArrowLeft, Smartphone, CreditCard, QrCode, Loader2, CheckCircle2, Shield, AlertCircle, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Smartphone, CreditCard, QrCode, Loader2, CheckCircle2, Shield, AlertCircle, RefreshCw, Banknote } from 'lucide-react';
 
 const API_BASE = import.meta.env.PROD
   ? 'https://laundry-connect-backend.onrender.com/api'
@@ -15,6 +15,7 @@ const PAYMENT_METHODS = [
   { id: 'tigo', label: 'Tigo Pesa', icon: '📱', desc: 'Mixx by Yas', color: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800' },
   { id: 'card', label: 'Card', icon: '💳', desc: 'Visa / Mastercard', color: 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800' },
   { id: 'qr', label: 'QR Code', icon: '📷', desc: 'Scan & Pay', color: 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700' },
+  { id: 'cash', label: 'Cash', icon: '💵', desc: 'Pay cash on delivery', color: 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' },
 ];
 
 export default function PaymentPage() {
@@ -85,6 +86,16 @@ export default function PaymentPage() {
         phone: phone,
       });
 
+      // Cash payment — immediate confirmation, no polling needed
+      if (method === 'cash') {
+        setStatus('success');
+        setTimeout(() => {
+          clearCart();
+          navigate('/orders');
+        }, 2500);
+        return;
+      }
+
       setPaymentRef(data.payment.reference);
       setPollCount(0);
 
@@ -114,8 +125,12 @@ export default function PaymentPage() {
         <div className="w-20 h-20 bg-fresh-100 dark:bg-fresh-900/30 rounded-full flex items-center justify-center mb-6 animate-bounce-in">
           <CheckCircle2 size={40} className="text-fresh-600 dark:text-fresh-400" />
         </div>
-        <h1 className="text-2xl font-bold text-slate-800 dark:text-white font-display mb-2">Malipo Yamekamilika!</h1>
-        <p className="text-slate-500 dark:text-slate-400 text-center mb-2">Payment successful</p>
+        <h1 className="text-2xl font-bold text-slate-800 dark:text-white font-display mb-2">
+          {method === 'cash' ? 'Oda Imethibitishwa!' : 'Malipo Yamekamilika!'}
+        </h1>
+        <p className="text-slate-500 dark:text-slate-400 text-center mb-2">
+          {method === 'cash' ? 'Order confirmed — pay cash on delivery' : 'Payment successful'}
+        </p>
         <p className="text-3xl font-bold text-fresh-600 dark:text-fresh-400 text-price mb-6">{formatTZS(totalAmount)}</p>
         <p className="text-sm text-slate-400 text-center">Redirecting to your orders...</p>
       </div>
@@ -251,13 +266,28 @@ export default function PaymentPage() {
           </div>
         )}
 
+        {/* Cash info note */}
+        {method === 'cash' && (
+          <div className="flex items-start gap-3 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl">
+            <Banknote size={18} className="text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-sm text-green-700 dark:text-green-300 font-medium">Lipa Taslimu — Pay Cash</p>
+              <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                Your order will be confirmed immediately. Pay the full amount in cash when your laundry is delivered.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Security note */}
-        <div className="flex items-center gap-2 p-3 bg-fresh-50 dark:bg-fresh-900/20 border border-fresh-200 dark:border-fresh-800 rounded-xl">
-          <Shield size={16} className="text-fresh-600 dark:text-fresh-400 flex-shrink-0" />
-          <p className="text-xs text-fresh-700 dark:text-fresh-300">
-            Your payment is securely processed by Snippe. We never store your PIN or card details.
-          </p>
-        </div>
+        {method !== 'cash' && (
+          <div className="flex items-center gap-2 p-3 bg-fresh-50 dark:bg-fresh-900/20 border border-fresh-200 dark:border-fresh-800 rounded-xl">
+            <Shield size={16} className="text-fresh-600 dark:text-fresh-400 flex-shrink-0" />
+            <p className="text-xs text-fresh-700 dark:text-fresh-300">
+              Your payment is securely processed by Snippe. We never store your PIN or card details.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Bottom pay button */}
@@ -266,7 +296,9 @@ export default function PaymentPage() {
           {status === 'processing' ? (
             <Loader2 className="animate-spin mx-auto" size={20} />
           ) : (
-            `Lipa ${formatTZS(totalAmount)} — Pay Now`
+            method === 'cash'
+              ? `Thibitisha Oda — Confirm Order (${formatTZS(totalAmount)})`
+              : `Lipa ${formatTZS(totalAmount)} — Pay Now`
           )}
         </button>
       </div>

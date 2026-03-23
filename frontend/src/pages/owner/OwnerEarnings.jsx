@@ -1,24 +1,51 @@
 import { useState, useEffect } from 'react';
-import { apiOwnerGetEarnings } from '../../api/client';
+import { apiOwnerGetEarnings, apiOwnerGetCommission, apiOwnerSettleCommission } from '../../api/client';
 import { formatTZS } from '../../data/mockData';
-import { Loader2, TrendingUp, ArrowUpRight } from 'lucide-react';
+import { Loader2, TrendingUp, ArrowUpRight, AlertTriangle, Smartphone, CheckCircle2 } from 'lucide-react';
 
 export default function OwnerEarnings() {
   const [monthly, setMonthly] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Commission state
+  const [commission, setCommission] = useState(null);
+  const [settlePhone, setSettlePhone] = useState('');
+  const [settling, setSettling] = useState(false);
+  const [settleResult, setSettleResult] = useState(null);
+
   useEffect(() => {
-    async function fetch() {
+    async function fetchData() {
       try {
-        const data = await apiOwnerGetEarnings();
-        setMonthly(data.monthly);
-        setTransactions(data.transactions);
+        const [earningsData, commissionData] = await Promise.all([
+          apiOwnerGetEarnings(),
+          apiOwnerGetCommission(),
+        ]);
+        setMonthly(earningsData.monthly);
+        setTransactions(earningsData.transactions);
+        setCommission(commissionData.commission);
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
     }
-    fetch();
+    fetchData();
   }, []);
+
+  const handleSettle = async () => {
+    if (!settlePhone) return;
+    setSettling(true);
+    setSettleResult(null);
+    try {
+      const data = await apiOwnerSettleCommission(settlePhone);
+      setSettleResult({ success: true, message: data.message });
+      // Refresh commission data
+      const commissionData = await apiOwnerGetCommission();
+      setCommission(commissionData.commission);
+    } catch (err) {
+      setSettleResult({ success: false, message: err.message || 'Settlement failed' });
+    } finally {
+      setSettling(false);
+    }
+  };
 
   const totalEarnings = monthly.reduce((sum, m) => sum + parseInt(m.earnings), 0);
   const totalRevenue = monthly.reduce((sum, m) => sum + parseInt(m.revenue), 0);
@@ -56,6 +83,66 @@ export default function OwnerEarnings() {
           </div>
         </div>
       </div>
+
+      {/* Cash Commission Settlement */}
+      {commission && commission.total_owed > 0 && (
+        <div className="card p-5 mb-6 border-2 border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
+          <div className="flex items-start gap-3 mb-4">
+            <AlertTriangle size={20} className="text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+            <div>
+              <h2 className="font-bold text-slate-800 dark:text-white">Commission Due — Deni la Commission</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                You have pending platform commission from {commission.orders.length} cash order{commission.orders.length !== 1 ? 's' : ''}.
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-4 mb-4">
+            <p className="text-sm text-slate-500 dark:text-slate-400">Total Commission Owed</p>
+            <p className="text-3xl font-bold text-amber-600 dark:text-amber-400 text-price mt-1">{formatTZS(commission.total_owed)}</p>
+          </div>
+
+          {/* Settlement result message */}
+          {settleResult && (
+            <div className={`flex items-center gap-2 p-3 rounded-xl mb-4 ${
+              settleResult.success
+                ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
+                : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
+            }`}>
+              {settleResult.success
+                ? <CheckCircle2 size={16} className="text-green-600 dark:text-green-400" />
+                : <AlertTriangle size={16} className="text-red-500" />
+              }
+              <p className={`text-sm font-medium ${settleResult.success ? 'text-green-700 dark:text-green-300' : 'text-red-600 dark:text-red-400'}`}>
+                {settleResult.message}
+              </p>
+            </div>
+          )}
+
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Smartphone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="tel"
+                placeholder="M-Pesa number e.g. 0754123456"
+                value={settlePhone}
+                onChange={e => setSettlePhone(e.target.value)}
+                className="input-field pl-9 text-sm"
+              />
+            </div>
+            <button
+              onClick={handleSettle}
+              disabled={settling || !settlePhone}
+              className="btn-primary px-5 text-sm whitespace-nowrap disabled:opacity-50"
+            >
+              {settling ? <Loader2 size={16} className="animate-spin" /> : 'Lipa — Pay'}
+            </button>
+          </div>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-2">
+            Pay your commission via M-Pesa. You'll receive a USSD prompt to confirm.
+          </p>
+        </div>
+      )}
 
       {monthly.length > 0 && (
         <div className="card overflow-hidden mb-6">

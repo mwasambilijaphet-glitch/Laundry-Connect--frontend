@@ -8,6 +8,7 @@ export function CartProvider({ children }) {
   const [deliveryZone, setDeliveryZone] = useState(null);
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [specialInstructions, setSpecialInstructions] = useState('');
+  const [orderId, setOrderId] = useState(null);
 
   const addItem = (shop, item) => {
     // If adding from a different shop, clear cart first
@@ -60,6 +61,7 @@ export function CartProvider({ children }) {
     setDeliveryZone(null);
     setDeliveryAddress('');
     setSpecialInstructions('');
+    setOrderId(null);
   };
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
@@ -73,6 +75,7 @@ export function CartProvider({ children }) {
       addItem, updateItemQuantity, removeItem, clearCart,
       setDeliveryZone, setDeliveryAddress, setSpecialInstructions,
       subtotal, deliveryFee, totalAmount, itemCount,
+      orderId, setOrderId,
     }}>
       {children}
     </CartContext.Provider>

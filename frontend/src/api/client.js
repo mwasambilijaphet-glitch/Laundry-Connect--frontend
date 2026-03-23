@@ -213,10 +213,49 @@ export async function apiOwnerGetEarnings() {
   return request('/owner/earnings');
 }
 
+export async function apiOwnerGetCommission() {
+  return request('/owner/commission');
+}
+
+export async function apiOwnerSettleCommission(phone) {
+  return request('/owner/commission/settle', {
+    method: 'POST',
+    body: JSON.stringify({ phone }),
+  });
+}
+
 export async function apiOwnerUpdateShop(data) {
   return request('/owner/shop', {
     method: 'PUT',
     body: JSON.stringify(data),
+  });
+}
+
+// ── MESSAGES API ──────────────────────────────────────────
+
+export async function apiGetConversations() {
+  return request('/messages/conversations');
+}
+
+export async function apiGetUnreadCount() {
+  return request('/messages/unread-count');
+}
+
+export async function apiStartConversation(shop_id, order_id) {
+  return request('/messages/start', {
+    method: 'POST',
+    body: JSON.stringify({ shop_id, order_id }),
+  });
+}
+
+export async function apiGetMessages(conversationId) {
+  return request(`/messages/${conversationId}`);
+}
+
+export async function apiSendMessage(conversationId, content) {
+  return request(`/messages/${conversationId}`, {
+    method: 'POST',
+    body: JSON.stringify({ content }),
   });
 }
 

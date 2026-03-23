@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { apiRegister } from '../api/client';
-import { Sparkles, ArrowLeft, Eye, EyeOff, Loader2, Phone, Mail, Lock, User, MessageCircle, Smartphone, Sun, Moon } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, Loader2, Phone, Mail, Lock, User, MessageCircle, Smartphone, Sun, Moon } from 'lucide-react';
+import { LogoIcon } from '../components/Logo';
 
 const API_BASE = import.meta.env.PROD
   ? 'https://laundry-connect-backend.onrender.com/api'
@@ -260,7 +261,7 @@ export default function AuthPage() {
           </button>
         </div>
         <div className="relative flex items-center gap-3 mb-2">
-          <Sparkles className="text-white" size={24} />
+          <LogoIcon size={32} />
           <h1 className="text-2xl font-bold text-white font-display">{getTitle()}</h1>
         </div>
         <p className="text-primary-100 relative">{getSubtitle()}</p>

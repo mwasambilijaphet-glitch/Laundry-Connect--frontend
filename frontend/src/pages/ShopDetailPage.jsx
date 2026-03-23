@@ -4,7 +4,8 @@ import { useCart } from '../context/CartContext';
 import { apiGetShop } from '../api/client';
 import { CLOTHING_TYPES, SERVICE_TYPES, formatTZS, getClothingIcon, getServiceLabel } from '../data/mockData';
 import StarRating from '../components/StarRating';
-import { ArrowLeft, MapPin, Clock, Phone, Star, ShoppingBag, Plus, Truck, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
+import { apiStartConversation } from '../api/client';
+import { ArrowLeft, MapPin, Clock, Phone, Star, ShoppingBag, Plus, Truck, ChevronDown, ChevronUp, Loader2, MessageCircle } from 'lucide-react';
 
 export default function ShopDetailPage() {
   const { id } = useParams();
@@ -123,13 +124,34 @@ export default function ShopDetailPage() {
               {shop.operating_hours?.open || '07:00'}–{shop.operating_hours?.close || '20:00'}
             </span>
             <span className="flex items-center gap-1">
-              <Phone size={13} className="text-primary-500" />
-              {shop.phone}
-            </span>
-            <span className="flex items-center gap-1">
               <ShoppingBag size={13} className="text-accent-500" />
               {shop.total_orders} orders
             </span>
+          </div>
+
+          {/* Action buttons — Chat & Call */}
+          <div className="flex items-center gap-3 mt-4">
+            <button
+              onClick={async () => {
+                try {
+                  const data = await apiStartConversation(shop.id);
+                  navigate(`/chat/${data.conversation.id}`);
+                } catch (err) {
+                  console.error('Failed to start chat:', err);
+                }
+              }}
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-semibold text-sm transition-colors active:scale-95"
+            >
+              <MessageCircle size={16} /> Chat with Shop
+            </button>
+            {shop.phone && (
+              <a
+                href={`tel:${shop.phone}`}
+                className="flex items-center justify-center gap-2 px-5 py-2.5 bg-fresh-50 dark:bg-fresh-900/30 text-fresh-600 dark:text-fresh-400 rounded-xl font-semibold text-sm hover:bg-fresh-100 dark:hover:bg-fresh-900/50 transition-colors active:scale-95"
+              >
+                <Phone size={16} /> Call
+              </a>
+            )}
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { MapPin, Phone, Mail, MessageCircle, ArrowUpRight } from 'lucide-react';
+import { LogoIcon } from './Logo';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -15,9 +16,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
           {/* Brand */}
           <div>
-            <h3 className="text-2xl font-bold font-display mb-3">
-              Laundry<span className="text-fresh-400">Connect</span>
-            </h3>
+            <div className="flex items-center gap-2.5 mb-3">
+              <LogoIcon size={32} />
+              <h3 className="text-2xl font-bold font-display">
+                Laundry<span className="text-fresh-400">Connect</span>
+              </h3>
+            </div>
             <p className="text-slate-400 text-sm leading-relaxed mb-4">
               Tanzania's premier laundry marketplace. Connecting you with trusted local laundry shops for quality care at fair prices.
             </p>

@@ -41,8 +41,8 @@ function RecenterMap({ lat, lng }) {
 // Major Tanzanian cities
 const CITIES = [
   { id: 'nearby', name: 'Near Me', lat: null, lng: null, icon: '📍' },
-  { id: 'dodoma', name: 'Dodoma', lat: -6.1630, lng: 35.7516, icon: '🏛️' },
   { id: 'dar', name: 'Dar es Salaam', lat: -6.7924, lng: 39.2083, icon: '🌊' },
+  { id: 'dodoma', name: 'Dodoma', lat: -6.1630, lng: 35.7516, icon: '🏛️' },
   { id: 'mwanza', name: 'Mwanza', lat: -2.5164, lng: 32.9175, icon: '🐟' },
   { id: 'arusha', name: 'Arusha', lat: -3.3869, lng: 36.6830, icon: '🏔️' },
   { id: 'mbeya', name: 'Mbeya', lat: -8.9000, lng: 33.4500, icon: '🌿' },
@@ -55,6 +55,11 @@ const CITIES = [
   { id: 'songea', name: 'Songea', lat: -10.6800, lng: 35.6500, icon: '🌻' },
   { id: 'musoma', name: 'Musoma', lat: -1.5000, lng: 33.8000, icon: '🎣' },
   { id: 'bukoba', name: 'Bukoba', lat: -1.3319, lng: 31.8125, icon: '🍌' },
+  { id: 'lindi', name: 'Lindi', lat: -10.0000, lng: 39.7167, icon: '🐚' },
+  { id: 'mtwara', name: 'Mtwara', lat: -10.2736, lng: 40.1828, icon: '⛽' },
+  { id: 'shinyanga', name: 'Shinyanga', lat: -3.6615, lng: 33.4242, icon: '💎' },
+  { id: 'singida', name: 'Singida', lat: -4.8163, lng: 34.7438, icon: '🏜️' },
+  { id: 'sumbawanga', name: 'Sumbawanga', lat: -7.9667, lng: 31.6167, icon: '🦁' },
 ];
 
 const DEFAULT_LAT = -6.1630;
