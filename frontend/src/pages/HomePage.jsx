@@ -6,6 +6,8 @@ import { useTheme } from '../context/ThemeContext';
 import { apiGetShops } from '../api/client';
 import { SERVICE_TYPES, formatTZS } from '../data/mockData';
 import StarRating from '../components/StarRating';
+import CitySwitcher from '../components/CitySwitcher';
+import VendorCard from '../components/VendorCard';
 import { ScrollReveal } from '../hooks/useScrollReveal';
 import {
   Search, MapPin, Clock, ChevronRight, ShoppingBag, TrendingUp,
@@ -153,6 +155,7 @@ export default function HomePage() {
     return () => clearTimeout(timer);
   }, [search]);
 
+  const [selectedCity, setSelectedCity] = useState('Dar es Salaam');
   const featuredShops = shops.filter(s => parseFloat(s.rating_avg) >= 4.7);
   const topRated = [...shops].sort((a, b) => parseFloat(b.rating_avg) - parseFloat(a.rating_avg));
 
@@ -210,6 +213,11 @@ export default function HomePage() {
       </div>
 
       <div className="px-6 py-6 space-y-8">
+        {/* City Switcher */}
+        <ScrollReveal>
+          <CitySwitcher currentCity={selectedCity} onCityChange={setSelectedCity} />
+        </ScrollReveal>
+
         {/* Quick services */}
         <ScrollReveal>
           <div>
@@ -438,6 +446,32 @@ export default function HomePage() {
                 </div>
               </div>
             </ScrollReveal>
+
+            {/* Vendor Cards (New Design) */}
+            {topRated.length > 0 && (
+              <ScrollReveal>
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="section-title">
+                      <MapPin size={18} className="text-primary-500" /> Vendors in {selectedCity}
+                    </h2>
+                  </div>
+                  <div className="stagger-children">
+                    {topRated.map(shop => (
+                      <VendorCard
+                        key={`vendor-${shop.id}`}
+                        vendor={{
+                          ...shop,
+                          availableTonight: true,
+                          sameDayDelivery: shop.operating_hours?.days?.includes('Sun'),
+                          primaryService: shop.services?.[0]?.service_type,
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </ScrollReveal>
+            )}
           </>
         )}
       </div>
