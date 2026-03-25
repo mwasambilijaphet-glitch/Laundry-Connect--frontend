@@ -13,6 +13,8 @@ import {
   Sparkles, Shield, Truck, MessageCircle, Zap
 } from 'lucide-react';
 import { LogoIcon } from '../components/Logo';
+import CitySwitcher from '../components/CitySwitcher';
+import VendorCard from '../components/VendorCard';
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -366,6 +368,35 @@ export default function HomePage() {
             </div>
           </div>
         </ScrollReveal>
+
+        {/* ═══════ CITY SWITCHER ═══════ */}
+        <CitySwitcher onCityChange={(cityId) => {
+          navigate(`/shops?city=${cityId}`);
+        }} />
+
+        {/* ═══════ TOP VENDORS ═══════ */}
+        {!loading && topRated.length > 0 && !search && (
+          <ScrollReveal>
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="section-title">
+                  <Star size={16} className="text-accent-500" /> Wachuuzi Bora — Top Vendors
+                </h2>
+                <button
+                  onClick={() => navigate('/shops')}
+                  className="text-sm text-primary-600 dark:text-primary-400 font-semibold flex items-center gap-0.5 hover:gap-1.5 transition-all duration-300"
+                >
+                  All <ChevronRight size={14} />
+                </button>
+              </div>
+              <div className="grid grid-cols-1 gap-4 stagger-children">
+                {topRated.slice(0, 3).map(shop => (
+                  <VendorCard key={shop.id} shop={shop} />
+                ))}
+              </div>
+            </div>
+          </ScrollReveal>
+        )}
 
         {loading && (
           <div className="flex flex-col items-center justify-center py-12 gap-3">
