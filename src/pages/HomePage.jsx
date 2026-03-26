@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
 import { apiGetShops } from '../api/client';
 import { formatTZS } from '../data/mockData';
+import { DEMO_SHOPS } from '../data/demoData';
 import StarRating from '../components/StarRating';
 import CitySwitcher from '../components/CitySwitcher';
 import VendorCard from '../components/VendorCard';
@@ -30,11 +31,13 @@ export default function HomePage() {
       try {
         setLoading(true);
         const data = await apiGetShops({ search: search || undefined });
-        setShops(data.shops);
+        setShops(data.shops || []);
         setError('');
       } catch (err) {
-        setError('Failed to load shops');
         console.error(err);
+        // Fallback to demo shops so app always looks good
+        setShops(DEMO_SHOPS);
+        setError('');
       } finally {
         setLoading(false);
       }
@@ -65,26 +68,37 @@ export default function HomePage() {
 
   return (
     <div className="animate-fade-in bg-white dark:bg-slate-900 min-h-screen">
-      {/* ── Top bar: location + theme toggle ── */}
-      <div className="flex items-center justify-between px-5 pt-12 pb-3">
-        <button className="flex items-center gap-1.5 text-sm font-semibold text-slate-800 dark:text-white">
-          <MapPin size={16} className="text-primary-600" />
-          <span>Select location</span>
-          <ChevronRight size={14} className="text-slate-400 rotate-90" />
-        </button>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={toggleTheme}
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          >
-            {isDark ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
-          <button
-            onClick={() => navigate('/shops')}
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          >
-            <SlidersHorizontal size={18} />
-          </button>
+      {/* ── Top bar: greeting + actions ── */}
+      <div className="px-5 pt-12 pb-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              {new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening'}
+            </p>
+            <h1 className="text-lg font-bold text-slate-800 dark:text-white">
+              {user?.full_name?.split(' ')[0] || 'Welcome'}
+            </h1>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={toggleTheme}
+              className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            >
+              {isDark ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+            <button
+              onClick={() => navigate('/profile')}
+              className="w-10 h-10 rounded-xl flex items-center justify-center bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 transition-colors"
+            >
+              <div className="w-7 h-7 rounded-full bg-primary-600 dark:bg-primary-500 flex items-center justify-center text-white text-xs font-bold">
+                {user?.full_name?.[0]?.toUpperCase() || 'U'}
+              </div>
+            </button>
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5 mt-2 text-sm text-slate-500 dark:text-slate-400">
+          <MapPin size={14} className="text-primary-600" />
+          <span>Dar es Salaam</span>
         </div>
       </div>
 

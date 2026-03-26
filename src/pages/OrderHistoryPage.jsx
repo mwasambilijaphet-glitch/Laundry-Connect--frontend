@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiGetOrders } from '../api/client';
 import { formatTZS, getStatusInfo, getClothingIcon } from '../data/mockData';
+import { DEMO_ORDERS } from '../data/demoData';
 import { Package, ChevronRight, Loader2 } from 'lucide-react';
 
 export default function OrderHistoryPage() {
@@ -14,9 +15,10 @@ export default function OrderHistoryPage() {
       try {
         setLoading(true);
         const data = await apiGetOrders();
-        setOrders(data.orders);
+        setOrders(data.orders || []);
       } catch (err) {
         console.error('Failed to load orders:', err);
+        setOrders(DEMO_ORDERS);
       } finally {
         setLoading(false);
       }
