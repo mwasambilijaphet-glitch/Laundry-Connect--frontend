@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiGetShops } from '../api/client';
 import { formatTZS } from '../data/mockData';
+import { DEMO_SHOPS } from '../data/demoData';
 import StarRating from '../components/StarRating';
 import { Search, MapPin, Clock, Loader2 } from 'lucide-react';
 
@@ -17,9 +18,10 @@ export default function ShopListPage() {
       try {
         setLoading(true);
         const data = await apiGetShops({ search: search || undefined, sort: sortBy });
-        setShops(data.shops);
+        setShops(data.shops || []);
       } catch (err) {
         console.error('Failed to load shops:', err);
+        setShops(DEMO_SHOPS);
       } finally {
         setLoading(false);
       }

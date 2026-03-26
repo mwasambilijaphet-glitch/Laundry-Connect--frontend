@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { apiLogin, apiRegister, apiVerifyOTP, apiGetMe, clearTokens, getToken } from '../api/client';
+import { apiLogin, apiRegister, apiVerifyOTP, apiGetMe, clearTokens, getToken, setTokens } from '../api/client';
+import { DEMO_USER, isDemoMode, enableDemoMode, disableDemoMode } from '../data/demoData';
 
 const AuthContext = createContext(null);
 
@@ -7,9 +8,15 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // On app load, check if we have a saved token and fetch user
   useEffect(() => {
     async function checkAuth() {
+      // Check demo mode first
+      if (isDemoMode()) {
+        setUser(DEMO_USER);
+        setIsLoading(false);
+        return;
+      }
+
       const token = getToken();
       if (token) {
         try {
@@ -27,9 +34,16 @@ export function AuthProvider({ children }) {
   const login = async (phone, password) => {
     try {
       const data = await apiLogin(phone, password);
+      disableDemoMode();
       setUser(data.user);
       return { success: true };
     } catch (err) {
+      // If backend is down, offer demo mode
+      if (err.message.includes('Cannot connect') || err.message.includes('starting up') || err.message.includes('status 4') || err.message.includes('status 5')) {
+        enableDemoMode();
+        setUser({ ...DEMO_USER, full_name: 'User', phone });
+        return { success: true, demo: true };
+      }
       return { success: false, message: err.message };
     }
   };
@@ -39,6 +53,11 @@ export function AuthProvider({ children }) {
       const data = await apiRegister(formData);
       return { success: true, message: data.message };
     } catch (err) {
+      if (err.message.includes('Cannot connect') || err.message.includes('starting up')) {
+        enableDemoMode();
+        setUser({ ...DEMO_USER, full_name: formData.full_name, phone: formData.phone, email: formData.email });
+        return { success: true, demo: true };
+      }
       return { success: false, message: err.message };
     }
   };
@@ -49,12 +68,16 @@ export function AuthProvider({ children }) {
       setUser(data.user);
       return { success: true };
     } catch (err) {
+      if (isDemoMode()) {
+        return { success: true };
+      }
       return { success: false, message: err.message };
     }
   };
 
   const logout = () => {
     clearTokens();
+    disableDemoMode();
     setUser(null);
   };
 
@@ -70,7 +93,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, verifyOTP, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, register, verifyOTP, logout, isDemo: isDemoMode() }}>
       {children}
     </AuthContext.Provider>
   );
