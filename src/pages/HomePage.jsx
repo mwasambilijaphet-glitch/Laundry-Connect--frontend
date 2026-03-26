@@ -370,9 +370,7 @@ export default function HomePage() {
         </ScrollReveal>
 
         {/* ═══════ CITY SWITCHER ═══════ */}
-        <CitySwitcher onCityChange={(cityId) => {
-          navigate(`/shops?city=${cityId}`);
-        }} />
+        <CitySwitcher />
 
         {/* ═══════ TOP VENDORS ═══════ */}
         {!loading && topRated.length > 0 && !search && (
