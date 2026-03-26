@@ -45,10 +45,15 @@ async function request(endpoint, options = {}) {
     headers['Authorization'] = `Bearer ${accessToken}`;
   }
 
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers,
-  });
+  let response;
+  try {
+    response = await fetch(`${API_BASE}${endpoint}`, {
+      ...options,
+      headers,
+    });
+  } catch (err) {
+    throw new Error('Cannot connect to server. Please check your internet connection and try again.');
+  }
 
   if (response.status === 401 && refreshToken) {
     const refreshed = await tryRefreshToken();
@@ -75,14 +80,16 @@ async function handleResponse(response) {
   try {
     data = text ? JSON.parse(text) : {};
   } catch {
-    throw new Error(
-      response.status === 502 || response.status === 503
-        ? 'Server is starting up, please try again in a moment'
-        : 'Server returned an invalid response'
-    );
+    if (response.status === 502 || response.status === 503 || response.status === 0) {
+      throw new Error('Server is starting up, please wait 30 seconds and try again');
+    }
+    throw new Error('Server returned an invalid response (status ' + response.status + ')');
   }
   if (!response.ok) {
-    throw new Error(data.message || 'Something went wrong');
+    if (response.status === 500) {
+      throw new Error(data.message || 'Server error. The backend may still be starting up — please try again in 30 seconds.');
+    }
+    throw new Error(data.message || 'Request failed (status ' + response.status + ')');
   }
   return data;
 }
