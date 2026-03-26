@@ -92,7 +92,7 @@ function TanzaniaMap({ cities, isDark }) {
         const markerHtml = `
           <div style="
             width: 28px; height: 28px;
-            background: linear-gradient(135deg, #2563eb, #10b981);
+            background: linear-gradient(135deg, #16a34a, #22c55e);
             border-radius: 50%;
             border: 3px solid white;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
@@ -120,7 +120,7 @@ function TanzaniaMap({ cities, isDark }) {
             <strong style="font-size: 14px; color: #1e293b;">${city.name}</strong>
             <p style="font-size: 11px; color: #64748b; margin: 4px 0; line-height: 1.4;">${city.desc}</p>
             <div style="display: flex; gap: 8px; margin-top: 6px;">
-              <span style="font-size: 10px; color: #3b82f6; font-weight: 600;">Pop: ${city.population}</span>
+              <span style="font-size: 10px; color: #16a34a; font-weight: 600;">Pop: ${city.population}
               <span style="font-size: 10px; color: #10b981; font-weight: 600;">${city.region}</span>
             </div>
           </div>

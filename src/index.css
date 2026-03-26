@@ -36,7 +36,7 @@
   align-items: center;
   justify-content: center;
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(to right, #2563eb, #3b82f6);
+  background: linear-gradient(to right, #16a34a, #22c55e);
   color: white;
   font-weight: 600;
   border-radius: 16px;
@@ -57,27 +57,27 @@
   justify-content: center;
   padding: 0.75rem 1.5rem;
   background: white;
-  color: #2563eb;
+  color: #16a34a;
   font-weight: 600;
   border-radius: 16px;
-  border: 2px solid #dbeafe;
+  border: 2px solid #dcfce7;
   transition: all 0.3s;
 }
 .btn-secondary:hover {
-  border-color: #93c5fd;
-  background: #eff6ff;
+  border-color: #86efac;
+  background: #f0fdf4;
 }
 .btn-secondary:active {
   transform: scale(0.95);
 }
 .dark .btn-secondary {
   background: #1e293b;
-  color: #60a5fa;
+  color: #4ade80;
   border-color: #334155;
 }
 .dark .btn-secondary:hover {
-  border-color: #3b82f6;
-  background: #172554;
+  border-color: #22c55e;
+  background: #052e16;
 }
 
 .btn-fresh {
@@ -150,7 +150,7 @@
 }
 .input-field:focus {
   outline: none;
-  box-shadow: 0 0 0 2px #3b82f6;
+  box-shadow: 0 0 0 2px #22c55e;
   border-color: transparent;
   background: white;
 }
@@ -164,7 +164,7 @@
 }
 .dark .input-field:focus {
   background: #1e293b;
-  box-shadow: 0 0 0 2px #3b82f6;
+  box-shadow: 0 0 0 2px #22c55e;
 }
 
 /* ── Badges ───────────────────────────────────────── */
@@ -177,13 +177,13 @@
   font-weight: 600;
   letter-spacing: 0.025em;
 }
-.badge-blue { background: #dbeafe; color: #1d4ed8; }
+.badge-blue { background: #dcfce7; color: #15803d; }
 .badge-green { background: #d1fae5; color: #047857; }
 .badge-amber { background: #fef3c7; color: #b45309; }
 .badge-red { background: #fee2e2; color: #dc2626; }
 .badge-gray { background: #f1f5f9; color: #475569; }
 
-.dark .badge-blue { background: #1e3a8a; color: #93c5fd; }
+.dark .badge-blue { background: #14532d; color: #86efac; }
 .dark .badge-green { background: #065f46; color: #6ee7b7; }
 .dark .badge-amber { background: #78350f; color: #fcd34d; }
 .dark .badge-red { background: #7f1d1d; color: #fca5a5; }
@@ -238,7 +238,7 @@
 
 /* ── Gradient text ────────────────────────────────── */
 .text-gradient-primary {
-  background: linear-gradient(to right, #2563eb, #60a5fa);
+  background: linear-gradient(to right, #16a34a, #4ade80);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -287,7 +287,7 @@
 
 /* ── Focus-visible for keyboard nav ───────────────── */
 :focus-visible {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid #22c55e;
   outline-offset: 2px;
 }
 
@@ -297,12 +297,12 @@ button:focus:not(:focus-visible) {
 
 /* ── Selection color ──────────────────────────────── */
 ::selection {
-  background-color: #bfdbfe;
-  color: #1e3a8a;
+  background-color: #bbf7d0;
+  color: #14532d;
 }
 .dark ::selection {
-  background-color: #1e3a8a;
-  color: #bfdbfe;
+  background-color: #14532d;
+  color: #bbf7d0;
 }
 
 /* ── Scroll reveal animations ─────────────────────── */
