@@ -70,7 +70,17 @@ async function request(endpoint, options = {}) {
 }
 
 async function handleResponse(response) {
-  const data = await response.json();
+  const text = await response.text();
+  let data;
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    throw new Error(
+      response.status === 502 || response.status === 503
+        ? 'Server is starting up, please try again in a moment'
+        : 'Server returned an invalid response'
+    );
+  }
   if (!response.ok) {
     throw new Error(data.message || 'Something went wrong');
   }
