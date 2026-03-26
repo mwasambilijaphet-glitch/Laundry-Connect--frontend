@@ -6,7 +6,7 @@
  * In prod: calls Render backend directly
  */
 
-const API_BASE = import.meta.env.PROD
+export const API_BASE = import.meta.env.PROD
   ? 'https://laundry-connect-backend.onrender.com/api'
   : '/api';
 

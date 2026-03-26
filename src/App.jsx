@@ -80,6 +80,19 @@ function RoleRedirect() {
   return <Navigate to="/home" replace />;
 }
 
+function NotFoundPage() {
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-slate-900 px-6 text-center">
+      <div className="text-6xl mb-4">🧺</div>
+      <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">Page Not Found</h1>
+      <p className="text-slate-500 dark:text-slate-400 mb-6">The page you're looking for doesn't exist.</p>
+      <a href="/home" className="px-6 py-3 bg-primary-600 text-white font-semibold rounded-xl hover:bg-primary-700 transition-colors">
+        Go Home
+      </a>
+    </div>
+  );
+}
+
 function AppRoutes() {
   const { user } = useAuth();
 
@@ -117,6 +130,9 @@ function AppRoutes() {
         <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
         <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
         <Route path="/admin/transactions" element={<AdminRoute><AdminTransactions /></AdminRoute>} />
+
+        {/* 404 catch-all */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
 
       {/* WhatsApp floating button */}

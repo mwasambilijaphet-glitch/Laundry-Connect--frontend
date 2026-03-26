@@ -2,13 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { apiRegister } from '../api/client';
+import { apiRegister, API_BASE } from '../api/client';
 import { ArrowLeft, Eye, EyeOff, Loader2, Phone, Mail, Lock, User, MessageCircle, Smartphone, Sun, Moon } from 'lucide-react';
 import { LogoIcon } from '../components/Logo';
-
-const API_BASE = import.meta.env.PROD
-  ? 'https://laundry-connect-backend.onrender.com/api'
-  : '/api';
 
 export default function AuthPage() {
   const navigate = useNavigate();

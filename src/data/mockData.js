@@ -25,8 +25,8 @@ export const SERVICE_TYPES = [
 ];
 
 export const ORDER_STATUSES = [
-  { id: 'placed', label: 'Order Placed', icon: '📋', color: 'blue' },
-  { id: 'confirmed', label: 'Confirmed', icon: '✅', color: 'blue' },
+  { id: 'placed', label: 'Order Placed', icon: '📋', color: 'green' },
+  { id: 'confirmed', label: 'Confirmed', icon: '✅', color: 'green' },
   { id: 'picked_up', label: 'Picked Up', icon: '🚗', color: 'amber' },
   { id: 'washing', label: 'Washing', icon: '🫧', color: 'amber' },
   { id: 'ready', label: 'Ready', icon: '✨', color: 'green' },
