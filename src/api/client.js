@@ -6,9 +6,7 @@
  * In prod: calls Render backend directly
  */
 
-export const API_BASE = import.meta.env.PROD
-  ? 'https://laundry-connect-backend.onrender.com/api'
-  : '/api';
+export const API_BASE = '/api';
 
 // ── Token management ──────────────────────────────────────
 let accessToken = localStorage.getItem('lc_token') || null;

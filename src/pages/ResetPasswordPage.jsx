@@ -3,9 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { Lock, Eye, EyeOff, CheckCircle2, ArrowLeft, Sun, Moon, Loader2, AlertCircle, KeyRound } from 'lucide-react';
 
-const API_BASE = import.meta.env.PROD
-  ? 'https://laundry-connect-backend.onrender.com/api'
-  : '/api';
+import { API_BASE } from '../api/client';
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
