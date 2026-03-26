@@ -285,6 +285,10 @@ export async function apiAdminGetUsers(role) {
   return request(`/admin/users${qs}`);
 }
 
+export async function apiAdminGetOrders() {
+  return request('/admin/orders');
+}
+
 export async function apiAdminGetTransactions() {
   return request('/admin/transactions');
 }
