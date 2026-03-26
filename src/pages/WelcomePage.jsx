@@ -10,26 +10,9 @@ import 'leaflet/dist/leaflet.css';
 
 // ── Major Tanzanian Cities ─────────────────────────────────
 const TANZANIAN_CITIES = [
-  { id: 'dar', name: 'Dar es Salaam', lat: -6.7924, lng: 39.2083, icon: '🌊', population: '5.4M', desc: 'Commercial capital & largest city. Major business hub on the Indian Ocean coast.', region: 'Eastern', color: 'from-blue-500 to-cyan-500' },
-  { id: 'dodoma', name: 'Dodoma', lat: -6.1630, lng: 35.7516, icon: '🏛️', population: '410K', desc: 'Official capital of Tanzania. Growing political & administrative center.', region: 'Central', color: 'from-amber-500 to-orange-500' },
-  { id: 'mwanza', name: 'Mwanza', lat: -2.5164, lng: 32.9175, icon: '🐟', population: '1.1M', desc: 'Rock City on Lake Victoria. Second largest city & fishing industry hub.', region: 'Lake Zone', color: 'from-emerald-500 to-teal-500' },
+  { id: 'dar', name: 'Dar es Salaam', lat: -6.7924, lng: 39.2083, icon: '🌊', population: '5.4M', desc: 'Commercial capital & largest city. Major business hub on the Indian Ocean coast.', region: 'Eastern', color: 'from-primary-500 to-primary-600' },
   { id: 'arusha', name: 'Arusha', lat: -3.3869, lng: 36.6830, icon: '🏔️', population: '615K', desc: 'Gateway to Kilimanjaro & Serengeti. Tourism capital of East Africa.', region: 'Northern', color: 'from-green-500 to-emerald-500' },
-  { id: 'mbeya', name: 'Mbeya', lat: -8.9000, lng: 33.4500, icon: '🌿', population: '385K', desc: 'Southern highlands city. Key agricultural & trade hub near Zambia border.', region: 'Southern Highlands', color: 'from-lime-500 to-green-500' },
-  { id: 'morogoro', name: 'Morogoro', lat: -6.8235, lng: 37.6603, icon: '🌾', population: '350K', desc: 'Nestled beneath the Uluguru Mountains. Major agricultural center.', region: 'Eastern', color: 'from-yellow-500 to-amber-500' },
-  { id: 'tanga', name: 'Tanga', lat: -5.0689, lng: 39.0989, icon: '⚓', population: '350K', desc: 'Historic port city. Sisal industry hub with beautiful beaches.', region: 'Northern Coast', color: 'from-sky-500 to-blue-500' },
-  { id: 'zanzibar', name: 'Zanzibar City', lat: -6.1659, lng: 39.2026, icon: '🏝️', population: '225K', desc: 'Stone Town UNESCO heritage site. Spice Island paradise & cultural gem.', region: 'Zanzibar', color: 'from-violet-500 to-purple-500' },
-  { id: 'tabora', name: 'Tabora', lat: -5.0242, lng: 32.8000, icon: '🌳', population: '225K', desc: 'Historic caravan trade center. Heart of central Tanzania.', region: 'Central', color: 'from-orange-500 to-red-500' },
-  { id: 'kigoma', name: 'Kigoma', lat: -4.8769, lng: 29.6266, icon: '🚢', population: '215K', desc: 'Port on Lake Tanganyika. Gateway to Gombe Stream & chimpanzees.', region: 'Western', color: 'from-teal-500 to-cyan-500' },
-  { id: 'iringa', name: 'Iringa', lat: -7.7700, lng: 35.6900, icon: '⛰️', population: '150K', desc: 'Cool highland town. Near Ruaha National Park & Isimila Stone Age site.', region: 'Southern Highlands', color: 'from-rose-500 to-pink-500' },
-  { id: 'songea', name: 'Songea', lat: -10.6800, lng: 35.6500, icon: '🌻', population: '200K', desc: 'Capital of Ruvuma Region. Historical Maji Maji rebellion center.', region: 'Southern', color: 'from-fuchsia-500 to-pink-500' },
-  { id: 'musoma', name: 'Musoma', lat: -1.5000, lng: 33.8000, icon: '🎣', population: '170K', desc: 'Lakeside city on Lake Victoria. Birthplace of Father of the Nation.', region: 'Lake Zone', color: 'from-indigo-500 to-violet-500' },
-  { id: 'bukoba', name: 'Bukoba', lat: -1.3319, lng: 31.8125, icon: '🍌', population: '130K', desc: 'Northwestern gem on Lake Victoria. Famous for Robusta coffee & bananas.', region: 'Lake Zone', color: 'from-green-600 to-lime-500' },
-  { id: 'lindi', name: 'Lindi', lat: -10.0000, lng: 39.7167, icon: '🐚', population: '100K', desc: 'Southern coastal town. Gateway to marine parks & pristine beaches.', region: 'Southern Coast', color: 'from-cyan-500 to-sky-500' },
-  { id: 'mtwara', name: 'Mtwara', lat: -10.2736, lng: 40.1828, icon: '⛽', population: '115K', desc: 'Deep-water port city. Growing gas industry & southern economic hub.', region: 'Southern Coast', color: 'from-red-500 to-rose-500' },
-  { id: 'shinyanga', name: 'Shinyanga', lat: -3.6615, lng: 33.4242, icon: '💎', population: '160K', desc: 'Diamond city of Tanzania. Major mining region & cotton belt.', region: 'Lake Zone', color: 'from-amber-400 to-yellow-500' },
-  { id: 'singida', name: 'Singida', lat: -4.8163, lng: 34.7438, icon: '🏜️', population: '115K', desc: 'Central Tanzania crossroads. Scenic salt lakes & Sukuma culture.', region: 'Central', color: 'from-stone-500 to-amber-600' },
-  { id: 'sumbawanga', name: 'Sumbawanga', lat: -7.9667, lng: 31.6167, icon: '🦁', population: '125K', desc: 'Western highlands capital. Gateway to Katavi National Park.', region: 'Western', color: 'from-emerald-600 to-green-500' },
-  { id: 'mpanda', name: 'Mpanda', lat: -6.3500, lng: 31.0667, icon: '🌲', population: '95K', desc: 'Heart of Katavi Region. Wild frontier near untouched national parks.', region: 'Western', color: 'from-green-700 to-emerald-500' },
+  { id: 'dodoma', name: 'Dodoma', lat: -6.1630, lng: 35.7516, icon: '🏛️', population: '410K', desc: 'Official capital of Tanzania. Growing political & administrative center.', region: 'Central', color: 'from-amber-500 to-orange-500' },
 ];
 
 function AnimatedCounter({ end, suffix = '', duration = 2000 }) {
@@ -323,7 +306,7 @@ export default function WelcomePage() {
                 Available in <span className="text-fresh-400">{TANZANIAN_CITIES.length} Major Cities</span>
               </h2>
               <p className="text-white/50 max-w-lg mx-auto leading-relaxed">
-                From the bustling streets of Dar es Salaam to the shores of Lake Victoria in Mwanza —
+                From the bustling streets of Dar es Salaam to the capital Dodoma and safari gateway Arusha —
                 LaundryConnect serves customers across Tanzania's biggest cities. Find a trusted laundry shop near you, wherever you are.
               </p>
             </div>
@@ -365,7 +348,7 @@ export default function WelcomePage() {
                 <div>
                   <h3 className="text-xl font-bold text-white mb-2">Your City, Your Laundry</h3>
                   <p className="text-sm text-white/50 max-w-sm mx-auto leading-relaxed">
-                    Whether you're in the capital Dodoma, coastal Dar es Salaam, or lakeside Mwanza —
+                    Whether you're in the capital Dodoma, coastal Dar es Salaam, or Arusha —
                     clean clothes are just a tap away. Join thousands of Tanzanians who trust LaundryConnect.
                   </p>
                 </div>
