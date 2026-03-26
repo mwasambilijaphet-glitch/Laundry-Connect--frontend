@@ -345,8 +345,8 @@ export default function NearbyPage() {
                     center={[userPos.lat, userPos.lng]}
                     radius={radius}
                     pathOptions={{
-                      color: '#3b82f6',
-                      fillColor: '#3b82f6',
+                      color: '#16a34a',
+                      fillColor: '#16a34a',
                       fillOpacity: 0.05,
                       weight: 1,
                       dashArray: '5, 5',

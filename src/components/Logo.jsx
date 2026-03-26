@@ -59,20 +59,20 @@ export function LogoIcon({ size = 40, className = '' }) {
 
       <defs>
         <linearGradient id="grad1" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#2563EB" />
-          <stop offset="1" stopColor="#1d4ed8" />
+          <stop stopColor="#22c55e" />
+          <stop offset="1" stopColor="#15803d" />
         </linearGradient>
         <linearGradient id="grad2" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#60a5fa" stopOpacity="0.3" />
-          <stop offset="1" stopColor="#2563EB" stopOpacity="0.1" />
+          <stop stopColor="#4ade80" stopOpacity="0.3" />
+          <stop offset="1" stopColor="#22c55e" stopOpacity="0.1" />
         </linearGradient>
         <radialGradient id="drumGrad" cx="32" cy="38" r="15" gradientUnits="userSpaceOnUse">
           <stop stopColor="#1e3a5f" />
           <stop offset="1" stopColor="#0f172a" />
         </radialGradient>
         <radialGradient id="innerGrad" cx="30" cy="36" r="11" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#3b82f6" stopOpacity="0.3" />
-          <stop offset="1" stopColor="#1e40af" stopOpacity="0.1" />
+          <stop stopColor="#22c55e" stopOpacity="0.3" />
+          <stop offset="1" stopColor="#166534" stopOpacity="0.1" />
         </radialGradient>
       </defs>
     </svg>
