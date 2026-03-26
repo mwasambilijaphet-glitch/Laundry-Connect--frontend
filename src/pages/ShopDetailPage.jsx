@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { apiGetShop } from '../api/client';
 import { CLOTHING_TYPES, SERVICE_TYPES, formatTZS, getClothingIcon, getServiceLabel } from '../data/mockData';
+import { getDemoShop } from '../data/demoData';
 import StarRating from '../components/StarRating';
 import { apiStartConversation } from '../api/client';
 import { ArrowLeft, MapPin, Clock, Phone, Star, ShoppingBag, Plus, Truck, ChevronDown, ChevronUp, Loader2, MessageCircle } from 'lucide-react';
@@ -24,8 +25,14 @@ export default function ShopDetailPage() {
         const data = await apiGetShop(id);
         setShop(data.shop);
       } catch (err) {
-        setError('Failed to load shop');
         console.error(err);
+        // Fallback to demo shop
+        const demoShop = getDemoShop(id);
+        if (demoShop) {
+          setShop(demoShop);
+        } else {
+          setError('Failed to load shop');
+        }
       } finally {
         setLoading(false);
       }

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { apiGetConversations } from '../api/client';
+import { DEMO_CONVERSATIONS } from '../data/demoData';
 import { MessageCircle, Search, Loader2, ChevronRight, Phone } from 'lucide-react';
 
 export default function ChatListPage() {
@@ -24,6 +25,7 @@ export default function ChatListPage() {
       setConversations(data.conversations);
     } catch (err) {
       console.error('Failed to load conversations:', err);
+      setConversations(DEMO_CONVERSATIONS);
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { apiGetOrder } from '../api/client';
 import { ORDER_STATUSES, formatTZS, getClothingLabel, getClothingIcon, getServiceLabel, getStatusInfo } from '../data/mockData';
+import { getDemoOrder } from '../data/demoData';
 import { ArrowLeft, Star, MapPin, Loader2, CheckCircle2, Truck, Home } from 'lucide-react';
 
 export default function OrderTrackingPage() {
@@ -18,8 +19,13 @@ export default function OrderTrackingPage() {
         const data = await apiGetOrder(id);
         setOrder(data.order);
       } catch (err) {
-        setError('Order not found');
         console.error(err);
+        const demoOrder = getDemoOrder(id);
+        if (demoOrder) {
+          setOrder(demoOrder);
+        } else {
+          setError('Order not found');
+        }
       } finally {
         setLoading(false);
       }
