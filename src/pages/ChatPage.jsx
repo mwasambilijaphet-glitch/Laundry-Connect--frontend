@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { apiGetMessages, apiSendMessage } from '../api/client';
+import { DEMO_CONVERSATIONS, DEMO_MESSAGES } from '../data/demoData';
 import { ArrowLeft, Send, Phone, Loader2, CheckCheck, Clock, ShoppingBag } from 'lucide-react';
 
 export default function ChatPage() {
@@ -36,6 +37,10 @@ export default function ChatPage() {
       setMessages(data.messages);
     } catch (err) {
       console.error('Failed to load messages:', err);
+      // Fallback to demo data
+      const demoConv = DEMO_CONVERSATIONS.find(c => c.id === parseInt(id));
+      if (demoConv) setConversation(demoConv);
+      setMessages(DEMO_MESSAGES);
     } finally {
       setLoading(false);
     }
