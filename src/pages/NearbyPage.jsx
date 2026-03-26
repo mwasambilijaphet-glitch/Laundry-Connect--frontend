@@ -14,7 +14,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-const userSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32"><circle cx="12" cy="12" r="10" fill="%233b82f6" stroke="white" stroke-width="3"/><circle cx="12" cy="12" r="4" fill="white"/></svg>`;
+const userSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32"><circle cx="12" cy="12" r="10" fill="%2316a34a" stroke="white" stroke-width="3"/><circle cx="12" cy="12" r="4" fill="white"/></svg>`;
 const userIcon = new L.Icon({
   iconUrl: `data:image/svg+xml,${userSvg}`,
   iconSize: [32, 32],
@@ -351,7 +351,7 @@ export default function NearbyPage() {
                     <div className="min-w-[180px]">
                       <strong className="text-sm">{place.name}</strong>
                       {place.address && <p className="text-xs text-gray-500 mt-1">{place.address}</p>}
-                      <p className="text-xs text-blue-600 font-semibold mt-1">{formatDistance(place.distance)} away</p>
+                      <p className="text-xs text-primary-600 dark:text-primary-400 font-semibold mt-1">{formatDistance(place.distance)} away</p>
                     </div>
                   </Popup>
                 </Marker>

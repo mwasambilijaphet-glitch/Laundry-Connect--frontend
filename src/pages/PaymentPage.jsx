@@ -1,18 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { apiInitiatePayment } from '../api/client';
+import { apiInitiatePayment, API_BASE } from '../api/client';
 import { formatTZS } from '../data/mockData';
 import { ArrowLeft, Smartphone, CreditCard, QrCode, Loader2, CheckCircle2, Shield, AlertCircle, RefreshCw } from 'lucide-react';
-
-const API_BASE = import.meta.env.PROD
-  ? 'https://laundry-connect-backend.onrender.com/api'
-  : '/api';
 
 const PAYMENT_METHODS = [
   { id: 'mpesa', label: 'M-Pesa', icon: '📱', desc: 'Vodacom M-Pesa', color: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' },
   { id: 'airtel', label: 'Airtel Money', icon: '📱', desc: 'Airtel Money', color: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' },
-  { id: 'tigo', label: 'Tigo Pesa', icon: '📱', desc: 'Mixx by Yas', color: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800' },
+  { id: 'tigo', label: 'Tigo Pesa', icon: '📱', desc: 'Mixx by Yas', color: 'bg-sky-50 dark:bg-sky-900/20 border-sky-200 dark:border-sky-800' },
   { id: 'card', label: 'Card', icon: '💳', desc: 'Visa / Mastercard', color: 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800' },
   { id: 'qr', label: 'QR Code', icon: '📷', desc: 'Scan & Pay', color: 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700' },
 ];
