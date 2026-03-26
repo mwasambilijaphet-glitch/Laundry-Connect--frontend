@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { apiLogin, apiRegister, apiVerifyOTP, apiGetMe, clearTokens, getToken, setTokens } from '../api/client';
-import { DEMO_USER, isDemoMode, enableDemoMode, disableDemoMode } from '../data/demoData';
+import { DEMO_USER, isDemoMode, enableDemoMode, disableDemoMode, getDemoRole } from '../data/demoData';
 
 const AuthContext = createContext(null);
 
@@ -12,7 +12,8 @@ export function AuthProvider({ children }) {
     async function checkAuth() {
       // Check demo mode first
       if (isDemoMode()) {
-        setUser(DEMO_USER);
+        const role = getDemoRole();
+        setUser({ ...DEMO_USER, role });
         setIsLoading(false);
         return;
       }
@@ -40,8 +41,11 @@ export function AuthProvider({ children }) {
     } catch (err) {
       // If backend is down, offer demo mode
       if (err.message.includes('Cannot connect') || err.message.includes('starting up') || err.message.includes('status 4') || err.message.includes('status 5')) {
-        enableDemoMode();
-        setUser({ ...DEMO_USER, full_name: 'User', phone });
+        // Detect admin phone for demo mode admin access
+        const isAdmin = phone === '0768188065' || phone === '+255768188065';
+        const role = isAdmin ? 'admin' : 'customer';
+        enableDemoMode(role);
+        setUser({ ...DEMO_USER, full_name: isAdmin ? 'Admin' : 'User', phone, role });
         return { success: true, demo: true };
       }
       return { success: false, message: err.message };

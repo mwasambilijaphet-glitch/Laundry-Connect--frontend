@@ -15,22 +15,27 @@ export default function OrderTrackingPage() {
   useEffect(() => {
     async function fetchOrder() {
       try {
-        setLoading(true);
+        if (!order) setLoading(true);
         const data = await apiGetOrder(id);
         setOrder(data.order);
       } catch (err) {
-        console.error(err);
-        const demoOrder = getDemoOrder(id);
-        if (demoOrder) {
-          setOrder(demoOrder);
-        } else {
-          setError('Order not found');
+        if (!order) {
+          console.error(err);
+          const demoOrder = getDemoOrder(id);
+          if (demoOrder) {
+            setOrder(demoOrder);
+          } else {
+            setError('Order not found');
+          }
         }
       } finally {
         setLoading(false);
       }
     }
     fetchOrder();
+    // Poll for real-time updates every 10 seconds
+    const interval = setInterval(fetchOrder, 10000);
+    return () => clearInterval(interval);
   }, [id]);
 
   if (loading) {

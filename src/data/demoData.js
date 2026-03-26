@@ -135,12 +135,18 @@ export function isDemoMode() {
   return localStorage.getItem('lc_demo_mode') === 'true';
 }
 
-export function enableDemoMode() {
+export function enableDemoMode(role) {
   localStorage.setItem('lc_demo_mode', 'true');
+  if (role) localStorage.setItem('lc_demo_role', role);
+}
+
+export function getDemoRole() {
+  return localStorage.getItem('lc_demo_role') || 'customer';
 }
 
 export function disableDemoMode() {
   localStorage.removeItem('lc_demo_mode');
+  localStorage.removeItem('lc_demo_role');
 }
 
 // Get a demo shop by ID

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { apiGetShops } from '../../api/client';
+import { apiAdminGetOrders } from '../../api/client';
 import { formatTZS, getStatusInfo, getClothingIcon } from '../../data/mockData';
 import { Loader2, Search } from 'lucide-react';
 
@@ -9,20 +9,14 @@ export default function AdminOrders() {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    async function fetch() {
+    async function fetchOrders() {
       try {
-        const response = await window.fetch('/api/admin/orders', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('lc_token')}`,
-            'Content-Type': 'application/json',
-          },
-        });
-        const data = await response.json();
+        const data = await apiAdminGetOrders();
         if (data.success) setOrders(data.orders);
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
     }
-    fetch();
+    fetchOrders();
   }, []);
 
   const filtered = search
