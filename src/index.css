@@ -145,6 +145,12 @@
   color: #1e293b;
   transition: all 0.3s;
 }
+.input-field.pl-10 {
+  padding-left: 2.5rem;
+}
+.input-field.pr-10 {
+  padding-right: 2.5rem;
+}
 .input-field::placeholder {
   color: #94a3b8;
 }
