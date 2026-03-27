@@ -47,7 +47,7 @@ export default function AuthPage() {
     const result = await login(form.phone, form.password);
     setLoading(false);
     if (result.success) {
-      navigate('/home');
+      navigate('/');
     } else {
       setError(result.message || 'Login failed');
     }
@@ -143,7 +143,7 @@ export default function AuthPage() {
       const result = await verifyOTP(otpEmail, code);
       setLoading(false);
       if (result.success) {
-        navigate('/home');
+        navigate('/');
       } else {
         setError(result.message || 'Invalid OTP');
       }
