@@ -242,9 +242,8 @@ export default function OrderBuilderPage() {
               setOrderId(data.order?.id || data.id);
               navigate('/order/pay');
             } catch (err) {
-              // Fallback: if order creation fails, still allow demo payment flow
-              setOrderId(1);
-              navigate('/order/pay');
+              console.error('Order creation error:', err);
+              setOrderError(err.message || 'Failed to create order. Please try again.');
             } finally {
               setPlacingOrder(false);
             }

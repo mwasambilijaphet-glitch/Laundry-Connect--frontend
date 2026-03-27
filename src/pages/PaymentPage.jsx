@@ -105,14 +105,9 @@ export default function PaymentPage() {
 
       // For mobile money, we wait for webhook/polling
     } catch (err) {
-      // If backend is down, simulate success for demo purposes
-      setTimeout(() => {
-        setStatus('success');
-        setTimeout(() => {
-          clearCart();
-          navigate('/orders');
-        }, 2500);
-      }, 3000);
+      console.error('Payment error:', err);
+      setStatus('failed');
+      setError(err.message || 'Payment failed. Please try again.');
     }
   };
 
