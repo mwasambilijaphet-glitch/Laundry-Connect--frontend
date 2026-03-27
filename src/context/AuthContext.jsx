@@ -41,11 +41,10 @@ export function AuthProvider({ children }) {
     } catch (err) {
       // If backend is down, offer demo mode
       if (err.message.includes('Cannot connect') || err.message.includes('starting up') || err.message.includes('status 4') || err.message.includes('status 5')) {
-        // Detect admin phone for demo mode admin access
-        const isAdmin = phone === '0768188065' || phone === '+255768188065';
-        const role = isAdmin ? 'admin' : 'customer';
+        // Demo mode defaults to customer role
+        const role = 'customer';
         enableDemoMode(role);
-        setUser({ ...DEMO_USER, full_name: isAdmin ? 'Admin' : 'User', phone, role });
+        setUser({ ...DEMO_USER, full_name: 'User', phone, role });
         return { success: true, demo: true };
       }
       return { success: false, message: err.message };

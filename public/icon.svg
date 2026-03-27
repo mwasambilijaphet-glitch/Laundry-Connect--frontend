@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#16a34a"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded square background -->
+  <rect x="0" y="0" width="48" height="48" rx="10" ry="10" fill="url(#bgGrad)"/>
+
+  <!-- Washing machine body (inner) -->
+  <rect x="8" y="8" width="32" height="32" rx="4" ry="4" fill="#ffffff" opacity="0.15"/>
+
+  <!-- Top panel strip -->
+  <rect x="10" y="10" width="28" height="7" rx="2" ry="2" fill="#ffffff" opacity="0.2"/>
+
+  <!-- Power button -->
+  <circle cx="15" cy="13.5" r="2" fill="#ffffff" opacity="0.7"/>
+
+  <!-- Control dots -->
+  <circle cx="21" cy="13.5" r="1" fill="#ffffff" opacity="0.5"/>
+  <circle cx="25" cy="13.5" r="1" fill="#ffffff" opacity="0.5"/>
+
+  <!-- Drum outer ring -->
+  <circle cx="24" cy="29" r="10" fill="#ffffff" opacity="0.2"/>
+
+  <!-- Drum inner circle -->
+  <circle cx="24" cy="29" r="7.5" fill="#ffffff" opacity="0.3"/>
+
+  <!-- Water swirl pattern -->
+  <path d="M18 27 Q21 22 24 26 Q27 30 30 25" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.8" stroke-linecap="round"/>
+  <path d="M18 32 Q21 28 24 31 Q27 34 30 30" stroke="#ffffff" stroke-width="1.5" fill="none" opacity="0.5" stroke-linecap="round"/>
+
+  <!-- Floating bubbles -->
+  <circle cx="37" cy="8" r="2.5" fill="#ffffff" opacity="0.3"/>
+  <circle cx="42" cy="5" r="1.8" fill="#ffffff" opacity="0.25"/>
+  <circle cx="34" cy="4" r="1.5" fill="#ffffff" opacity="0.2"/>
+</svg>

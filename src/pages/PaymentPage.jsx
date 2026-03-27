@@ -97,10 +97,20 @@ export default function PaymentPage() {
       setPaymentRef(data.payment.reference);
       setPollCount(0);
 
-      // If Snippe returns a checkout URL (for card/QR), redirect
+      // If Snippe returns a checkout URL (for card/QR), redirect after validation
       if (data.payment.checkout_url) {
-        window.location.href = data.payment.checkout_url;
-        return;
+        try {
+          const url = new URL(data.payment.checkout_url);
+          if (!['https:', 'http:'].includes(url.protocol)) {
+            throw new Error('Invalid checkout URL');
+          }
+          window.location.href = data.payment.checkout_url;
+          return;
+        } catch {
+          setStatus('failed');
+          setError('Invalid payment redirect URL. Please try again.');
+          return;
+        }
       }
 
       // For mobile money, we wait for webhook/polling
