@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50">
+  <defs>
+    <linearGradient id="bubbleGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#22c55e" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#16a34a" stop-opacity="0.3"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Washing machine icon -->
+  <g transform="translate(4, 3)">
+    <!-- Machine body -->
+    <rect x="0" y="0" width="44" height="44" rx="6" ry="6" fill="#16a34a"/>
+    <!-- Top panel -->
+    <rect x="3" y="3" width="38" height="10" rx="2" ry="2" fill="#ffffff" opacity="0.2"/>
+    <!-- Power button -->
+    <circle cx="8" cy="8" r="2.5" fill="#ffffff" opacity="0.7"/>
+    <!-- Control dots -->
+    <circle cx="15" cy="8" r="1.2" fill="#ffffff" opacity="0.5"/>
+    <circle cx="20" cy="8" r="1.2" fill="#ffffff" opacity="0.5"/>
+    <!-- Drum circle -->
+    <circle cx="22" cy="28" r="13" fill="#ffffff" opacity="0.15"/>
+    <circle cx="22" cy="28" r="10.5" fill="#ffffff" opacity="0.25"/>
+    <!-- Water/clothes swirl inside drum -->
+    <path d="M15 25 Q18 20 22 23 Q26 26 29 22" stroke="#ffffff" stroke-width="1.8" fill="none" opacity="0.7" stroke-linecap="round"/>
+    <path d="M15 31 Q18 27 22 30 Q26 33 29 29" stroke="#ffffff" stroke-width="1.8" fill="none" opacity="0.5" stroke-linecap="round"/>
+    <!-- Bubbles -->
+    <circle cx="34" cy="5" r="3" fill="url(#bubbleGrad)" opacity="0.0"/>
+  </g>
+
+  <!-- Decorative bubbles floating from machine -->
+  <circle cx="42" cy="8" r="2.5" fill="#22c55e" opacity="0.3"/>
+  <circle cx="48" cy="4" r="1.8" fill="#22c55e" opacity="0.25"/>
+  <circle cx="38" cy="3" r="1.5" fill="#16a34a" opacity="0.2"/>
+
+  <!-- Text: Laundry -->
+  <text x="56" y="24" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" fill="#16a34a" letter-spacing="-0.5">Laundry</text>
+
+  <!-- Text: Connect -->
+  <text x="56" y="42" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="600" fill="#22c55e" letter-spacing="-0.3">Connect</text>
+
+  <!-- Small decorative dot between words area -->
+  <circle cx="138" cy="33" r="2" fill="#22c55e" opacity="0.4"/>
+</svg>
