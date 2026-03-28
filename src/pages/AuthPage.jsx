@@ -157,8 +157,12 @@ export default function AuthPage() {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     setError('');
-    if (!newPassword || newPassword.length < 6) {
-      setError('Password must be at least 6 characters');
+    if (!newPassword || newPassword.length < 8) {
+      setError('Password must be at least 8 characters');
+      return;
+    }
+    if (!/[A-Z]/.test(newPassword) || !/[a-z]/.test(newPassword) || !/\d/.test(newPassword)) {
+      setError('Password must include uppercase, lowercase, and a number');
       return;
     }
     setLoading(true);
