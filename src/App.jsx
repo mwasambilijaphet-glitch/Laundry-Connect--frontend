@@ -41,7 +41,7 @@ import BottomNav from './components/BottomNav';
 import Footer from './components/Footer';
 import OwnerLayout from './components/OwnerLayout';
 import AdminLayout from './components/AdminLayout';
-import WhatsAppButton from './components/WhatsAppButton';
+
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth();
@@ -136,9 +136,6 @@ function AppRoutes() {
         {/* 404 catch-all */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-
-      {/* WhatsApp floating button */}
-      {user && <WhatsAppButton />}
     </>
   );
 }
