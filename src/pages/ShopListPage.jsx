@@ -4,7 +4,7 @@ import { apiGetShops } from '../api/client';
 import { formatTZS } from '../data/mockData';
 import { DEMO_SHOPS } from '../data/demoData';
 import StarRating from '../components/StarRating';
-import { Search, MapPin, Clock, Loader2 } from 'lucide-react';
+import { Search, MapPin, Clock, Loader2, Phone, MessageSquare } from 'lucide-react';
 
 export default function ShopListPage() {
   const navigate = useNavigate();
@@ -90,7 +90,9 @@ export default function ShopListPage() {
                     {shop.photos && shop.photos[0] ? (
                       <img src={shop.photos[0]} alt={shop.name} className="w-full h-full object-cover" loading="lazy" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-3xl">🧺</div>
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-100 to-fresh-100 dark:from-primary-900/40 dark:to-fresh-900/40">
+                      <span className="text-2xl font-bold text-primary-600/40 dark:text-primary-400/40">{shop.name?.[0] || 'L'}</span>
+                    </div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -116,6 +118,16 @@ export default function ShopListPage() {
                         </span>
                       )}
                     </div>
+                    {shop.phone && (
+                      <div className="flex items-center gap-2 mt-2">
+                        <a href={`tel:${shop.phone}`} onClick={e => e.stopPropagation()} className="inline-flex items-center gap-1 px-2.5 py-1 bg-fresh-50 dark:bg-fresh-900/30 text-fresh-600 dark:text-fresh-400 rounded-lg text-xs font-semibold hover:bg-fresh-100 transition-colors">
+                          <Phone size={10} /> Call
+                        </a>
+                        <a href={`sms:${shop.phone}`} onClick={e => e.stopPropagation()} className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-lg text-xs font-semibold hover:bg-primary-100 transition-colors">
+                          <MessageSquare size={10} /> SMS
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </button>
               ))}

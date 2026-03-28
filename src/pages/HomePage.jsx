@@ -12,7 +12,7 @@ import VendorCard from '../components/VendorCard';
 import { ScrollReveal } from '../hooks/useScrollReveal';
 import {
   Search, MapPin, Clock, ChevronRight, SlidersHorizontal,
-  Star, Sun, Moon, Loader2
+  Star, Sun, Moon, Loader2, Phone, MessageSquare
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -277,7 +277,9 @@ function ShopListItem({ shop, onClick }) {
         {shop.photos && shop.photos[0] ? (
           <img src={shop.photos[0]} alt={shop.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-3xl bg-primary-50 dark:bg-primary-900/30">🧺</div>
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-100 to-fresh-100 dark:from-primary-900/40 dark:to-fresh-900/40">
+              <span className="text-2xl font-bold text-primary-600/40 dark:text-primary-400/40">{shop.name?.[0] || 'L'}</span>
+            </div>
         )}
       </div>
 
@@ -293,13 +295,16 @@ function ShopListItem({ shop, onClick }) {
           <span className="text-xs text-slate-500 ml-0.5">{rating.toFixed(1)}</span>
         </div>
         <p className="text-xs text-primary-600 dark:text-primary-400 mt-1 font-medium">{hoursText}</p>
-      </div>
-
-      {/* View details */}
-      <div className="flex items-end flex-shrink-0 pb-1">
-        <span className="text-xs text-primary-600 dark:text-primary-400 font-semibold flex items-center gap-0.5 whitespace-nowrap">
-          View details <ChevronRight size={12} />
-        </span>
+        {shop.phone && (
+          <div className="flex items-center gap-2 mt-2">
+            <a href={`tel:${shop.phone}`} onClick={e => e.stopPropagation()} className="inline-flex items-center gap-1 px-2.5 py-1 bg-fresh-50 dark:bg-fresh-900/30 text-fresh-600 dark:text-fresh-400 rounded-lg text-xs font-semibold hover:bg-fresh-100 transition-colors">
+              <Phone size={10} /> Call
+            </a>
+            <a href={`sms:${shop.phone}`} onClick={e => e.stopPropagation()} className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-lg text-xs font-semibold hover:bg-primary-100 transition-colors">
+              <MessageSquare size={10} /> SMS
+            </a>
+          </div>
+        )}
       </div>
     </button>
   );

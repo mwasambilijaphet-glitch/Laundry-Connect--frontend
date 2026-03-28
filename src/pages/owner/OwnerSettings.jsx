@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiOwnerGetShop, apiOwnerUpdateShop } from '../../api/client';
-import { Loader2, Save, MapPin, Clock, Phone, FileText, CheckCircle2 } from 'lucide-react';
+import { Loader2, Save, MapPin, Clock, Phone, FileText, CheckCircle2, Camera, X, Plus } from 'lucide-react';
 
 export default function OwnerSettings() {
   const [shop, setShop] = useState(null);
@@ -13,6 +13,8 @@ export default function OwnerSettings() {
     name: '', description: '', address: '', region: '', phone: '',
     open: '07:00', close: '20:00', days: 'Mon-Sat',
   });
+  const [photos, setPhotos] = useState([]);
+  const [newPhotoUrl, setNewPhotoUrl] = useState('');
 
   useEffect(() => {
     async function fetch() {
@@ -30,6 +32,7 @@ export default function OwnerSettings() {
             close: data.shop.operating_hours?.close || '20:00',
             days: data.shop.operating_hours?.days || 'Mon-Sat',
           });
+          setPhotos(data.shop.photos || []);
         }
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
@@ -55,6 +58,7 @@ export default function OwnerSettings() {
         name: form.name, description: form.description,
         address: form.address, region: form.region, phone: form.phone,
         operating_hours: { open: form.open, close: form.close, days: form.days },
+        photos,
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
@@ -148,6 +152,58 @@ export default function OwnerSettings() {
               </select>
             </div>
           </div>
+        </div>
+
+        {/* Shop Photos */}
+        <div className="card p-5">
+          <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+            <Camera size={16} className="text-primary-500" /> Shop Photos
+          </label>
+          <p className="text-xs text-slate-400 mb-3">Add photos of your shop to attract customers. Paste image URLs from Imgur, Google Drive, or any image host.</p>
+
+          {/* Existing photos */}
+          <div className="grid grid-cols-3 gap-2 mb-3">
+            {photos.map((url, i) => (
+              <div key={i} className="relative aspect-square rounded-xl overflow-hidden bg-slate-100 group">
+                <img src={url} alt={`Shop photo ${i + 1}`} className="w-full h-full object-cover" />
+                <button
+                  onClick={() => { setPhotos(photos.filter((_, j) => j !== i)); setSaved(false); }}
+                  className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* Add photo URL */}
+          <div className="flex gap-2">
+            <input
+              type="url"
+              placeholder="Paste image URL here..."
+              value={newPhotoUrl}
+              onChange={e => setNewPhotoUrl(e.target.value)}
+              className="input-field flex-1"
+            />
+            <button
+              onClick={() => {
+                if (newPhotoUrl && photos.length < 10) {
+                  try {
+                    new URL(newPhotoUrl);
+                    setPhotos([...photos, newPhotoUrl]);
+                    setNewPhotoUrl('');
+                    setSaved(false);
+                  } catch {
+                    setError('Please enter a valid URL');
+                  }
+                }
+              }}
+              className="px-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-semibold hover:bg-primary-700 transition-colors flex items-center gap-1"
+            >
+              <Plus size={14} /> Add
+            </button>
+          </div>
+          {photos.length >= 10 && <p className="text-xs text-amber-500 mt-2">Maximum 10 photos reached</p>}
         </div>
 
         <button onClick={handleSave} disabled={saving} className="btn-primary w-full py-4">
