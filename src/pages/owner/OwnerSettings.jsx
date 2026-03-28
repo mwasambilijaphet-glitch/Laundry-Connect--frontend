@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { apiOwnerGetShop, apiOwnerUpdateShop } from '../../api/client';
-import { Loader2, Save, MapPin, Clock, Phone, FileText, CheckCircle2, Camera, X, Plus } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { apiOwnerGetShop, apiOwnerUpdateShop, apiUploadImage } from '../../api/client';
+import { Loader2, Save, MapPin, Clock, Phone, FileText, CheckCircle2, Camera, X, Plus, Upload, ImagePlus } from 'lucide-react';
 
 export default function OwnerSettings() {
   const [shop, setShop] = useState(null);
@@ -15,6 +15,9 @@ export default function OwnerSettings() {
   });
   const [photos, setPhotos] = useState([]);
   const [newPhotoUrl, setNewPhotoUrl] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     async function fetch() {
@@ -159,7 +162,11 @@ export default function OwnerSettings() {
           <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
             <Camera size={16} className="text-primary-500" /> Shop Photos
           </label>
-          <p className="text-xs text-slate-400 mb-3">Add photos of your shop to attract customers. Paste image URLs from Imgur, Google Drive, or any image host.</p>
+          <p className="text-xs text-slate-400 mb-3">Add photos of your shop to attract customers (max 5MB each, JPG/PNG/WebP)</p>
+
+          {uploadError && (
+            <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded-lg text-red-600 text-xs">{uploadError}</div>
+          )}
 
           {/* Existing photos */}
           <div className="grid grid-cols-3 gap-2 mb-3">
@@ -174,35 +181,87 @@ export default function OwnerSettings() {
                 </button>
               </div>
             ))}
+
+            {/* Upload button tile */}
+            {photos.length < 10 && (
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="aspect-square rounded-xl border-2 border-dashed border-slate-300 hover:border-primary-400 hover:bg-primary-50 flex flex-col items-center justify-center gap-1 transition-colors disabled:opacity-50"
+              >
+                {uploading ? (
+                  <Loader2 size={24} className="text-primary-500 animate-spin" />
+                ) : (
+                  <>
+                    <ImagePlus size={24} className="text-slate-400" />
+                    <span className="text-[10px] text-slate-400 font-medium">Add Photo</span>
+                  </>
+                )}
+              </button>
+            )}
           </div>
 
-          {/* Add photo URL */}
-          <div className="flex gap-2">
-            <input
-              type="url"
-              placeholder="Paste image URL here..."
-              value={newPhotoUrl}
-              onChange={e => setNewPhotoUrl(e.target.value)}
-              className="input-field flex-1"
-            />
-            <button
-              onClick={() => {
-                if (newPhotoUrl && photos.length < 10) {
-                  try {
-                    new URL(newPhotoUrl);
-                    setPhotos([...photos, newPhotoUrl]);
-                    setNewPhotoUrl('');
-                    setSaved(false);
-                  } catch {
-                    setError('Please enter a valid URL');
-                  }
+          {/* Hidden file input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            multiple
+            className="hidden"
+            onChange={async (e) => {
+              const files = Array.from(e.target.files || []);
+              if (files.length === 0) return;
+
+              setUploading(true);
+              setUploadError('');
+
+              for (const file of files) {
+                if (photos.length >= 10) break;
+                try {
+                  const data = await apiUploadImage(file);
+                  setPhotos(prev => [...prev, data.url]);
+                  setSaved(false);
+                } catch (err) {
+                  setUploadError(err.message || 'Failed to upload image');
                 }
-              }}
-              className="px-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-semibold hover:bg-primary-700 transition-colors flex items-center gap-1"
-            >
-              <Plus size={14} /> Add
-            </button>
-          </div>
+              }
+
+              setUploading(false);
+              // Reset file input
+              e.target.value = '';
+            }}
+          />
+
+          {/* Alternative: paste URL */}
+          <details className="mt-2">
+            <summary className="text-xs text-slate-400 cursor-pointer hover:text-slate-600">Or paste image URL</summary>
+            <div className="flex gap-2 mt-2">
+              <input
+                type="url"
+                placeholder="Paste image URL here..."
+                value={newPhotoUrl}
+                onChange={e => setNewPhotoUrl(e.target.value)}
+                className="input-field flex-1 text-sm"
+              />
+              <button
+                onClick={() => {
+                  if (newPhotoUrl && photos.length < 10) {
+                    try {
+                      new URL(newPhotoUrl);
+                      setPhotos([...photos, newPhotoUrl]);
+                      setNewPhotoUrl('');
+                      setSaved(false);
+                    } catch {
+                      setError('Please enter a valid URL');
+                    }
+                  }
+                }}
+                className="px-3 py-2 bg-primary-600 text-white rounded-xl text-xs font-semibold hover:bg-primary-700 transition-colors flex items-center gap-1"
+              >
+                <Plus size={12} /> Add
+              </button>
+            </div>
+          </details>
           {photos.length >= 10 && <p className="text-xs text-amber-500 mt-2">Maximum 10 photos reached</p>}
         </div>
 

@@ -321,3 +321,42 @@ export async function apiApplyReferralCode(code) {
     body: JSON.stringify({ code }),
   });
 }
+
+// ── UPLOAD API ─────────────────────────────────────────────
+export async function apiUploadImage(file) {
+  const formData = new FormData();
+  formData.append('image', file);
+
+  const headers = { 'Accept-Language': getLang() };
+  if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`;
+
+  const response = await fetch(`${API_BASE}/upload`, {
+    method: 'POST',
+    headers,
+    body: formData,
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || 'Upload failed');
+  return data;
+}
+
+export async function apiUploadMultiple(files) {
+  const formData = new FormData();
+  for (const file of files) {
+    formData.append('images', file);
+  }
+
+  const headers = { 'Accept-Language': getLang() };
+  if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`;
+
+  const response = await fetch(`${API_BASE}/upload/multiple`, {
+    method: 'POST',
+    headers,
+    body: formData,
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || 'Upload failed');
+  return data;
+}
