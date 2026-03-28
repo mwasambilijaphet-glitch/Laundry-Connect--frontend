@@ -32,8 +32,12 @@ export default function ResetPasswordPage() {
       setError('Please fill in all fields');
       return;
     }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters');
+      return;
+    }
+    if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password)) {
+      setError('Password must include uppercase, lowercase, and a number');
       return;
     }
     if (password !== confirmPassword) {
