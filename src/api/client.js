@@ -305,3 +305,15 @@ export async function apiAdminGetBalances() {
 export async function apiAdminSettleBalance(shopId) {
   return request(`/admin/balances/${shopId}/settle`, { method: 'POST' });
 }
+
+// ── REFERRALS ───────────────────────────────────────────
+export async function apiGetReferralInfo() {
+  return request('/referrals');
+}
+
+export async function apiApplyReferralCode(code) {
+  return request('/referrals/apply', {
+    method: 'POST',
+    body: JSON.stringify({ code }),
+  });
+}
