@@ -294,7 +294,7 @@ export default {
   codeCopied: 'Imenakiliwa!',
   shareViaWhatsApp: 'Shiriki WhatsApp',
   shareViaSMS: 'Shiriki SMS',
-  shareMessage: (code) => `Habari! Jiunge na Laundry Connect na utumie nambari yangu ya rufaa ${code} kupata punguzo la TZS 1,000 kwenye oda yako ya kwanza. Pakua: https://laundryconnect.app`,
+  shareMessage: (code) => `Habari! Jiunge na Laundry Connect na utumie nambari yangu ya rufaa ${code} kupata punguzo la TZS 1,000 kwenye oda yako ya kwanza. Pakua: https://laundryconnect.co.tz`,
   referralBalance: 'Salio la Rufaa',
   totalEarned: 'Jumla Uliyopata',
   friendsReferred: 'Marafiki Walioalikwa',

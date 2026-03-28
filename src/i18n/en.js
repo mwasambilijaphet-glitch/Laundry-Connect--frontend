@@ -294,7 +294,7 @@ export default {
   codeCopied: 'Copied!',
   shareViaWhatsApp: 'Share via WhatsApp',
   shareViaSMS: 'Share via SMS',
-  shareMessage: (code) => `Hey! Join Laundry Connect and use my referral code ${code} to get TZS 1,000 off your first order. Download: https://laundryconnect.app`,
+  shareMessage: (code) => `Hey! Join Laundry Connect and use my referral code ${code} to get TZS 1,000 off your first order. Download: https://laundryconnect.co.tz`,
   referralBalance: 'Referral Balance',
   totalEarned: 'Total Earned',
   friendsReferred: 'Friends Referred',

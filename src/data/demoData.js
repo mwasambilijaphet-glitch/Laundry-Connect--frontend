@@ -7,7 +7,7 @@ export const DEMO_USER = {
   id: 0,
   full_name: 'Demo User',
   phone: '0700000000',
-  email: 'demo@laundryconnect.app',
+  email: 'demo@laundryconnect.co.tz',
   role: 'customer',
   avatar_url: null,
 };
