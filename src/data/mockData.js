@@ -29,9 +29,8 @@ export const ORDER_STATUSES = [
   { id: 'confirmed', label: 'Confirmed', icon: '✅', color: 'green' },
   { id: 'picked_up', label: 'Picked Up', icon: '🚗', color: 'amber' },
   { id: 'washing', label: 'Washing', icon: '🫧', color: 'amber' },
-  { id: 'ready', label: 'Ready', icon: '✨', color: 'green' },
-  { id: 'out_for_delivery', label: 'Out for Delivery', icon: '🛵', color: 'green' },
-  { id: 'delivered', label: 'Delivered', icon: '🎉', color: 'green' },
+  { id: 'ready', label: 'Ready for Pickup', icon: '✨', color: 'green' },
+  { id: 'delivered', label: 'Collected', icon: '🎉', color: 'green' },
 ];
 
 export const mockShops = [

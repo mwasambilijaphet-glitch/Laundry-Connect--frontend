@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { apiGetOrder } from '../api/client';
 import { ORDER_STATUSES, formatTZS, getClothingLabel, getClothingIcon, getServiceLabel, getStatusInfo } from '../data/mockData';
 import { getDemoOrder } from '../data/demoData';
-import { ArrowLeft, Star, MapPin, Loader2, CheckCircle2, Truck, Home } from 'lucide-react';
+import { ArrowLeft, Star, MapPin, Loader2, CheckCircle2, Phone, Home } from 'lucide-react';
 
 export default function OrderTrackingPage() {
   const { id } = useParams();
@@ -223,15 +223,15 @@ export default function OrderTrackingPage() {
           </span>
         </div>
 
-        {/* Track Rider button */}
-        {!isDelivered && order.status !== 'pending' && (
-          <button
-            onClick={() => navigate(`/orders/${id}/track`)}
-            className="w-full py-4 bg-primary-600 dark:bg-primary-500 text-white font-bold text-sm rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2 min-h-[48px]"
+        {/* Contact Shop */}
+        {order.shop_phone && !isDelivered && (
+          <a
+            href={`tel:${order.shop_phone}`}
+            className="w-full py-4 bg-fresh-600 dark:bg-fresh-500 text-white font-bold text-sm rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2 min-h-[48px]"
           >
-            <Truck size={18} />
-            Track Rider
-          </button>
+            <Phone size={18} />
+            Call Shop
+          </a>
         )}
 
         {/* Back to Home */}
