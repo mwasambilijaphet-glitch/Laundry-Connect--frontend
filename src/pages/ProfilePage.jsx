@@ -7,7 +7,8 @@ import { apiUploadImage, apiUpdateProfile } from '../api/client';
 import {
   Phone, Mail, LogOut, ChevronRight, Bell, Shield, HelpCircle, Star,
   Package, MapPin, User, CheckCircle2, Sun, Moon, Camera, Edit3,
-  Globe, Heart, Award, Zap, Settings, Info, CreditCard, Lock, Gift, Loader2
+  Globe, Heart, Award, Zap, Settings, Info, CreditCard, Lock, Gift, Loader2,
+  Save, X
 } from 'lucide-react';
 import { LogoIcon } from '../components/Logo';
 import LanguageToggle from '../components/LanguageToggle';
@@ -19,7 +20,53 @@ export default function ProfilePage() {
   const { t, lang, toggleLanguage } = useLanguage();
   const [showFullInfo, setShowFullInfo] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editForm, setEditForm] = useState({ full_name: '', phone: '', email: '' });
+  const [editSaving, setEditSaving] = useState(false);
+  const [editError, setEditError] = useState('');
+  const [editSuccess, setEditSuccess] = useState(false);
   const avatarInputRef = useRef(null);
+
+  const startEditing = () => {
+    setEditForm({
+      full_name: user?.full_name || '',
+      phone: user?.phone || '',
+      email: user?.email || '',
+    });
+    setEditError('');
+    setEditSuccess(false);
+    setEditing(true);
+  };
+
+  const handleSaveProfile = async () => {
+    if (!editForm.full_name.trim()) {
+      setEditError('Name is required');
+      return;
+    }
+    try {
+      setEditSaving(true);
+      setEditError('');
+      const updates = {};
+      if (editForm.full_name !== user?.full_name) updates.full_name = editForm.full_name;
+      if (editForm.phone !== user?.phone) updates.phone = editForm.phone;
+      if (editForm.email !== user?.email) updates.email = editForm.email;
+
+      if (Object.keys(updates).length === 0) {
+        setEditing(false);
+        return;
+      }
+
+      await apiUpdateProfile(updates);
+      await refreshUser();
+      setEditSuccess(true);
+      setEditing(false);
+      setTimeout(() => setEditSuccess(false), 3000);
+    } catch (err) {
+      setEditError(err.message || 'Failed to update profile');
+    } finally {
+      setEditSaving(false);
+    }
+  };
 
   const handleAvatarUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -142,34 +189,129 @@ export default function ProfilePage() {
         <div className="mx-6 -mt-10 relative z-10">
           <div className="card p-4 shadow-elevated">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Contact Info</h3>
-              <button
-                onClick={() => setShowFullInfo(!showFullInfo)}
-                className="text-xs text-primary-600 dark:text-primary-400 font-semibold flex items-center gap-1 hover:underline"
-              >
-                <Edit3 size={12} /> Edit
-              </button>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                {editing ? 'Edit Profile' : 'Contact Info'}
+              </h3>
+              {!editing ? (
+                <button
+                  onClick={startEditing}
+                  className="text-xs text-primary-600 dark:text-primary-400 font-semibold flex items-center gap-1 hover:underline"
+                >
+                  <Edit3 size={12} /> Edit
+                </button>
+              ) : (
+                <button
+                  onClick={() => { setEditing(false); setEditError(''); }}
+                  className="text-xs text-slate-400 hover:text-slate-600 font-semibold flex items-center gap-1"
+                >
+                  <X size={12} /> Cancel
+                </button>
+              )}
             </div>
-            <div className="space-y-2.5">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-primary-50 dark:bg-primary-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Phone size={16} className="text-primary-600 dark:text-primary-400" />
+
+            {editError && (
+              <div className="mb-3 p-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400 text-xs">
+                {editError}
+              </div>
+            )}
+
+            {editSuccess && (
+              <div className="mb-3 p-2 bg-fresh-50 dark:bg-fresh-900/20 border border-fresh-200 dark:border-fresh-800 rounded-lg text-fresh-700 dark:text-fresh-400 text-xs flex items-center gap-1.5 animate-slide-up">
+                <CheckCircle2 size={14} /> Profile updated!
+              </div>
+            )}
+
+            {editing ? (
+              <div className="space-y-3">
+                {/* Name */}
+                <div>
+                  <label className="text-xs text-slate-400 mb-1 block">Full Name</label>
+                  <div className="flex items-center gap-2">
+                    <div className="w-9 h-9 bg-slate-100 dark:bg-slate-700 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <User size={16} className="text-slate-500 dark:text-slate-400" />
+                    </div>
+                    <input
+                      type="text"
+                      value={editForm.full_name}
+                      onChange={e => setEditForm(f => ({ ...f, full_name: e.target.value }))}
+                      className="flex-1 px-3 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                      placeholder="Your full name"
+                    />
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-slate-400">Phone</p>
-                  <p className="text-sm font-semibold text-slate-800 dark:text-white truncate">{user?.phone || '—'}</p>
+                {/* Phone */}
+                <div>
+                  <label className="text-xs text-slate-400 mb-1 block">Phone</label>
+                  <div className="flex items-center gap-2">
+                    <div className="w-9 h-9 bg-primary-50 dark:bg-primary-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Phone size={16} className="text-primary-600 dark:text-primary-400" />
+                    </div>
+                    <input
+                      type="tel"
+                      value={editForm.phone}
+                      onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))}
+                      className="flex-1 px-3 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                      placeholder="0768 123 456"
+                    />
+                  </div>
+                </div>
+                {/* Email */}
+                <div>
+                  <label className="text-xs text-slate-400 mb-1 block">Email</label>
+                  <div className="flex items-center gap-2">
+                    <div className="w-9 h-9 bg-fresh-50 dark:bg-fresh-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Mail size={16} className="text-fresh-600 dark:text-fresh-400" />
+                    </div>
+                    <input
+                      type="email"
+                      value={editForm.email}
+                      onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))}
+                      className="flex-1 px-3 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                      placeholder="you@example.com"
+                    />
+                  </div>
+                </div>
+                {/* Save button */}
+                <button
+                  onClick={handleSaveProfile}
+                  disabled={editSaving}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-xl transition-all active:scale-[0.97] disabled:opacity-50"
+                >
+                  {editSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                  {editSaving ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-slate-100 dark:bg-slate-700 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <User size={16} className="text-slate-500 dark:text-slate-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-slate-400">Name</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-white truncate">{user?.full_name || '—'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-primary-50 dark:bg-primary-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Phone size={16} className="text-primary-600 dark:text-primary-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-slate-400">Phone</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-white truncate">{user?.phone || '—'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-fresh-50 dark:bg-fresh-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Mail size={16} className="text-fresh-600 dark:text-fresh-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-slate-400">Email</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-white truncate">{user?.email || '—'}</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-fresh-50 dark:bg-fresh-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Mail size={16} className="text-fresh-600 dark:text-fresh-400" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-slate-400">Email</p>
-                  <p className="text-sm font-semibold text-slate-800 dark:text-white truncate">{user?.email || '—'}</p>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
