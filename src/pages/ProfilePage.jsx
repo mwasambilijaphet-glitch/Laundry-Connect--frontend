@@ -1,22 +1,41 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
+import { apiUploadImage, apiUpdateProfile } from '../api/client';
 import {
   Phone, Mail, LogOut, ChevronRight, Bell, Shield, HelpCircle, Star,
   Package, MapPin, User, CheckCircle2, Sun, Moon, Camera, Edit3,
-  Globe, Heart, Award, Zap, Settings, Info, CreditCard, Lock, Gift
+  Globe, Heart, Award, Zap, Settings, Info, CreditCard, Lock, Gift, Loader2
 } from 'lucide-react';
 import { LogoIcon } from '../components/Logo';
 import LanguageToggle from '../components/LanguageToggle';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, refreshUser } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const { t, lang, toggleLanguage } = useLanguage();
   const [showFullInfo, setShowFullInfo] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const avatarInputRef = useRef(null);
+
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setUploadingAvatar(true);
+      const uploadData = await apiUploadImage(file);
+      await apiUpdateProfile({ avatar_url: uploadData.url });
+      await refreshUser();
+    } catch (err) {
+      alert(err.message || 'Failed to upload photo');
+    } finally {
+      setUploadingAvatar(false);
+      e.target.value = '';
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -85,8 +104,19 @@ export default function ProfilePage() {
                   <span className="text-2xl font-bold text-white">{initials}</span>
                 )}
               </div>
-              <button className="absolute -bottom-1 -right-1 w-7 h-7 bg-fresh-500 rounded-lg flex items-center justify-center shadow-lg ring-2 ring-white dark:ring-slate-800 group-hover:scale-110 transition-transform">
-                <Camera size={13} className="text-white" />
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                className="hidden"
+                onChange={handleAvatarUpload}
+              />
+              <button
+                onClick={() => avatarInputRef.current?.click()}
+                disabled={uploadingAvatar}
+                className="absolute -bottom-1 -right-1 w-7 h-7 bg-fresh-500 rounded-lg flex items-center justify-center shadow-lg ring-2 ring-white dark:ring-slate-800 group-hover:scale-110 transition-transform disabled:opacity-50"
+              >
+                {uploadingAvatar ? <Loader2 size={13} className="text-white animate-spin" /> : <Camera size={13} className="text-white" />}
               </button>
             </div>
             <div className="flex-1">
