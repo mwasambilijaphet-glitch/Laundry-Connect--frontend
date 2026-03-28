@@ -33,9 +33,14 @@ export function getToken() {
 }
 
 // ── Base fetch wrapper ────────────────────────────────────
+function getLang() {
+  try { return localStorage.getItem('lc_lang') || 'en'; } catch { return 'en'; }
+}
+
 async function request(endpoint, options = {}) {
   const headers = {
     'Content-Type': 'application/json',
+    'Accept-Language': getLang(),
     ...options.headers,
   };
 

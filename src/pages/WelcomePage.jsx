@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 import { ArrowRight, Shield, Truck, Smartphone, Star, Clock, Sun, Moon, Zap, Users, MapPin, ChevronRight, Building2, Globe } from 'lucide-react';
 import { LogoIcon, LogoFull } from '../components/Logo';
 import { ScrollReveal } from '../hooks/useScrollReveal';
+import LanguageToggle from '../components/LanguageToggle';
 import Footer from '../components/Footer';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -176,18 +178,22 @@ function CityCard({ city, index }) {
 export default function WelcomePage() {
   const navigate = useNavigate();
   const { isDark, toggleTheme } = useTheme();
+  const { t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 flex flex-col overflow-hidden">
       {/* Top bar */}
       <div className="relative z-20 flex items-center justify-between px-6 pt-12 pb-4">
         <LogoFull size="sm" />
-        <button
-          onClick={toggleTheme}
-          className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center hover:bg-white/20 transition-all active:scale-90"
-        >
-          {isDark ? <Sun size={18} className="text-accent-400" /> : <Moon size={18} className="text-white" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <LanguageToggle variant="header" />
+          <button
+            onClick={toggleTheme}
+            className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center hover:bg-white/20 transition-all active:scale-90"
+          >
+            {isDark ? <Sun size={18} className="text-accent-400" /> : <Moon size={18} className="text-white" />}
+          </button>
+        </div>
       </div>
 
       {/* Animated decorative orbs */}
@@ -211,17 +217,17 @@ export default function WelcomePage() {
           </h1>
           <div className="mt-3 inline-flex items-center gap-1.5 px-4 py-1.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/10">
             <Star size={12} className="text-accent-400 fill-accent-400" />
-            <span className="text-xs text-white/80 font-medium">Tanzania's #1 Laundry App</span>
+            <span className="text-xs text-white/80 font-medium">{t('heroTagline')}</span>
           </div>
         </div>
 
         {/* Tagline */}
         <div className="animate-slide-up mb-8">
           <p className="text-2xl text-white font-semibold leading-snug mb-3">
-            Fresh laundry,<br />delivered to your door.
+            {t('heroTitle1')}<br />{t('heroTitle2')}
           </p>
           <p className="text-primary-200/90 dark:text-slate-400 max-w-sm mx-auto leading-relaxed">
-            Connect with trusted local laundry shops across <strong className="text-white font-semibold">{TANZANIAN_CITIES.length} major cities</strong> in Tanzania. Quality care, fair prices, right from your phone.
+            {t('heroDescription', TANZANIAN_CITIES.length)}
           </p>
         </div>
 
@@ -245,10 +251,10 @@ export default function WelcomePage() {
         {/* Feature pills */}
         <div className="flex flex-wrap justify-center gap-3 mb-10 animate-slide-up" style={{ animationDelay: '200ms' }}>
           {[
-            { icon: Shield, label: 'Verified Shops' },
-            { icon: Smartphone, label: 'M-Pesa Pay' },
-            { icon: Truck, label: 'Door Delivery' },
-            { icon: Clock, label: 'Track Live' },
+            { icon: Shield, label: t('verifiedShops') },
+            { icon: Smartphone, label: t('mpesaPay') },
+            { icon: Truck, label: t('doorDelivery') },
+            { icon: Clock, label: t('trackLive') },
           ].map(({ icon: Icon, label }, i) => (
             <div
               key={i}
@@ -266,14 +272,14 @@ export default function WelcomePage() {
             onClick={() => navigate('/auth')}
             className="group w-full flex items-center justify-center gap-3 px-8 py-4 bg-white dark:bg-accent-400 text-primary-700 dark:text-slate-900 font-bold text-lg rounded-2xl shadow-elevated hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.97]"
           >
-            Anza Sasa — Get Started
+            {t('getStarted')}
             <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-300" />
           </button>
           <button
             onClick={() => navigate('/auth')}
             className="w-full py-3 text-white/80 hover:text-white font-medium transition-colors duration-300"
           >
-            Tayari una akaunti? <span className="underline underline-offset-4 decoration-white/40 hover:decoration-white/80 font-semibold">Ingia</span>
+            {t('alreadyHaveAccount')} <span className="underline underline-offset-4 decoration-white/40 hover:decoration-white/80 font-semibold">{t('signIn')}</span>
           </button>
         </div>
 
@@ -300,14 +306,13 @@ export default function WelcomePage() {
           <ScrollReveal>
             <div className="text-center mb-10">
               <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-fresh-500/10 border border-fresh-500/20 rounded-full text-fresh-400 text-xs font-bold uppercase tracking-widest mb-4">
-                <MapPin size={12} /> Nationwide Coverage
+                <MapPin size={12} /> {t('nationwideCoverage')}
               </span>
               <h2 className="text-3xl md:text-4xl font-bold text-white font-display mb-3">
-                Available in <span className="text-fresh-400">{TANZANIAN_CITIES.length} Major Cities</span>
+                {t('availableInCities', TANZANIAN_CITIES.length)}
               </h2>
               <p className="text-white/50 max-w-lg mx-auto leading-relaxed">
-                From the bustling streets of Dar es Salaam to the capital Dodoma and safari gateway Arusha —
-                LaundryConnect serves customers across Tanzania's biggest cities. Find a trusted laundry shop near you, wherever you are.
+                {t('citiesDescription')}
               </p>
             </div>
           </ScrollReveal>
@@ -323,10 +328,10 @@ export default function WelcomePage() {
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold text-white flex items-center gap-2">
                   <Building2 size={18} className="text-fresh-400" />
-                  All Cities
+                  {t('allCities')}
                 </h3>
                 <span className="text-xs text-white/40 font-medium">
-                  {TANZANIAN_CITIES.length} locations
+                  {TANZANIAN_CITIES.length} {t('locations')}
                 </span>
               </div>
             </ScrollReveal>
@@ -346,17 +351,16 @@ export default function WelcomePage() {
                   <MapPin size={28} className="text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-2">Your City, Your Laundry</h3>
+                  <h3 className="text-xl font-bold text-white mb-2">{t('yourCityYourLaundry')}</h3>
                   <p className="text-sm text-white/50 max-w-sm mx-auto leading-relaxed">
-                    Whether you're in the capital Dodoma, coastal Dar es Salaam, or Arusha —
-                    clean clothes are just a tap away. Join thousands of Tanzanians who trust LaundryConnect.
+                    {t('yourCityDescription')}
                   </p>
                 </div>
                 <button
                   onClick={() => navigate('/auth')}
                   className="group flex items-center gap-2 px-6 py-3 bg-fresh-500 hover:bg-fresh-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 active:scale-95"
                 >
-                  Find Shops Near You
+                  {t('findShopsNearYou')}
                   <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
@@ -370,15 +374,15 @@ export default function WelcomePage() {
         <div className="max-w-4xl mx-auto px-6 py-12">
           <ScrollReveal>
             <h2 className="text-center text-xs font-bold uppercase tracking-widest text-white/40 mb-8">
-              Our Impact
+              {t('ourImpact')}
             </h2>
           </ScrollReveal>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { value: 99.9, suffix: '%', label: 'Uptime Reliability', icon: Zap },
-              { value: 500, suffix: '+', label: 'Orders Completed', icon: Star },
-              { value: TANZANIAN_CITIES.length, suffix: '', label: 'Cities Covered', icon: MapPin },
-              { value: 200, suffix: '+', label: 'Happy Customers', icon: Users },
+              { value: 99.9, suffix: '%', label: t('uptimeReliability'), icon: Zap },
+              { value: 500, suffix: '+', label: t('ordersCompleted'), icon: Star },
+              { value: TANZANIAN_CITIES.length, suffix: '', label: t('citiesCovered'), icon: MapPin },
+              { value: 200, suffix: '+', label: t('happyCustomers'), icon: Users },
             ].map((stat, i) => (
               <ScrollReveal key={i} delay={i * 100}>
                 <div className="text-center">
@@ -400,22 +404,22 @@ export default function WelcomePage() {
           <ScrollReveal>
             <div className="text-center mb-12">
               <span className="inline-block px-4 py-1.5 bg-accent-400/10 border border-accent-400/20 rounded-full text-accent-400 text-xs font-bold uppercase tracking-widest mb-4">
-                Our Capabilities
+                {t('ourCapabilities')}
               </span>
               <h2 className="text-3xl font-bold text-white font-display mb-3">
-                Powerful tools for <span className="text-accent-400">modern laundry</span>
+                {t('capabilitiesTitle')}
               </h2>
               <p className="text-primary-200/70 dark:text-slate-400 max-w-md mx-auto">
-                Everything you need to manage your laundry with enterprise-grade reliability.
+                {t('capabilitiesDescription')}
               </p>
             </div>
           </ScrollReveal>
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { icon: Smartphone, title: 'Mobile Payments', desc: 'M-Pesa, Airtel Money, Tigo Pesa, Card & QR payments. Only 0.5% platform fee.', color: 'text-primary-400' },
-              { icon: Truck, title: 'Door-to-Door', desc: 'Pickup and delivery tracking in real-time. Know exactly where your clothes are.', color: 'text-fresh-400' },
-              { icon: Shield, title: 'Verified & Secure', desc: 'All shops are verified. Your payments are encrypted and secure via Snippe.', color: 'text-accent-400' },
+              { icon: Smartphone, title: t('mobilePayments'), desc: t('mobilePaymentsDesc'), color: 'text-primary-400' },
+              { icon: Truck, title: t('doorToDoor'), desc: t('doorToDoorDesc'), color: 'text-fresh-400' },
+              { icon: Shield, title: t('verifiedSecure'), desc: t('verifiedSecureDesc'), color: 'text-accent-400' },
             ].map((feature, i) => (
               <ScrollReveal key={i} delay={i * 150}>
                 <div className="p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-300 magnetic-hover">
