@@ -30,7 +30,7 @@ export default {
   navProfile: 'Profile',
 
   // ── Welcome Page ──
-  heroTagline: "Tanzania's #1 Laundry App",
+  heroTagline: "Tanzania's Fastest-Growing Laundry App",
   heroMainTitle: 'Fresh Clothes, Delivered to Your Door',
   heroMainDesc: 'Connect with trusted local laundry shops across Tanzania. Order pickup, track your clothes in real-time, and pay with M-Pesa or cash. Built for how Tanzanians live.',
   getStarted: 'Get Started',
@@ -52,6 +52,8 @@ export default {
   // How it works
   howItWorksTitle: 'How It Works',
   howItWorksDesc: 'Whether you need laundry done or want to grow your laundry business — getting started takes minutes.',
+  howItWorksDescShort: 'Getting started takes just minutes. Pick your side.',
+  step: 'Step',
   forCustomers: 'For Customers',
   step1Title: 'Find a Shop',
   step1Desc: 'Browse verified laundry shops near you. Compare prices, read reviews, and pick the best one for your needs.',
@@ -108,6 +110,14 @@ export default {
   ctaTitle: 'Ready to Get Started?',
   ctaDesc: 'Join hundreds of Tanzanians who trust LaundryConnect for fresh, clean clothes delivered to their door. Free to sign up.',
   ctaFootnote: 'No subscription fees. No hidden charges. Pay only when you order.',
+
+  // Stats
+  ordersProcessed: 'Orders Processed',
+  activeUsers: 'Active Users',
+  citiesLive: 'Cities Live',
+
+  // Testimonials
+  translatedFromSwahili: 'Translated from Swahili',
 
   // Legacy keys (kept for compatibility)
   heroTitle1: 'Fresh laundry,',

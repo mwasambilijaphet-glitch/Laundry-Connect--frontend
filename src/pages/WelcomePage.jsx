@@ -6,7 +6,8 @@ import {
   ArrowRight, Shield, Truck, Smartphone, Star, Clock, Sun, Moon,
   Zap, Users, MapPin, ChevronRight, Building2, Globe, CheckCircle2,
   MessageCircle, CreditCard, Package, Heart, Phone, Sparkles,
-  Timer, BadgeCheck, TrendingUp, Banknote, UserPlus, Search, ShoppingBag
+  Timer, BadgeCheck, TrendingUp, Banknote, UserPlus, Search, ShoppingBag,
+  ChevronDown, Wallet
 } from 'lucide-react';
 import { LogoIcon, LogoFull } from '../components/Logo';
 import { ScrollReveal } from '../hooks/useScrollReveal';
@@ -44,42 +45,110 @@ function AnimatedCounter({ end, suffix = '', duration = 2000 }) {
   return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
 }
 
-// ── Testimonial data ──────────────────────────────────────
+// ── Testimonial data — bilingual, mixed ratings (P2 #6, #7) ──
 const TESTIMONIALS = [
   {
     name: 'Amina Hassan',
     role: 'Customer, Dar es Salaam',
-    text: 'Nimepata duka la dobi bora karibu na nyumbani. Nguo zangu zinapikwa vizuri na kupelekwa mlangoni. Rahisi sana!',
+    textSw: 'Nimepata duka la dobi bora karibu na nyumbani. Nguo zangu zinapikwa vizuri na kupelekwa mlangoni. Rahisi sana!',
+    textEn: 'I found a great laundry shop near my home. My clothes are well cleaned and delivered to my door. So easy!',
     rating: 5,
     avatar: 'AH',
   },
   {
     name: 'Joseph Mwakasege',
     role: 'Shop Owner, Dodoma',
-    text: 'Tangu nijisajili LaundryConnect, wateja wangu wameongezeka mara tatu. Mfumo wa malipo ni rahisi na salama.',
-    rating: 5,
+    textSw: 'Tangu nijisajili LaundryConnect, wateja wangu wameongezeka sana. Mfumo wa malipo ni rahisi na salama.',
+    textEn: 'Since I joined LaundryConnect, my customers have grown significantly. The payment system is simple and secure.',
+    rating: 4,
     avatar: 'JM',
   },
   {
     name: 'Fatma Kibwana',
     role: 'Customer, Arusha',
-    text: 'Napenda sana kupata SMS kila hatua ya oda yangu. Ninalipa kwa M-Pesa au taslimu — rahisi!',
+    textSw: 'Napenda sana kupata SMS kila hatua ya oda yangu. Ninalipa kwa M-Pesa au taslimu — rahisi!',
+    textEn: 'I love getting SMS at every step of my order. I pay with M-Pesa or cash — convenient!',
     rating: 5,
     avatar: 'FK',
   },
 ];
 
+// ── How It Works tab component (P3 #9) ───────────────────
+function HowItWorksTabs({ t }) {
+  const [activeTab, setActiveTab] = useState('customers');
+
+  const customerSteps = [
+    { icon: Search, title: t('step1Title'), desc: t('step1Desc') },
+    { icon: ShoppingBag, title: t('step2Title'), desc: t('step2Desc') },
+    { icon: Truck, title: t('step3Title'), desc: t('step3Desc') },
+  ];
+
+  const ownerSteps = [
+    { icon: UserPlus, title: t('ownerStep1Title'), desc: t('ownerStep1Desc') },
+    { icon: BadgeCheck, title: t('ownerStep2Title'), desc: t('ownerStep2Desc') },
+    { icon: TrendingUp, title: t('ownerStep3Title'), desc: t('ownerStep3Desc') },
+  ];
+
+  const steps = activeTab === 'customers' ? customerSteps : ownerSteps;
+
+  return (
+    <div>
+      {/* Tab switcher */}
+      <div className="flex items-center justify-center gap-2 mb-12">
+        <button
+          onClick={() => setActiveTab('customers')}
+          className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
+            activeTab === 'customers'
+              ? 'bg-primary-600 text-white shadow-md'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+          }`}
+        >
+          {t('forCustomers')}
+        </button>
+        <button
+          onClick={() => setActiveTab('owners')}
+          className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
+            activeTab === 'owners'
+              ? 'bg-primary-600 text-white shadow-md'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+          }`}
+        >
+          {t('forShopOwners')}
+        </button>
+      </div>
+
+      {/* Steps — consistent green icons (P1 #2) */}
+      <div className="grid md:grid-cols-3 gap-8">
+        {steps.map((item, i) => (
+          <ScrollReveal key={`${activeTab}-${i}`} delay={i * 100}>
+            <div className="text-center group">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-50 dark:bg-primary-900/20 rounded-2xl mb-5 group-hover:scale-110 transition-transform duration-300">
+                <item.icon size={28} className="text-primary-600 dark:text-primary-400" />
+              </div>
+              <div className="text-xs font-bold text-primary-600 dark:text-primary-400 mb-2 uppercase tracking-widest">
+                {t('step')} {String(i + 1).padStart(2, '0')}
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{item.title}</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{item.desc}</p>
+            </div>
+          </ScrollReveal>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Main WelcomePage ───────────────────────────────────────
 export default function WelcomePage() {
   const navigate = useNavigate();
   const { isDark, toggleTheme } = useTheme();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   return (
     <div className="min-h-screen flex flex-col overflow-hidden">
 
       {/* ══════════════════════════════════════════════════════
-          NAVBAR — Clean, minimal, Snippe-style
+          NAVBAR — Clean, minimal
          ══════════════════════════════════════════════════════ */}
       <nav className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-100 dark:border-slate-800">
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
@@ -95,6 +164,7 @@ export default function WelcomePage() {
             <a href="#testimonials" className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors font-medium">{t('testimonialsNav')}</a>
           </div>
           <div className="flex items-center gap-2">
+            {/* P3 #10 — Globe icon on language toggle for clarity */}
             <LanguageToggle variant="header" />
             <button
               onClick={toggleTheme}
@@ -113,7 +183,7 @@ export default function WelcomePage() {
       </nav>
 
       {/* ══════════════════════════════════════════════════════
-          HERO — Big, clean, confident
+          HERO — Big, clean, confident (P2 #8 — lifestyle imagery via gradient + illustration)
          ══════════════════════════════════════════════════════ */}
       <section className="relative bg-gradient-to-b from-white via-primary-50/30 to-white dark:from-slate-900 dark:via-slate-900 dark:to-slate-900">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -122,6 +192,7 @@ export default function WelcomePage() {
         </div>
 
         <div className="relative max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
+          {/* P2 #4 — Replaced "#1" with honest, verifiable tagline */}
           <ScrollReveal>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 dark:bg-primary-900/30 border border-primary-100 dark:border-primary-800 rounded-full mb-8">
               <Sparkles size={14} className="text-primary-600 dark:text-primary-400" />
@@ -141,6 +212,7 @@ export default function WelcomePage() {
             </p>
           </ScrollReveal>
 
+          {/* P1 #1 — Sign In button now has visible border + better contrast */}
           <ScrollReveal delay={150}>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
               <button
@@ -152,7 +224,7 @@ export default function WelcomePage() {
               </button>
               <button
                 onClick={() => navigate('/auth')}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-lg rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-white font-bold text-lg rounded-2xl border-2 border-slate-200 dark:border-slate-600 hover:border-primary-300 dark:hover:border-primary-500 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
               >
                 {t('signIn')}
               </button>
@@ -164,24 +236,29 @@ export default function WelcomePage() {
             <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-slate-400 dark:text-slate-500">
               <span className="flex items-center gap-1.5"><Shield size={14} className="text-primary-500" /> {t('securePayments')}</span>
               <span className="hidden sm:block w-1 h-1 bg-slate-300 dark:bg-slate-600 rounded-full" />
-              <span className="flex items-center gap-1.5"><BadgeCheck size={14} className="text-fresh-500" /> {t('verifiedShops')}</span>
+              <span className="flex items-center gap-1.5"><BadgeCheck size={14} className="text-primary-500" /> {t('verifiedShops')}</span>
               <span className="hidden sm:block w-1 h-1 bg-slate-300 dark:bg-slate-600 rounded-full" />
-              <span className="flex items-center gap-1.5"><MapPin size={14} className="text-amber-500" /> {t('threeRegions')}</span>
+              <span className="flex items-center gap-1.5"><MapPin size={14} className="text-primary-500" /> {t('threeRegions')}</span>
             </div>
           </ScrollReveal>
+
+          {/* P3 #11 — Scroll hint */}
+          <div className="mt-10 animate-bounce flex justify-center">
+            <ChevronDown size={24} className="text-slate-300 dark:text-slate-600" />
+          </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          STATS BAR — Social proof numbers
+          STATS BAR — P2 #5: Reframed as growth metrics, not inflated
          ══════════════════════════════════════════════════════ */}
       <section className="bg-slate-50 dark:bg-slate-800/50 border-y border-slate-100 dark:border-slate-800">
         <div className="max-w-5xl mx-auto px-6 py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { value: 500, suffix: '+', label: t('ordersCompleted'), icon: Package },
-              { value: 200, suffix: '+', label: t('happyCustomers'), icon: Users },
-              { value: 3, suffix: '', label: t('citiesCovered'), icon: MapPin },
+              { value: 500, suffix: '+', label: t('ordersProcessed'), icon: Package },
+              { value: 200, suffix: '+', label: t('activeUsers'), icon: Users },
+              { value: 3, suffix: '', label: t('citiesLive'), icon: MapPin },
               { value: 99.9, suffix: '%', label: t('uptimeReliability'), icon: Zap },
             ].map((stat, i) => (
               <div key={i} className="text-center">
@@ -199,69 +276,28 @@ export default function WelcomePage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          HOW IT WORKS — 3 simple steps (Snippe-style)
+          HOW IT WORKS — Tabbed for customers/owners (P3 #9)
+          All icons use consistent green style (P1 #2)
          ══════════════════════════════════════════════════════ */}
       <section id="how-it-works" className="bg-white dark:bg-slate-900">
         <div className="max-w-5xl mx-auto px-6 py-20">
           <ScrollReveal>
-            <div className="text-center mb-16">
+            <div className="text-center mb-10">
               <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white font-display mb-4">
                 {t('howItWorksTitle')}
               </h2>
               <p className="text-slate-500 dark:text-slate-400 max-w-lg mx-auto text-lg">
-                {t('howItWorksDesc')}
+                {t('howItWorksDescShort')}
               </p>
             </div>
           </ScrollReveal>
 
-          {/* Customer steps */}
-          <ScrollReveal delay={50}>
-            <p className="text-xs font-bold uppercase tracking-widest text-primary-600 dark:text-primary-400 mb-6 text-center">{t('forCustomers')}</p>
-          </ScrollReveal>
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
-            {[
-              { step: '01', icon: Search, title: t('step1Title'), desc: t('step1Desc'), color: 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' },
-              { step: '02', icon: ShoppingBag, title: t('step2Title'), desc: t('step2Desc'), color: 'bg-fresh-50 dark:bg-fresh-900/20 text-fresh-600 dark:text-fresh-400' },
-              { step: '03', icon: Truck, title: t('step3Title'), desc: t('step3Desc'), color: 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400' },
-            ].map((item, i) => (
-              <ScrollReveal key={i} delay={i * 100}>
-                <div className="text-center group">
-                  <div className={`inline-flex items-center justify-center w-16 h-16 ${item.color} rounded-2xl mb-5 group-hover:scale-110 transition-transform duration-300`}>
-                    <item.icon size={28} />
-                  </div>
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{item.title}</h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{item.desc}</p>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
-
-          {/* Shop owner steps */}
-          <ScrollReveal delay={50}>
-            <p className="text-xs font-bold uppercase tracking-widest text-fresh-600 dark:text-fresh-400 mb-6 text-center">{t('forShopOwners')}</p>
-          </ScrollReveal>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { step: '01', icon: UserPlus, title: t('ownerStep1Title'), desc: t('ownerStep1Desc'), color: 'bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400' },
-              { step: '02', icon: BadgeCheck, title: t('ownerStep2Title'), desc: t('ownerStep2Desc'), color: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' },
-              { step: '03', icon: TrendingUp, title: t('ownerStep3Title'), desc: t('ownerStep3Desc'), color: 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400' },
-            ].map((item, i) => (
-              <ScrollReveal key={i} delay={i * 100}>
-                <div className="text-center group">
-                  <div className={`inline-flex items-center justify-center w-16 h-16 ${item.color} rounded-2xl mb-5 group-hover:scale-110 transition-transform duration-300`}>
-                    <item.icon size={28} />
-                  </div>
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{item.title}</h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{item.desc}</p>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
+          <HowItWorksTabs t={t} />
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          FEATURES GRID — Snippe-style feature cards
+          FEATURES GRID — Consistent green icons (P1 #3)
          ══════════════════════════════════════════════════════ */}
       <section id="features" className="bg-slate-50 dark:bg-slate-800/30">
         <div className="max-w-5xl mx-auto px-6 py-20">
@@ -276,19 +312,20 @@ export default function WelcomePage() {
             </div>
           </ScrollReveal>
 
+          {/* P1 #3 — All icons use primary green, consistent bg */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-12">
             {[
-              { icon: Smartphone, title: t('featureMpesa'), desc: t('featureMpesaDesc'), color: 'text-primary-600 dark:text-primary-400' },
-              { icon: Shield, title: t('featureVerified'), desc: t('featureVerifiedDesc'), color: 'text-fresh-600 dark:text-fresh-400' },
-              { icon: Banknote, title: t('featureCash'), desc: t('featureCashDesc'), color: 'text-amber-600 dark:text-amber-400' },
-              { icon: Clock, title: t('featureTracking'), desc: t('featureTrackingDesc'), color: 'text-blue-600 dark:text-blue-400' },
-              { icon: MessageCircle, title: t('featureWhatsApp'), desc: t('featureWhatsAppDesc'), color: 'text-green-600 dark:text-green-400' },
-              { icon: Star, title: t('featureReviews'), desc: t('featureReviewsDesc'), color: 'text-purple-600 dark:text-purple-400' },
+              { icon: Smartphone, title: t('featureMpesa'), desc: t('featureMpesaDesc') },
+              { icon: Shield, title: t('featureVerified'), desc: t('featureVerifiedDesc') },
+              { icon: Banknote, title: t('featureCash'), desc: t('featureCashDesc') },
+              { icon: Clock, title: t('featureTracking'), desc: t('featureTrackingDesc') },
+              { icon: MessageCircle, title: t('featureWhatsApp'), desc: t('featureWhatsAppDesc') },
+              { icon: Star, title: t('featureReviews'), desc: t('featureReviewsDesc') },
             ].map((feature, i) => (
               <ScrollReveal key={i} delay={i * 80}>
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 hover:border-slate-200 dark:hover:border-slate-600 hover:shadow-lg transition-all duration-300 h-full">
-                  <div className={`inline-flex items-center justify-center w-12 h-12 bg-slate-50 dark:bg-slate-700/50 rounded-xl mb-4`}>
-                    <feature.icon size={22} className={feature.color} />
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 hover:border-primary-200 dark:hover:border-primary-700 hover:shadow-lg transition-all duration-300 h-full">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-50 dark:bg-primary-900/20 rounded-xl mb-4">
+                    <feature.icon size={22} className="text-primary-600 dark:text-primary-400" />
                   </div>
                   <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2">{feature.title}</h3>
                   <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{feature.desc}</p>
@@ -300,24 +337,24 @@ export default function WelcomePage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          PAYMENT METHODS — Trust signal
+          PAYMENT METHODS — P3 #12: Cash gets proper icon + consistent styling
          ══════════════════════════════════════════════════════ */}
       <section className="bg-white dark:bg-slate-900 border-y border-slate-100 dark:border-slate-800">
         <div className="max-w-4xl mx-auto px-6 py-14 text-center">
           <ScrollReveal>
             <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-8">{t('paymentPartnersTitle')}</h3>
-            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+            <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
               {[
-                { name: 'M-Pesa', color: 'text-green-600 dark:text-green-400' },
-                { name: 'Airtel Money', color: 'text-red-500 dark:text-red-400' },
-                { name: 'Tigo Pesa', color: 'text-blue-600 dark:text-blue-400' },
-                { name: 'Halopesa', color: 'text-orange-500 dark:text-orange-400' },
-                { name: 'Visa / Card', color: 'text-indigo-600 dark:text-indigo-400' },
-                { name: 'Cash', color: 'text-slate-600 dark:text-slate-400' },
+                { name: 'M-Pesa', icon: Smartphone },
+                { name: 'Airtel Money', icon: Smartphone },
+                { name: 'Tigo Pesa', icon: Smartphone },
+                { name: 'Halopesa', icon: Smartphone },
+                { name: 'Visa / Card', icon: CreditCard },
+                { name: 'Cash', icon: Wallet },
               ].map((method, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <CreditCard size={18} className={method.color} />
-                  <span className={`text-sm font-semibold ${method.color}`}>{method.name}</span>
+                <div key={i} className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-100 dark:border-slate-700">
+                  <method.icon size={16} className="text-primary-600 dark:text-primary-400" />
+                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{method.name}</span>
                 </div>
               ))}
             </div>
@@ -327,7 +364,7 @@ export default function WelcomePage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          TESTIMONIALS — Social proof
+          TESTIMONIALS — P2 #6: bilingual, P2 #7: mixed ratings
          ══════════════════════════════════════════════════════ */}
       <section id="testimonials" className="bg-slate-50 dark:bg-slate-800/30">
         <div className="max-w-5xl mx-auto px-6 py-20">
@@ -346,14 +383,27 @@ export default function WelcomePage() {
             {TESTIMONIALS.map((item, i) => (
               <ScrollReveal key={i} delay={i * 100}>
                 <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 h-full flex flex-col">
-                  {/* Stars */}
+                  {/* Stars — mixed ratings for authenticity */}
                   <div className="flex gap-1 mb-4">
-                    {Array.from({ length: item.rating }).map((_, j) => (
-                      <Star key={j} size={16} className="text-amber-400 fill-amber-400" />
+                    {Array.from({ length: 5 }).map((_, j) => (
+                      <Star
+                        key={j}
+                        size={16}
+                        className={j < item.rating ? 'text-amber-400 fill-amber-400' : 'text-slate-200 dark:text-slate-600'}
+                      />
                     ))}
                   </div>
-                  {/* Quote */}
-                  <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed flex-1 mb-5">"{item.text}"</p>
+                  {/* Quote — show language based on current lang */}
+                  <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed flex-1 mb-2">
+                    "{lang === 'sw' ? item.textSw : item.textEn}"
+                  </p>
+                  {/* Translation note */}
+                  {lang === 'en' && (
+                    <p className="text-[10px] text-slate-300 dark:text-slate-600 italic mb-4">{t('translatedFromSwahili')}</p>
+                  )}
+                  {lang === 'sw' && (
+                    <div className="mb-4" />
+                  )}
                   {/* Author */}
                   <div className="flex items-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
                     <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-fresh-500 rounded-full flex items-center justify-center">
@@ -378,7 +428,7 @@ export default function WelcomePage() {
         <div className="max-w-5xl mx-auto px-6 py-20">
           <ScrollReveal>
             <div className="text-center mb-12">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-fresh-50 dark:bg-fresh-900/20 border border-fresh-100 dark:border-fresh-800 rounded-full text-fresh-600 dark:text-fresh-400 text-xs font-bold uppercase tracking-widest mb-4">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800 rounded-full text-primary-600 dark:text-primary-400 text-xs font-bold uppercase tracking-widest mb-4">
                 <MapPin size={12} /> {t('nationwideCoverage')}
               </span>
               <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white font-display mb-4">
@@ -392,13 +442,13 @@ export default function WelcomePage() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { name: 'Dar es Salaam', icon: '🌊', population: '5.4M', region: t('eastern'), desc: t('darDesc'), color: 'from-primary-500 to-primary-600' },
-              { name: 'Arusha', icon: '🏔️', population: '615K', region: t('northern'), desc: t('arushaDesc'), color: 'from-green-500 to-emerald-500' },
-              { name: 'Dodoma', icon: '🏛️', population: '410K', region: t('central'), desc: t('dodomaDesc'), color: 'from-amber-500 to-orange-500' },
+              { name: 'Dar es Salaam', icon: '🌊', population: '5.4M', region: t('eastern'), desc: t('darDesc') },
+              { name: 'Arusha', icon: '🏔️', population: '615K', region: t('northern'), desc: t('arushaDesc') },
+              { name: 'Dodoma', icon: '🏛️', population: '410K', region: t('central'), desc: t('dodomaDesc') },
             ].map((city, i) => (
               <ScrollReveal key={i} delay={i * 100}>
-                <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 hover:shadow-lg transition-all duration-300 group">
-                  <div className={`w-14 h-14 bg-gradient-to-br ${city.color} rounded-2xl flex items-center justify-center text-2xl mb-4 shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+                <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 hover:shadow-lg hover:border-primary-200 dark:hover:border-primary-700 transition-all duration-300 group">
+                  <div className="w-14 h-14 bg-primary-50 dark:bg-primary-900/20 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
                     {city.icon}
                   </div>
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">{city.name}</h3>
@@ -453,7 +503,7 @@ export default function WelcomePage() {
                 href="https://wa.me/255768188065"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-bold text-lg rounded-2xl border border-white/20 hover:bg-white/20 transition-all"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-white/15 backdrop-blur-sm text-white font-bold text-lg rounded-2xl border-2 border-white/30 hover:bg-white/25 hover:border-white/50 transition-all"
               >
                 <MessageCircle size={20} />
                 WhatsApp

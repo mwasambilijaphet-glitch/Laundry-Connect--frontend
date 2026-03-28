@@ -30,7 +30,7 @@ export default {
   navProfile: 'Wasifu',
 
   // ── Ukurasa wa Kukaribisha ──
-  heroTagline: 'Programu #1 ya Dobi Tanzania',
+  heroTagline: 'Programu ya Dobi Inayokua Haraka Tanzania',
   heroMainTitle: 'Nguo Safi, Hadi Mlangoni Kwako',
   heroMainDesc: 'Ungana na maduka ya dobi ya kuaminika kote Tanzania. Agiza kuchukua nguo, fuatilia moja kwa moja, na lipa kwa M-Pesa au taslimu. Imeundwa kwa Watanzania.',
   getStarted: 'Anza Sasa',
@@ -52,6 +52,8 @@ export default {
   // How it works
   howItWorksTitle: 'Inavyofanya Kazi',
   howItWorksDesc: 'Iwe unataka dobi au kukuza biashara yako ya dobi — kuanza kunachukua dakika chache.',
+  howItWorksDescShort: 'Kuanza kunachukua dakika chache tu. Chagua upande wako.',
+  step: 'Hatua',
   forCustomers: 'Kwa Wateja',
   step1Title: 'Tafuta Duka',
   step1Desc: 'Tafuta maduka ya dobi yaliyothibitishwa karibu nawe. Linganisha bei, soma maoni, na chagua bora zaidi.',
@@ -108,6 +110,14 @@ export default {
   ctaTitle: 'Tayari Kuanza?',
   ctaDesc: 'Jiunge na mamia ya Watanzania wanaoamini LaundryConnect kwa nguo safi zinazopelekwa mlangoni. Bure kujisajili.',
   ctaFootnote: 'Hakuna ada za usajili. Hakuna gharama zilizofichwa. Lipa tu unapoagiza.',
+
+  // Stats
+  ordersProcessed: 'Oda Zilizoshughulikiwa',
+  activeUsers: 'Watumiaji Hai',
+  citiesLive: 'Miji Inayofanya Kazi',
+
+  // Testimonials
+  translatedFromSwahili: 'Imetafsiriwa kutoka Kiswahili',
 
   // Legacy keys
   heroTitle1: 'Nguo safi,',
