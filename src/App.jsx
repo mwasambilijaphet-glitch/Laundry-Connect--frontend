@@ -22,6 +22,8 @@ import ChatListPage from './pages/ChatListPage';
 import ChatPage from './pages/ChatPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ReferralPage from './pages/ReferralPage';
+import TermsPage from './pages/TermsPage';
+import PrivacyPage from './pages/PrivacyPage';
 
 // Owner pages
 import OwnerDashboard from './pages/owner/OwnerDashboard';
@@ -107,6 +109,8 @@ function AppRoutes() {
         <Route path="/" element={user ? <RoleRedirect /> : <WelcomePage />} />
         <Route path="/auth" element={user ? <RoleRedirect /> : <AuthPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
 
         {/* Customer routes */}
         <Route path="/home" element={<ProtectedRoute><CustomerLayout showFooter><HomePage /></CustomerLayout></ProtectedRoute>} />

@@ -1,4 +1,5 @@
 import { MapPin, Phone, Mail, MessageCircle, ArrowUpRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { LogoIcon } from './Logo';
 
 export default function Footer() {
@@ -71,16 +72,23 @@ export default function Footer() {
             <ul className="space-y-2.5">
               {[
                 { label: 'Pricing', href: '#' },
-                { label: 'Privacy Policy', href: '#' },
-                { label: 'Terms of Service', href: '#' },
+                { label: 'Privacy Policy', to: '/privacy' },
+                { label: 'Terms of Service', to: '/terms' },
                 { label: 'Contact Us', href: '#' },
                 { label: 'Help Center', href: '#' },
               ].map(link => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-sm text-slate-400 hover:text-white transition-colors flex items-center gap-1.5 group">
-                    {link.label}
-                    <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </a>
+                  {link.to ? (
+                    <Link to={link.to} className="text-sm text-slate-400 hover:text-white transition-colors flex items-center gap-1.5 group">
+                      {link.label}
+                      <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </Link>
+                  ) : (
+                    <a href={link.href} className="text-sm text-slate-400 hover:text-white transition-colors flex items-center gap-1.5 group">
+                      {link.label}
+                      <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>
@@ -93,8 +101,8 @@ export default function Footer() {
             &copy; {currentYear} Laundry Connect. Designed & Built in Dodoma, Tanzania.
           </p>
           <div className="flex items-center gap-6 text-xs text-slate-500">
-            <a href="#" className="hover:text-slate-300 transition-colors uppercase tracking-wider font-medium">Terms</a>
-            <a href="#" className="hover:text-slate-300 transition-colors uppercase tracking-wider font-medium">Privacy</a>
+            <Link to="/terms" className="hover:text-slate-300 transition-colors uppercase tracking-wider font-medium">Terms</Link>
+            <Link to="/privacy" className="hover:text-slate-300 transition-colors uppercase tracking-wider font-medium">Privacy</Link>
             <a href="#" className="hover:text-slate-300 transition-colors uppercase tracking-wider font-medium">Support</a>
           </div>
         </div>
