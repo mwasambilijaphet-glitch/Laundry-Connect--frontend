@@ -5,11 +5,13 @@ import { useAuth } from '../context/AuthContext';
 import { apiCreateOrder } from '../api/client';
 import { formatTZS, getClothingLabel, getClothingIcon, getServiceLabel } from '../data/mockData';
 import { isDemoMode } from '../data/demoData';
-import { ArrowLeft, Plus, Minus, Trash2, MapPin, Truck, MessageSquare, ChevronDown, Loader2 } from 'lucide-react';
+import { ArrowLeft, Plus, Minus, Trash2, MapPin, Truck, MessageSquare, ChevronDown, Loader2, Calendar, Sun, CloudSun, Sunset } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function OrderBuilderPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const {
     cartItems, cartShop, deliveryZone, deliveryAddress, specialInstructions,
     updateItemQuantity, removeItem, clearCart,
@@ -21,6 +23,33 @@ export default function OrderBuilderPage() {
   const [manualArea, setManualArea] = useState('');
   const [placingOrder, setPlacingOrder] = useState(false);
   const [orderError, setOrderError] = useState('');
+  const [pickupSlot, setPickupSlot] = useState('');
+  const [deliverySlot, setDeliverySlot] = useState('');
+
+  // Time slot helpers
+  const TIME_SLOTS = [
+    { id: 'asubuhi', icon: Sun, label: t('slotMorning'), time: '7:00 - 11:00' },
+    { id: 'mchana', icon: CloudSun, label: t('slotAfternoon'), time: '11:00 - 15:00' },
+    { id: 'jioni', icon: Sunset, label: t('slotEvening'), time: '15:00 - 19:00' },
+  ];
+
+  function getQuickOptions() {
+    const now = new Date();
+    const hour = now.getHours();
+    const options = [];
+
+    // Today options (only show slots that haven't passed)
+    if (hour < 10) options.push({ label: t('todayMorning'), day: 'today', slot: 'asubuhi' });
+    if (hour < 14) options.push({ label: t('todayAfternoon'), day: 'today', slot: 'mchana' });
+    if (hour < 18) options.push({ label: t('todayEvening'), day: 'today', slot: 'jioni' });
+
+    // Tomorrow options
+    options.push({ label: t('tomorrowMorning'), day: 'tomorrow', slot: 'asubuhi' });
+    options.push({ label: t('tomorrowAfternoon'), day: 'tomorrow', slot: 'mchana' });
+    options.push({ label: t('tomorrowEvening'), day: 'tomorrow', slot: 'jioni' });
+
+    return options.slice(0, 4); // Show max 4 quick options
+  }
 
   if (!cartShop || cartItems.length === 0) {
     return (
@@ -203,6 +232,96 @@ export default function OrderBuilderPage() {
           )}
         </div>
 
+        {/* Pickup & Delivery Scheduling */}
+        <div className="card p-4">
+          <h2 className="font-semibold text-slate-800 dark:text-white flex items-center gap-2 mb-3">
+            <Calendar size={16} className="text-primary-600" /> {t('schedulePickupDelivery')}
+          </h2>
+
+          {/* Quick options */}
+          <div className="flex gap-2 overflow-x-auto no-scrollbar mb-4 -mx-1 px-1">
+            {getQuickOptions().map(opt => (
+              <button
+                key={`${opt.day}-${opt.slot}`}
+                onClick={() => {
+                  setPickupSlot(`${opt.day}_${opt.slot}`);
+                  // Auto-set delivery to next slot
+                  const slots = ['asubuhi', 'mchana', 'jioni'];
+                  const nextIdx = Math.min(slots.indexOf(opt.slot) + 1, 2);
+                  setDeliverySlot(opt.day === 'today' ? `tomorrow_${slots[nextIdx]}` : `tomorrow_${slots[nextIdx]}`);
+                }}
+                className={`flex-shrink-0 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                  pickupSlot === `${opt.day}_${opt.slot}`
+                    ? 'bg-primary-600 text-white shadow-glow-primary'
+                    : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-primary-50 hover:text-primary-600'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Pickup slot */}
+          <div className="mb-4">
+            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">{t('pickupTime')}</p>
+            <div className="grid grid-cols-3 gap-2">
+              {TIME_SLOTS.map(slot => {
+                const SlotIcon = slot.icon;
+                const isSelected = pickupSlot.endsWith(slot.id);
+                return (
+                  <button
+                    key={`pickup-${slot.id}`}
+                    onClick={() => setPickupSlot(pickupSlot.includes('tomorrow') ? `tomorrow_${slot.id}` : `today_${slot.id}`)}
+                    className={`p-3 rounded-xl border-2 text-center transition-all ${
+                      isSelected
+                        ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30'
+                        : 'border-slate-200 dark:border-slate-600 hover:border-slate-300'
+                    }`}
+                  >
+                    <SlotIcon size={18} className={`mx-auto mb-1 ${isSelected ? 'text-primary-600' : 'text-slate-400'}`} />
+                    <p className={`text-xs font-semibold ${isSelected ? 'text-primary-700 dark:text-primary-300' : 'text-slate-600 dark:text-slate-300'}`}>{slot.label}</p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">{slot.time}</p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Delivery slot */}
+          <div>
+            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">{t('deliveryTime')}</p>
+            <div className="grid grid-cols-3 gap-2">
+              {TIME_SLOTS.map(slot => {
+                const SlotIcon = slot.icon;
+                const isSelected = deliverySlot.endsWith(slot.id);
+                return (
+                  <button
+                    key={`delivery-${slot.id}`}
+                    onClick={() => setDeliverySlot(deliverySlot.includes('tomorrow') ? `tomorrow_${slot.id}` : `today_${slot.id}`)}
+                    className={`p-3 rounded-xl border-2 text-center transition-all ${
+                      isSelected
+                        ? 'border-fresh-500 bg-fresh-50 dark:bg-fresh-900/30'
+                        : 'border-slate-200 dark:border-slate-600 hover:border-slate-300'
+                    }`}
+                  >
+                    <SlotIcon size={18} className={`mx-auto mb-1 ${isSelected ? 'text-fresh-600' : 'text-slate-400'}`} />
+                    <p className={`text-xs font-semibold ${isSelected ? 'text-fresh-700 dark:text-fresh-300' : 'text-slate-600 dark:text-slate-300'}`}>{slot.label}</p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">{slot.time}</p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Selected summary */}
+          {(pickupSlot || deliverySlot) && (
+            <div className="mt-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl text-xs text-slate-600 dark:text-slate-300">
+              {pickupSlot && <p>{t('pickupTime')}: <span className="font-semibold">{pickupSlot.replace('_', ' — ').replace('today', t('today')).replace('tomorrow', t('tomorrow'))}</span></p>}
+              {deliverySlot && <p className="mt-1">{t('deliveryTime')}: <span className="font-semibold">{deliverySlot.replace('_', ' — ').replace('today', t('today')).replace('tomorrow', t('tomorrow'))}</span></p>}
+            </div>
+          )}
+        </div>
+
         {/* Special Instructions */}
         <div className="card p-4">
           <h2 className="font-semibold text-slate-800 flex items-center gap-2 mb-3">
@@ -270,6 +389,8 @@ export default function OrderBuilderPage() {
                 delivery_area: manualArea || deliveryZone?.zone_name || undefined,
                 delivery_address: deliveryAddress,
                 special_instructions: specialInstructions || undefined,
+                pickup_time_slot: pickupSlot || undefined,
+                delivery_time_slot: deliverySlot || undefined,
               });
 
               // Store order ID for payment page

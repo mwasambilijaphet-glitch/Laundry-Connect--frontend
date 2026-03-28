@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, Store, Users, ClipboardList, CreditCard, Wallet, LogOut, Sparkles } from 'lucide-react';
+import { LayoutDashboard, Store, Users, ClipboardList, CreditCard, Wallet, LogOut, Sparkles, MessageCircle } from 'lucide-react';
 
 const navItems = [
   { path: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
@@ -9,6 +9,7 @@ const navItems = [
   { path: '/admin/orders', icon: ClipboardList, label: 'Orders' },
   { path: '/admin/transactions', icon: CreditCard, label: 'Transactions' },
   { path: '/admin/balances', icon: Wallet, label: 'Balances' },
+  { path: '/admin/whatsapp', icon: MessageCircle, label: 'WhatsApp Bot' },
 ];
 
 export default function AdminLayout({ children }) {

@@ -4,13 +4,14 @@ import { useCart } from '../context/CartContext';
 import { apiInitiatePayment, API_BASE } from '../api/client';
 import { formatTZS } from '../data/mockData';
 import { isDemoMode } from '../data/demoData';
-import { ArrowLeft, Smartphone, CreditCard, QrCode, Loader2, CheckCircle2, Shield, AlertCircle, RefreshCw, Banknote } from 'lucide-react';
+import { ArrowLeft, Smartphone, CreditCard, QrCode, Loader2, CheckCircle2, Shield, AlertCircle, RefreshCw, Banknote, Wallet } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const PAYMENT_METHODS = [
+  { id: 'cash', label: 'Taslimu — Cash', icon: '💵', desc: 'Lipa unapopokea / Pay on pickup or delivery', color: 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800', popular: true },
   { id: 'mpesa', label: 'M-Pesa', icon: '📱', desc: 'Vodacom M-Pesa', color: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' },
   { id: 'airtel', label: 'Airtel Money', icon: '📱', desc: 'Airtel Money', color: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' },
   { id: 'tigo', label: 'Tigo Pesa', icon: '📱', desc: 'Mixx by Yas', color: 'bg-sky-50 dark:bg-sky-900/20 border-sky-200 dark:border-sky-800' },
-  { id: 'cash', label: 'Cash', icon: '💵', desc: 'Pay on delivery', color: 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' },
   { id: 'card', label: 'Card', icon: '💳', desc: 'Visa / Mastercard', color: 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800' },
   { id: 'qr', label: 'QR Code', icon: '📷', desc: 'Scan & Pay', color: 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700' },
 ];
@@ -18,7 +19,8 @@ const PAYMENT_METHODS = [
 export default function PaymentPage() {
   const navigate = useNavigate();
   const { cartShop, subtotal, deliveryFee, totalAmount, clearCart, orderId } = useCart();
-  const [method, setMethod] = useState('mpesa');
+  const { t } = useLanguage();
+  const [method, setMethod] = useState('cash');
   const [phone, setPhone] = useState('');
   const [status, setStatus] = useState('idle'); // idle | processing | success | failed
   const [error, setError] = useState('');
@@ -100,11 +102,11 @@ export default function PaymentPage() {
 
       // Cash payment — instantly confirmed, no polling needed
       if (method === 'cash') {
-        setStatus('success');
+        setStatus('cash_success');
         setTimeout(() => {
           clearCart();
           navigate('/orders');
-        }, 2500);
+        }, 3000);
         return;
       }
 
@@ -138,6 +140,23 @@ export default function PaymentPage() {
     setPaymentRef(null);
     setPollCount(0);
   };
+
+  if (status === 'cash_success') {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 animate-fade-in bg-white dark:bg-slate-900">
+        <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-6 animate-bounce-in">
+          <CheckCircle2 size={40} className="text-green-600 dark:text-green-400" />
+        </div>
+        <h1 className="text-2xl font-bold text-slate-800 dark:text-white font-display mb-2">{t('cashOrderConfirmed')}</h1>
+        <p className="text-slate-500 dark:text-slate-400 text-center mb-2">{t('cashOrderDesc')}</p>
+        <p className="text-3xl font-bold text-green-600 dark:text-green-400 text-price mb-4">{formatTZS(totalAmount)}</p>
+        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4 text-center max-w-xs">
+          <p className="text-sm text-green-700 dark:text-green-300 font-medium">{t('cashPayLater')}</p>
+        </div>
+        <p className="text-sm text-slate-400 text-center mt-4">{t('redirectingToOrders')}</p>
+      </div>
+    );
+  }
 
   if (status === 'success') {
     return (
@@ -238,7 +257,7 @@ export default function PaymentPage() {
 
         {/* Payment methods */}
         <div className="card p-4">
-          <h2 className="font-semibold text-slate-800 dark:text-white mb-3">Njia ya Malipo — Payment Method</h2>
+          <h2 className="font-semibold text-slate-800 dark:text-white mb-3">{t('paymentMethodTitle')}</h2>
           <div className="space-y-2">
             {PAYMENT_METHODS.map(pm => (
               <button
@@ -251,33 +270,62 @@ export default function PaymentPage() {
                 }`}
               >
                 <span className="text-2xl">{pm.icon}</span>
-                <div className="text-left">
-                  <p className="font-semibold text-sm text-slate-800 dark:text-white">{pm.label}</p>
+                <div className="text-left flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold text-sm text-slate-800 dark:text-white">{pm.label}</p>
+                    {pm.popular && <span className="text-[10px] px-1.5 py-0.5 bg-green-500 text-white rounded-full font-bold">{t('mostPopular')}</span>}
+                  </div>
                   <p className="text-xs text-slate-400">{pm.desc}</p>
                 </div>
                 {method === pm.id && (
-                  <CheckCircle2 size={18} className="text-primary-600 dark:text-primary-400 ml-auto" />
+                  <CheckCircle2 size={18} className="text-primary-600 dark:text-primary-400 flex-shrink-0" />
                 )}
               </button>
             ))}
           </div>
         </div>
 
+        {/* Cash payment info */}
+        {method === 'cash' && (
+          <div className="card p-4 border-2 border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-900/10">
+            <h2 className="font-semibold text-green-800 dark:text-green-300 mb-3 flex items-center gap-2">
+              <Wallet size={16} /> {t('cashPaymentTitle')}
+            </h2>
+            <div className="space-y-2.5 text-sm text-green-700 dark:text-green-400">
+              <div className="flex items-start gap-2">
+                <span className="font-bold">1.</span>
+                <p>{t('cashStep1')}</p>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="font-bold">2.</span>
+                <p>{t('cashStep2')}</p>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="font-bold">3.</span>
+                <p>{t('cashStep3')}</p>
+              </div>
+            </div>
+            <div className="mt-3 p-2.5 bg-white dark:bg-slate-800 rounded-lg">
+              <p className="text-xs text-slate-500 dark:text-slate-400">{t('cashNote')}</p>
+            </div>
+          </div>
+        )}
+
         {/* Phone number for mobile money */}
         {['mpesa', 'airtel', 'tigo'].includes(method) && (
           <div className="card p-4">
             <h2 className="font-semibold text-slate-800 dark:text-white mb-3">
-              <Smartphone size={16} className="inline mr-1" /> Phone Number
+              <Smartphone size={16} className="inline mr-1" /> {t('phoneNumber')}
             </h2>
             <input
               type="tel"
-              placeholder="e.g. 0754 123 456"
+              placeholder="0754 123 456"
               value={phone}
               onChange={e => { setPhone(e.target.value); setError(''); }}
               className="input-field"
             />
             <p className="text-xs text-slate-400 mt-2">
-              You'll receive a USSD prompt on this number. Enter your PIN to confirm payment.
+              {t('ussdPromptNote')}
             </p>
           </div>
         )}
@@ -286,18 +334,20 @@ export default function PaymentPage() {
         <div className="flex items-center gap-2 p-3 bg-fresh-50 dark:bg-fresh-900/20 border border-fresh-200 dark:border-fresh-800 rounded-xl">
           <Shield size={16} className="text-fresh-600 dark:text-fresh-400 flex-shrink-0" />
           <p className="text-xs text-fresh-700 dark:text-fresh-300">
-            Your payment is securely processed by Snippe. We never store your PIN or card details.
+            {method === 'cash' ? t('cashSecurityNote') : t('digitalSecurityNote')}
           </p>
         </div>
       </div>
 
       {/* Bottom pay button */}
       <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 px-6 py-4 z-20">
-        <button onClick={handlePay} disabled={status === 'processing'} className="btn-fresh w-full py-4 text-base disabled:opacity-50">
+        <button onClick={handlePay} disabled={status === 'processing'} className={`w-full py-4 text-base font-bold rounded-2xl disabled:opacity-50 transition-colors ${method === 'cash' ? 'bg-green-600 hover:bg-green-700 text-white' : 'btn-fresh'}`}>
           {status === 'processing' ? (
             <Loader2 className="animate-spin mx-auto" size={20} />
+          ) : method === 'cash' ? (
+            `${t('confirmCashOrder')} — ${formatTZS(totalAmount)}`
           ) : (
-            `Lipa ${formatTZS(totalAmount)} — Pay Now`
+            `Lipa ${formatTZS(totalAmount)} — ${t('payNow')}`
           )}
         </button>
       </div>

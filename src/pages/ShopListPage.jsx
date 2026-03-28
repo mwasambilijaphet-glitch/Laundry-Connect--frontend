@@ -119,7 +119,7 @@ export default function ShopListPage() {
         {/* Popular areas quick picks */}
         {!selectedArea && !search && (
           <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-6 px-6 pb-1">
-            {['Mikocheni', 'Sinza', 'Masaki', 'Kinondoni', 'Kariakoo', 'Mbezi'].map(area => (
+            {['Mikocheni', 'Sinza', 'Kariakoo', 'Njiro', 'Dodoma CBD', 'Mwanza CBD', 'Masaki', 'Mbezi'].map(area => (
               <button
                 key={area}
                 onClick={() => setSearch(area)}
