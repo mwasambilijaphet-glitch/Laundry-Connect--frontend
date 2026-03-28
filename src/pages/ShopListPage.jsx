@@ -5,9 +5,11 @@ import { formatTZS } from '../data/mockData';
 import { DEMO_SHOPS } from '../data/demoData';
 import StarRating from '../components/StarRating';
 import { Search, MapPin, Clock, Loader2, Phone, MessageSquare } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function ShopListPage() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('rating');
   const [shops, setShops] = useState([]);
@@ -114,7 +116,7 @@ export default function ShopListPage() {
                       <span className="text-xs text-slate-400">{shop.total_orders} orders completed</span>
                       {shop.min_price && (
                         <span className="text-sm font-bold text-primary-600 text-price">
-                          {formatTZS(shop.min_price)}+
+                          {t('startingFrom', formatTZS(shop.min_price))}
                         </span>
                       )}
                     </div>

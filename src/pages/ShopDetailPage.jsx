@@ -6,12 +6,15 @@ import { CLOTHING_TYPES, SERVICE_TYPES, formatTZS, getClothingIcon, getServiceLa
 import { getDemoShop } from '../data/demoData';
 import StarRating from '../components/StarRating';
 import { apiStartConversation } from '../api/client';
-import { ArrowLeft, MapPin, Clock, Phone, Star, ShoppingBag, Plus, Truck, ChevronDown, ChevronUp, Loader2, MessageCircle } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, Phone, Star, ShoppingBag, Plus, Truck, ChevronDown, ChevronUp, Loader2, MessageCircle, HeartHandshake } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { apiSendMessage } from '../api/client';
 
 export default function ShopDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addItem, cartShop, itemCount } = useCart();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState('services');
   const [expandedClothing, setExpandedClothing] = useState(null);
   const [shop, setShop] = useState(null);
@@ -136,8 +139,8 @@ export default function ShopDetailPage() {
             </span>
           </div>
 
-          {/* Action buttons — Chat & Call */}
-          <div className="flex items-center gap-3 mt-4">
+          {/* Action buttons — Chat, Negotiate & Call */}
+          <div className="flex items-center gap-2 mt-4">
             <button
               onClick={async () => {
                 try {
@@ -149,14 +152,29 @@ export default function ShopDetailPage() {
               }}
               className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-semibold text-sm transition-colors active:scale-95"
             >
-              <MessageCircle size={16} /> Chat with Shop
+              <MessageCircle size={16} /> {t('chats')}
+            </button>
+            <button
+              onClick={async () => {
+                try {
+                  const data = await apiStartConversation(shop.id);
+                  const msg = t('negotiateGreeting', shop.name);
+                  await apiSendMessage(data.conversation.id, msg);
+                  navigate(`/chat/${data.conversation.id}`);
+                } catch (err) {
+                  console.error('Failed to start negotiation:', err);
+                }
+              }}
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-accent-50 dark:bg-accent-900/30 text-accent-600 dark:text-accent-400 border border-accent-200 dark:border-accent-800 rounded-xl font-semibold text-sm hover:bg-accent-100 dark:hover:bg-accent-900/50 transition-colors active:scale-95"
+            >
+              <HeartHandshake size={16} /> {t('negotiatePrice')}
             </button>
             {shop.phone && (
               <a
                 href={`tel:${shop.phone}`}
-                className="flex items-center justify-center gap-2 px-5 py-2.5 bg-fresh-50 dark:bg-fresh-900/30 text-fresh-600 dark:text-fresh-400 rounded-xl font-semibold text-sm hover:bg-fresh-100 dark:hover:bg-fresh-900/50 transition-colors active:scale-95"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-fresh-50 dark:bg-fresh-900/30 text-fresh-600 dark:text-fresh-400 rounded-xl font-semibold text-sm hover:bg-fresh-100 dark:hover:bg-fresh-900/50 transition-colors active:scale-95"
               >
-                <Phone size={16} /> Call
+                <Phone size={16} />
               </a>
             )}
           </div>
@@ -220,7 +238,7 @@ export default function ShopDetailPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold text-primary-600 text-price">
-                        {formatTZS(Math.min(...services.map(s => s.price)))}+
+                        {t('startingFrom', formatTZS(Math.min(...services.map(s => s.price))))}
                       </span>
                       {isExpanded ? <ChevronUp size={18} className="text-slate-400" /> : <ChevronDown size={18} className="text-slate-400" />}
                     </div>

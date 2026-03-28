@@ -346,7 +346,15 @@ export const mockUser = {
 };
 
 // Helpers
+export function roundTZS(amount) {
+  return Math.round(amount / 500) * 500;
+}
+
 export function formatTZS(amount) {
+  return `TZS ${roundTZS(amount).toLocaleString()}`;
+}
+
+export function formatTZSExact(amount) {
   return `TZS ${amount.toLocaleString()}`;
 }
 

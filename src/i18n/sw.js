@@ -241,6 +241,9 @@ export default {
   shopClosed: 'Limefungwa Kwa Sasa',
   minOrder: 'Oda ndogo',
   delivery: 'Usafirishaji',
+  startingFrom: (price) => `Kuanzia ${price}`,
+  negotiatePrice: 'Jadili Bei',
+  negotiateGreeting: (shopName) => `Habari ${shopName}! Ningependa kujadili bei za huduma zako za dobi. Tunaweza kujadiliana?`,
 
   // ── Kutengeneza Oda ──
   buildOrder: 'Tengeneza Oda Yako',

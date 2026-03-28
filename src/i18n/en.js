@@ -241,6 +241,9 @@ export default {
   shopClosed: 'Currently Closed',
   minOrder: 'Min order',
   delivery: 'Delivery',
+  startingFrom: (price) => `From ${price}`,
+  negotiatePrice: 'Negotiate Price',
+  negotiateGreeting: (shopName) => `Hi ${shopName}! I'd like to discuss pricing for your laundry services. Can we negotiate?`,
 
   // ── Order Builder ──
   buildOrder: 'Build Your Order',
