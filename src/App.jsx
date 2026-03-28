@@ -37,6 +37,7 @@ import AdminUsers from './pages/admin/AdminUsers';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminTransactions from './pages/admin/AdminTransactions';
 import AdminBalances from './pages/admin/AdminBalances';
+import AdminWhatsApp from './pages/admin/AdminWhatsApp';
 
 // Components
 import BottomNav from './components/BottomNav';
@@ -135,6 +136,7 @@ function AppRoutes() {
         <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
         <Route path="/admin/transactions" element={<AdminRoute><AdminTransactions /></AdminRoute>} />
         <Route path="/admin/balances" element={<AdminRoute><AdminBalances /></AdminRoute>} />
+        <Route path="/admin/whatsapp" element={<AdminRoute><AdminWhatsApp /></AdminRoute>} />
 
         {/* 404 catch-all */}
         <Route path="*" element={<NotFoundPage />} />
