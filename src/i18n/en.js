@@ -255,6 +255,22 @@ export default {
   cartEmpty: 'Your cart is empty',
   addItems: 'Add items to get started',
 
+  // ── Scheduling ──
+  schedulePickupDelivery: 'Pickup & Delivery Time',
+  pickupTime: 'Pickup',
+  deliveryTime: 'Delivery',
+  slotMorning: 'Morning',
+  slotAfternoon: 'Afternoon',
+  slotEvening: 'Evening',
+  today: 'Today',
+  tomorrow: 'Tomorrow',
+  todayMorning: 'Today morning',
+  todayAfternoon: 'Today afternoon',
+  todayEvening: 'Today evening',
+  tomorrowMorning: 'Kesho asubuhi',
+  tomorrowAfternoon: 'Kesho mchana',
+  tomorrowEvening: 'Kesho jioni',
+
   // ── Owner Pages ──
   ownerDashboard: 'Dashboard',
   ownerServices: 'Services',

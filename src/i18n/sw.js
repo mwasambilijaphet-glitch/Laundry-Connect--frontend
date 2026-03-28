@@ -255,6 +255,22 @@ export default {
   cartEmpty: 'Kikapu chako ni tupu',
   addItems: 'Ongeza vitu kuanza',
 
+  // ── Ratiba ──
+  schedulePickupDelivery: 'Muda wa Kuchukua & Kupeleka',
+  pickupTime: 'Kuchukua',
+  deliveryTime: 'Kupeleka',
+  slotMorning: 'Asubuhi',
+  slotAfternoon: 'Mchana',
+  slotEvening: 'Jioni',
+  today: 'Leo',
+  tomorrow: 'Kesho',
+  todayMorning: 'Leo asubuhi',
+  todayAfternoon: 'Leo mchana',
+  todayEvening: 'Leo jioni',
+  tomorrowMorning: 'Kesho asubuhi',
+  tomorrowAfternoon: 'Kesho mchana',
+  tomorrowEvening: 'Kesho jioni',
+
   // ── Kurasa za Mmiliki ──
   ownerDashboard: 'Dashibodi',
   ownerServices: 'Huduma',
