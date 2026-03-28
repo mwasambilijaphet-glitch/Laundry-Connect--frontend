@@ -306,6 +306,10 @@ export async function apiAdminSettleBalance(shopId) {
   return request(`/admin/balances/${shopId}/settle`, { method: 'POST' });
 }
 
+export async function apiAdminSendInvoice(shopId) {
+  return request(`/admin/balances/${shopId}/invoice`, { method: 'POST' });
+}
+
 // ── REFERRALS ───────────────────────────────────────────
 export async function apiGetReferralInfo() {
   return request('/referrals');
