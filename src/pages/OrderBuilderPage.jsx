@@ -17,7 +17,8 @@ export default function OrderBuilderPage() {
     subtotal, deliveryFee, totalAmount, itemCount,
     setOrderId,
   } = useCart();
-  const [showAddressInput, setShowAddressInput] = useState(false);
+  const [showAddressInput, setShowAddressInput] = useState(true);
+  const [manualArea, setManualArea] = useState('');
   const [placingOrder, setPlacingOrder] = useState(false);
   const [orderError, setOrderError] = useState('');
 
@@ -144,30 +145,62 @@ export default function OrderBuilderPage() {
           )}
         </div>
 
-        {/* Delivery Zone */}
+        {/* Delivery Area */}
         <div className="card p-4">
-          <h2 className="font-semibold text-slate-800 flex items-center gap-2 mb-3">
-            <Truck size={16} className="text-fresh-600" /> Delivery Zone
+          <h2 className="font-semibold text-slate-800 dark:text-white flex items-center gap-2 mb-3">
+            <Truck size={16} className="text-fresh-600" /> Delivery Area
           </h2>
-          <div className="space-y-2">
-            {(cartShop.delivery_zones || []).map((zone, i) => (
-              <button
-                key={i}
-                onClick={() => setDeliveryZone(zone)}
-                className={`w-full flex items-center justify-between p-3 rounded-xl border-2 transition-all ${
-                  deliveryZone?.zone_name === zone.zone_name
-                    ? 'border-fresh-500 bg-fresh-50'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
-              >
-                <div className="text-left">
-                  <p className="text-sm font-medium text-slate-700">{zone.zone_name}</p>
-                  <p className="text-xs text-slate-400">{zone.description}</p>
-                </div>
-                <span className="font-bold text-fresh-600 text-price">{formatTZS(zone.fee)}</span>
-              </button>
-            ))}
+          <input
+            type="text"
+            placeholder="e.g., Mikocheni, Sinza, Masaki, Kariakoo..."
+            value={manualArea}
+            onChange={e => {
+              setManualArea(e.target.value);
+              // Match to existing zone if possible
+              const zones = cartShop.delivery_zones || [];
+              const match = zones.find(z => z.zone_name.toLowerCase().includes(e.target.value.toLowerCase()));
+              if (match) {
+                setDeliveryZone(match);
+              } else if (e.target.value.length > 0) {
+                setDeliveryZone({ zone_name: e.target.value, fee: zones.length > 0 ? zones[zones.length - 1].fee : 3000, id: null });
+              } else {
+                setDeliveryZone(null);
+              }
+            }}
+            className="input-field pl-10"
+          />
+          <div className="relative -mt-10 ml-3 pointer-events-none">
+            <MapPin size={16} className="text-slate-400" />
           </div>
+          <div className="mt-3" />
+          {deliveryZone && (
+            <div className="p-3 bg-fresh-50 dark:bg-fresh-900/20 border border-fresh-200 dark:border-fresh-800 rounded-xl">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-fresh-700 dark:text-fresh-300">Delivery fee for {deliveryZone.zone_name}</span>
+                <span className="font-bold text-fresh-600 text-price">{formatTZS(deliveryZone.fee)}</span>
+              </div>
+            </div>
+          )}
+          {/* Quick zone options if available */}
+          {(cartShop.delivery_zones || []).length > 0 && !manualArea && (
+            <div className="mt-3 space-y-2">
+              <p className="text-xs text-slate-400">Or select an area:</p>
+              <div className="flex flex-wrap gap-2">
+                {(cartShop.delivery_zones || []).map((zone, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setManualArea(zone.zone_name);
+                      setDeliveryZone(zone);
+                    }}
+                    className="px-3 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-medium hover:bg-fresh-50 hover:text-fresh-600 transition-colors"
+                  >
+                    {zone.zone_name} — {formatTZS(zone.fee)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Special Instructions */}
@@ -205,7 +238,7 @@ export default function OrderBuilderPage() {
           <div className="flex justify-between text-sm">
             <span className="text-slate-500 dark:text-slate-400">Delivery Fee</span>
             <span className="font-semibold text-slate-700 dark:text-slate-200 text-price">
-              {deliveryZone ? formatTZS(deliveryFee) : 'Select zone'}
+              {deliveryZone ? formatTZS(deliveryFee) : 'Enter area'}
             </span>
           </div>
           <div className="flex justify-between text-base pt-1 border-t border-slate-100 dark:border-slate-700">
@@ -216,7 +249,7 @@ export default function OrderBuilderPage() {
         <button
           onClick={async () => {
             if (!deliveryAddress) { setOrderError('Please enter a delivery address'); return; }
-            if (!deliveryZone) { setOrderError('Please select a delivery zone'); return; }
+            if (!deliveryZone && !manualArea) { setOrderError('Please enter your delivery area'); return; }
 
             setOrderError('');
             setPlacingOrder(true);
@@ -233,7 +266,8 @@ export default function OrderBuilderPage() {
                   service_id: item.service_id,
                   quantity: item.quantity,
                 })),
-                delivery_zone_id: deliveryZone.id,
+                delivery_zone_id: deliveryZone?.id || undefined,
+                delivery_area: manualArea || deliveryZone?.zone_name || undefined,
                 delivery_address: deliveryAddress,
                 special_instructions: specialInstructions || undefined,
               });
