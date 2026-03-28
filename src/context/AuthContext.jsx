@@ -78,6 +78,13 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const refreshUser = async () => {
+    try {
+      const data = await apiGetMe();
+      setUser(data.user);
+    } catch {}
+  };
+
   const logout = () => {
     clearTokens();
     disableDemoMode();
@@ -96,7 +103,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, verifyOTP, logout, isDemo: isDemoMode() }}>
+    <AuthContext.Provider value={{ user, isLoading, login, register, verifyOTP, logout, refreshUser, isDemo: isDemoMode() }}>
       {children}
     </AuthContext.Provider>
   );

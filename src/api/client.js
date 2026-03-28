@@ -330,6 +330,14 @@ export async function apiApplyReferralCode(code) {
   });
 }
 
+// ── PROFILE API ───────────────────────────────────────────
+export async function apiUpdateProfile(data) {
+  return request('/auth/profile', {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+}
+
 // ── UPLOAD API ─────────────────────────────────────────────
 export async function apiUploadImage(file) {
   const formData = new FormData();
