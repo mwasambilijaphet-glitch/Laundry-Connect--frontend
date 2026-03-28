@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiAdminGetDashboard } from '../../api/client';
 import { formatTZS } from '../../data/mockData';
-import { Users, Store, ShoppingBag, DollarSign, Loader2, ChevronRight } from 'lucide-react';
+import { Users, Store, ShoppingBag, DollarSign, Wallet, Loader2, ChevronRight } from 'lucide-react';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -89,11 +89,28 @@ export default function AdminDashboard() {
         </div>
       )}
 
+      {/* Pending commission alert */}
+      {parseInt(revenue.pending_commission || 0) > 0 && (
+        <button onClick={() => navigate('/admin/balances')} className="w-full mb-6 p-4 bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800 rounded-2xl flex items-center justify-between hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-green-200 dark:bg-green-800 rounded-xl flex items-center justify-center">
+              <Wallet size={20} className="text-green-700 dark:text-green-300" />
+            </div>
+            <div className="text-left">
+              <p className="font-bold text-green-800 dark:text-green-200">{formatTZS(parseInt(revenue.pending_commission))} commission to collect</p>
+              <p className="text-xs text-green-600 dark:text-green-400">From cash payments — tap to view details</p>
+            </div>
+          </div>
+          <ChevronRight size={20} className="text-green-500" />
+        </button>
+      )}
+
       {/* Quick links */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <QuickLink icon={Store} label="Manage Shops" desc="Approve, suspend, review" onClick={() => navigate('/admin/shops')} />
         <QuickLink icon={Users} label="Manage Users" desc="Customers, owners, admins" onClick={() => navigate('/admin/users')} />
         <QuickLink icon={DollarSign} label="Transactions" desc="Payments, commissions, payouts" onClick={() => navigate('/admin/transactions')} />
+        <QuickLink icon={Wallet} label="Shop Balances" desc="Cash commission to collect" onClick={() => navigate('/admin/balances')} />
       </div>
     </div>
   );

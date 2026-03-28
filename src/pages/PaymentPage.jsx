@@ -4,12 +4,13 @@ import { useCart } from '../context/CartContext';
 import { apiInitiatePayment, API_BASE } from '../api/client';
 import { formatTZS } from '../data/mockData';
 import { isDemoMode } from '../data/demoData';
-import { ArrowLeft, Smartphone, CreditCard, QrCode, Loader2, CheckCircle2, Shield, AlertCircle, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Smartphone, CreditCard, QrCode, Loader2, CheckCircle2, Shield, AlertCircle, RefreshCw, Banknote } from 'lucide-react';
 
 const PAYMENT_METHODS = [
   { id: 'mpesa', label: 'M-Pesa', icon: '📱', desc: 'Vodacom M-Pesa', color: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' },
   { id: 'airtel', label: 'Airtel Money', icon: '📱', desc: 'Airtel Money', color: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' },
   { id: 'tigo', label: 'Tigo Pesa', icon: '📱', desc: 'Mixx by Yas', color: 'bg-sky-50 dark:bg-sky-900/20 border-sky-200 dark:border-sky-800' },
+  { id: 'cash', label: 'Cash', icon: '💵', desc: 'Pay on delivery', color: 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' },
   { id: 'card', label: 'Card', icon: '💳', desc: 'Visa / Mastercard', color: 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800' },
   { id: 'qr', label: 'QR Code', icon: '📷', desc: 'Scan & Pay', color: 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700' },
 ];
@@ -96,6 +97,16 @@ export default function PaymentPage() {
 
       setPaymentRef(data.payment.reference);
       setPollCount(0);
+
+      // Cash payment — instantly confirmed, no polling needed
+      if (method === 'cash') {
+        setStatus('success');
+        setTimeout(() => {
+          clearCart();
+          navigate('/orders');
+        }, 2500);
+        return;
+      }
 
       // If Snippe returns a checkout URL (for card/QR), redirect after validation
       if (data.payment.checkout_url) {

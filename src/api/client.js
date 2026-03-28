@@ -292,3 +292,11 @@ export async function apiAdminGetOrders() {
 export async function apiAdminGetTransactions() {
   return request('/admin/transactions');
 }
+
+export async function apiAdminGetBalances() {
+  return request('/admin/balances');
+}
+
+export async function apiAdminSettleBalance(shopId) {
+  return request(`/admin/balances/${shopId}/settle`, { method: 'POST' });
+}
