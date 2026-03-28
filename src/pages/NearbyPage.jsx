@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { MapContainer, TileLayer, Marker, Popup, useMap, Circle } from 'react-leaflet';
 import L from 'leaflet';
-import { MapPin, Navigation, Loader2, AlertCircle, RefreshCw, Sun, Moon, ArrowLeft, Phone, ExternalLink, Locate, Filter } from 'lucide-react';
+import { MapPin, Navigation, Loader2, AlertCircle, RefreshCw, Sun, Moon, ArrowLeft, Phone, ExternalLink, Locate, Filter, Search } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import AREAS, { searchAreas, getDistrictsForCity } from '../data/areaData';
 import 'leaflet/dist/leaflet.css';
 
 // Fix Leaflet default marker icon issue with bundlers
@@ -53,6 +55,7 @@ const SEARCH_RADIUS = 5000; // 5km
 export default function NearbyPage() {
   const navigate = useNavigate();
   const { isDark, toggleTheme } = useTheme();
+  const { t } = useLanguage();
   const [userPos, setUserPos] = useState(null);
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -61,7 +64,11 @@ export default function NearbyPage() {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [radius, setRadius] = useState(SEARCH_RADIUS);
   const [selectedCity, setSelectedCity] = useState('nearby');
-  const [geoPos, setGeoPos] = useState(null); // store original geolocation
+  const [geoPos, setGeoPos] = useState(null);
+  const [areaQuery, setAreaQuery] = useState('');
+  const [areaResults, setAreaResults] = useState([]);
+  const [showAreaSearch, setShowAreaSearch] = useState(false);
+  const [selectedArea, setSelectedArea] = useState(null);
   const mapRef = useRef(null);
 
   // Get user location
@@ -216,6 +223,30 @@ export default function NearbyPage() {
     if (userPos) fetchNearby(userPos.lat, userPos.lng, newRadius);
   }
 
+  function handleAreaSearch(q) {
+    setAreaQuery(q);
+    if (q.length >= 2) {
+      setAreaResults(searchAreas(q));
+    } else {
+      setAreaResults([]);
+    }
+  }
+
+  function handleAreaSelect(area) {
+    setSelectedArea(area);
+    setShowAreaSearch(false);
+    setAreaQuery('');
+    setAreaResults([]);
+    // Use city coordinates as center for the area
+    const cityCoords = CITIES.find(c => c.id === area.cityId);
+    if (cityCoords) {
+      setSelectedCity(area.cityId);
+      setUserPos({ lat: cityCoords.lat, lng: cityCoords.lng });
+      if (mapRef.current) mapRef.current.setView([cityCoords.lat, cityCoords.lng], 14);
+      fetchNearby(cityCoords.lat, cityCoords.lng);
+    }
+  }
+
   function openDirections(place) {
     const url = userPos
       ? `https://www.openstreetmap.org/directions?from=${userPos.lat},${userPos.lng}&to=${place.lat},${place.lng}`
@@ -249,14 +280,61 @@ export default function NearbyPage() {
           </button>
         </div>
 
+        {/* Area search bar */}
+        <div className="relative mt-3">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 z-10" />
+          <input
+            type="text"
+            placeholder={t('searchAreaPlaceholder')}
+            value={areaQuery}
+            onFocus={() => setShowAreaSearch(true)}
+            onChange={e => handleAreaSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-100 dark:bg-slate-700 rounded-xl text-sm text-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+          />
+          {/* Area search dropdown */}
+          {showAreaSearch && areaQuery.length >= 2 && areaResults.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 rounded-xl shadow-elevated border border-slate-200 dark:border-slate-700 z-30 max-h-60 overflow-y-auto">
+              {areaResults.map((area) => (
+                <button
+                  key={`${area.cityId}-${area.wardId}`}
+                  onClick={() => handleAreaSelect(area)}
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-left border-b border-slate-50 dark:border-slate-700/50 last:border-0"
+                >
+                  <MapPin size={14} className="text-primary-600 dark:text-primary-400 flex-shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-slate-800 dark:text-white truncate">{area.wardName}, {area.districtName}</p>
+                    <p className="text-xs text-slate-400 truncate">{area.cityName} &middot; {area.landmarks.slice(0, 2).join(', ')}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Selected area badge */}
+        {selectedArea && (
+          <div className="flex items-center gap-2 mt-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-full text-xs font-semibold">
+              <MapPin size={12} />
+              {selectedArea.wardName}, {selectedArea.districtName}
+            </span>
+            <button
+              onClick={() => { setSelectedArea(null); setAreaQuery(''); }}
+              className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
         {/* City selector */}
-        <div className="flex items-center gap-2 mt-3 overflow-x-auto no-scrollbar -mx-6 px-6">
+        <div className="flex items-center gap-2 mt-2 overflow-x-auto no-scrollbar -mx-6 px-6">
           {CITIES.map((city) => (
             <button
               key={city.id}
-              onClick={() => handleCityChange(city)}
+              onClick={() => { handleCityChange(city); setSelectedArea(null); }}
               className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                selectedCity === city.id
+                selectedCity === city.id && !selectedArea
                   ? 'bg-fresh-600 text-white shadow-sm'
                   : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
               }`}

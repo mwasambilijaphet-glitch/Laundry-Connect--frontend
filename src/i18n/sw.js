@@ -270,6 +270,19 @@ export default {
   adminTransactions: 'Miamala',
   adminBalances: 'Mizani',
 
+  // ── Chagua Eneo ──
+  selectArea: 'Chagua eneo lako',
+  searchAreaPlaceholder: 'Tafuta kata, mtaa, au alama...',
+  useMyLocation: 'Tumia Eneo Langu',
+  useGPSDesc: 'Tafuta maduka karibu na eneo lako',
+  browseByCity: 'Tafuta kwa Mji',
+  districts: 'wilaya',
+  wards: 'kata',
+  nearLandmark: 'Karibu na',
+  searchResults: 'Matokeo',
+  changeArea: 'Badilisha',
+  nearMe: 'Karibu Nami',
+
   // ── Kijachini ──
   footerTagline: 'Nguo safi, maisha mazuri.',
   contactUs: 'Wasiliana Nasi',

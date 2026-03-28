@@ -270,6 +270,19 @@ export default {
   adminTransactions: 'Transactions',
   adminBalances: 'Balances',
 
+  // ── Area Picker ──
+  selectArea: 'Select your area',
+  searchAreaPlaceholder: 'Search ward, mtaa, or landmark...',
+  useMyLocation: 'Use My Location',
+  useGPSDesc: 'Find shops near your GPS location',
+  browseByCity: 'Browse by City',
+  districts: 'districts',
+  wards: 'wards',
+  nearLandmark: 'Near',
+  searchResults: 'Results',
+  changeArea: 'Change',
+  nearMe: 'Near Me',
+
   // ── Footer ──
   footerTagline: 'Clean clothes, happy life.',
   contactUs: 'Contact Us',
