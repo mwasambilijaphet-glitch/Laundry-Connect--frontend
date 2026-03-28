@@ -268,6 +268,14 @@ export async function apiSendMessage(conversationId, content) {
   });
 }
 
+// ── REVIEWS API ─────────────────────────────────────────
+export async function apiSubmitReview(orderId, { rating, comment }) {
+  return request(`/orders/${orderId}/review`, {
+    method: 'POST',
+    body: JSON.stringify({ rating, comment }),
+  });
+}
+
 // ── ADMIN API ─────────────────────────────────────────────
 
 export async function apiAdminGetDashboard() {
