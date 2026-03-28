@@ -34,6 +34,7 @@ import AdminShops from './pages/admin/AdminShops';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminTransactions from './pages/admin/AdminTransactions';
+import AdminBalances from './pages/admin/AdminBalances';
 
 // Components
 import BottomNav from './components/BottomNav';
@@ -130,6 +131,7 @@ function AppRoutes() {
         <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
         <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
         <Route path="/admin/transactions" element={<AdminRoute><AdminTransactions /></AdminRoute>} />
+        <Route path="/admin/balances" element={<AdminRoute><AdminBalances /></AdminRoute>} />
 
         {/* 404 catch-all */}
         <Route path="*" element={<NotFoundPage />} />
