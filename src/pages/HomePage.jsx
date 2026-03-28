@@ -11,6 +11,7 @@ import StarRating from '../components/StarRating';
 import CitySwitcher from '../components/CitySwitcher';
 import VendorCard from '../components/VendorCard';
 import LanguageToggle from '../components/LanguageToggle';
+import AreaPicker from '../components/AreaPicker';
 import { ScrollReveal } from '../hooks/useScrollReveal';
 import {
   Search, MapPin, Clock, ChevronRight, SlidersHorizontal,
@@ -28,17 +29,58 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [heroBanner, setHeroBanner] = useState(0);
+  const [selectedArea, setSelectedArea] = useState(() => {
+    try {
+      const saved = localStorage.getItem('lc_area');
+      return saved ? JSON.parse(saved) : null;
+    } catch { return null; }
+  });
+
+  function handleAreaSelect(area) {
+    setSelectedArea(area);
+    if (!area.useGPS) {
+      localStorage.setItem('lc_area', JSON.stringify(area));
+    }
+    // Re-fetch shops for the selected area
+    fetchShopsForArea(area);
+  }
+
+  async function fetchShopsForArea(area) {
+    try {
+      setLoading(true);
+      const params = {};
+      if (area && !area.useGPS) {
+        params.search = area.wardName;
+        if (area.cityId) params.city = area.cityId;
+      }
+      const data = await apiGetShops(params);
+      setShops(data.shops || []);
+      setError('');
+    } catch (err) {
+      console.error(err);
+      setShops(DEMO_SHOPS);
+      setError('');
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
     async function fetchShops() {
       try {
         setLoading(true);
-        const data = await apiGetShops({ search: search || undefined });
+        const params = {};
+        if (search) {
+          params.search = search;
+        } else if (selectedArea && !selectedArea.useGPS) {
+          params.search = selectedArea.wardName;
+          if (selectedArea.cityId) params.city = selectedArea.cityId;
+        }
+        const data = await apiGetShops(params);
         setShops(data.shops || []);
         setError('');
       } catch (err) {
         console.error(err);
-        // Fallback to demo shops so app always looks good
         setShops(DEMO_SHOPS);
         setError('');
       } finally {
@@ -102,9 +144,8 @@ export default function HomePage() {
             </button>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 mt-2 text-sm text-slate-500 dark:text-slate-400">
-          <MapPin size={14} className="text-primary-600" />
-          <span>Dar es Salaam</span>
+        <div className="mt-2">
+          <AreaPicker onSelect={handleAreaSelect} currentArea={selectedArea} compact />
         </div>
       </div>
 

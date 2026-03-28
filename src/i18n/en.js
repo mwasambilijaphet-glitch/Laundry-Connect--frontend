@@ -241,6 +241,9 @@ export default {
   shopClosed: 'Currently Closed',
   minOrder: 'Min order',
   delivery: 'Delivery',
+  startingFrom: (price) => `From ${price}`,
+  negotiatePrice: 'Negotiate Price',
+  negotiateGreeting: (shopName) => `Hi ${shopName}! I'd like to discuss pricing for your laundry services. Can we negotiate?`,
 
   // ── Order Builder ──
   buildOrder: 'Build Your Order',
@@ -266,6 +269,43 @@ export default {
   adminOrders: 'Orders',
   adminTransactions: 'Transactions',
   adminBalances: 'Balances',
+
+  // ── Referral System ──
+  referralTitle: 'Mwambie Rafiki',
+  referralSubtitle: 'Share with a friend, both get TZS 1,000 off!',
+  yourReferralCode: 'Your Referral Code',
+  copyCode: 'Copy Code',
+  codeCopied: 'Copied!',
+  shareViaWhatsApp: 'Share via WhatsApp',
+  shareViaSMS: 'Share via SMS',
+  shareMessage: (code) => `Hey! Join Laundry Connect and use my referral code ${code} to get TZS 1,000 off your first order. Download: https://laundryconnect.app`,
+  referralBalance: 'Referral Balance',
+  totalEarned: 'Total Earned',
+  friendsReferred: 'Friends Referred',
+  recentReferrals: 'Recent Referrals',
+  noReferralsYet: 'No referrals yet. Share your code!',
+  joined: 'Joined',
+  haveReferralCode: 'Have a referral code?',
+  enterReferralCode: 'Enter referral code',
+  applyCode: 'Apply',
+  referralOptional: 'Optional — get TZS 1,000 off',
+  howItWorks: 'How it works',
+  step1: 'Share your code with friends',
+  step2: 'They sign up using your code',
+  step3: 'You both get TZS 1,000 credit!',
+
+  // ── Area Picker ──
+  selectArea: 'Select your area',
+  searchAreaPlaceholder: 'Search ward, mtaa, or landmark...',
+  useMyLocation: 'Use My Location',
+  useGPSDesc: 'Find shops near your GPS location',
+  browseByCity: 'Browse by City',
+  districts: 'districts',
+  wards: 'wards',
+  nearLandmark: 'Near',
+  searchResults: 'Results',
+  changeArea: 'Change',
+  nearMe: 'Near Me',
 
   // ── Footer ──
   footerTagline: 'Clean clothes, happy life.',

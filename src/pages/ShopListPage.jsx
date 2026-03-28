@@ -4,14 +4,19 @@ import { apiGetShops } from '../api/client';
 import { formatTZS } from '../data/mockData';
 import { DEMO_SHOPS } from '../data/demoData';
 import StarRating from '../components/StarRating';
-import { Search, MapPin, Clock, Loader2, Phone, MessageSquare } from 'lucide-react';
+import { Search, MapPin, Clock, Loader2, Phone, MessageSquare, X } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { searchAreas } from '../data/areaData';
 
 export default function ShopListPage() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('rating');
   const [shops, setShops] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedArea, setSelectedArea] = useState(null);
+  const [areaSuggestions, setAreaSuggestions] = useState([]);
 
   useEffect(() => {
     async function fetchShops() {
@@ -41,14 +46,57 @@ export default function ShopListPage() {
           <Search size={18} className="absolute left-4 top-3.5 text-slate-400" />
           <input
             type="text"
-            placeholder="Search by name or area..."
+            placeholder={t('searchAreaPlaceholder')}
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={e => {
+              setSearch(e.target.value);
+              if (e.target.value.length >= 2) {
+                setAreaSuggestions(searchAreas(e.target.value));
+              } else {
+                setAreaSuggestions([]);
+              }
+            }}
             className="input-field pl-11"
           />
+          {/* Area suggestions dropdown */}
+          {areaSuggestions.length > 0 && !selectedArea && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 rounded-xl shadow-elevated border border-slate-200 dark:border-slate-700 z-30 max-h-48 overflow-y-auto">
+              {areaSuggestions.map((area) => (
+                <button
+                  key={`${area.cityId}-${area.wardId}`}
+                  onClick={() => {
+                    setSelectedArea(area);
+                    setSearch(area.wardName);
+                    setAreaSuggestions([]);
+                  }}
+                  className="w-full flex items-center gap-2 px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-700 text-left border-b border-slate-50 dark:border-slate-700/50 last:border-0"
+                >
+                  <MapPin size={12} className="text-primary-600 dark:text-primary-400 flex-shrink-0" />
+                  <span className="text-sm text-slate-800 dark:text-white truncate">{area.wardName}, {area.districtName}</span>
+                  <span className="text-xs text-slate-400 ml-auto flex-shrink-0">{area.cityName}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        <div className="flex gap-2">
+        {/* Selected area chip */}
+        {selectedArea && (
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-full text-xs font-semibold">
+              <MapPin size={12} />
+              {selectedArea.wardName}, {selectedArea.districtName}
+            </span>
+            <button
+              onClick={() => { setSelectedArea(null); setSearch(''); }}
+              className="text-slate-400 hover:text-slate-600"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        )}
+
+        <div className="flex gap-2 mb-2">
           {[
             { value: 'rating', label: '⭐ Top Rated' },
             { value: 'price', label: '💰 Cheapest' },
@@ -67,6 +115,21 @@ export default function ShopListPage() {
             </button>
           ))}
         </div>
+
+        {/* Popular areas quick picks */}
+        {!selectedArea && !search && (
+          <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-6 px-6 pb-1">
+            {['Mikocheni', 'Sinza', 'Masaki', 'Kinondoni', 'Kariakoo', 'Mbezi'].map(area => (
+              <button
+                key={area}
+                onClick={() => setSearch(area)}
+                className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-full text-xs font-medium hover:bg-primary-50 hover:text-primary-600 dark:hover:bg-primary-900/30 dark:hover:text-primary-400 transition-colors"
+              >
+                <MapPin size={10} /> {area}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Results */}
@@ -114,7 +177,7 @@ export default function ShopListPage() {
                       <span className="text-xs text-slate-400">{shop.total_orders} orders completed</span>
                       {shop.min_price && (
                         <span className="text-sm font-bold text-primary-600 text-price">
-                          {formatTZS(shop.min_price)}+
+                          {t('startingFrom', formatTZS(shop.min_price))}
                         </span>
                       )}
                     </div>

@@ -241,6 +241,9 @@ export default {
   shopClosed: 'Limefungwa Kwa Sasa',
   minOrder: 'Oda ndogo',
   delivery: 'Usafirishaji',
+  startingFrom: (price) => `Kuanzia ${price}`,
+  negotiatePrice: 'Jadili Bei',
+  negotiateGreeting: (shopName) => `Habari ${shopName}! Ningependa kujadili bei za huduma zako za dobi. Tunaweza kujadiliana?`,
 
   // ── Kutengeneza Oda ──
   buildOrder: 'Tengeneza Oda Yako',
@@ -266,6 +269,43 @@ export default {
   adminOrders: 'Oda',
   adminTransactions: 'Miamala',
   adminBalances: 'Mizani',
+
+  // ── Mfumo wa Rufaa ──
+  referralTitle: 'Mwambie Rafiki',
+  referralSubtitle: 'Shiriki na rafiki, wote mnapata TZS 1,000 punguzo!',
+  yourReferralCode: 'Nambari Yako ya Rufaa',
+  copyCode: 'Nakili',
+  codeCopied: 'Imenakiliwa!',
+  shareViaWhatsApp: 'Shiriki WhatsApp',
+  shareViaSMS: 'Shiriki SMS',
+  shareMessage: (code) => `Habari! Jiunge na Laundry Connect na utumie nambari yangu ya rufaa ${code} kupata punguzo la TZS 1,000 kwenye oda yako ya kwanza. Pakua: https://laundryconnect.app`,
+  referralBalance: 'Salio la Rufaa',
+  totalEarned: 'Jumla Uliyopata',
+  friendsReferred: 'Marafiki Walioalikwa',
+  recentReferrals: 'Rufaa za Hivi Karibuni',
+  noReferralsYet: 'Hakuna rufaa bado. Shiriki nambari yako!',
+  joined: 'Alijiunga',
+  haveReferralCode: 'Una nambari ya rufaa?',
+  enterReferralCode: 'Weka nambari ya rufaa',
+  applyCode: 'Tumia',
+  referralOptional: 'Si lazima — pata punguzo TZS 1,000',
+  howItWorks: 'Jinsi inavyofanya kazi',
+  step1: 'Shiriki nambari yako na marafiki',
+  step2: 'Wanajisajili kwa nambari yako',
+  step3: 'Wote mnapata TZS 1,000 salio!',
+
+  // ── Chagua Eneo ──
+  selectArea: 'Chagua eneo lako',
+  searchAreaPlaceholder: 'Tafuta kata, mtaa, au alama...',
+  useMyLocation: 'Tumia Eneo Langu',
+  useGPSDesc: 'Tafuta maduka karibu na eneo lako',
+  browseByCity: 'Tafuta kwa Mji',
+  districts: 'wilaya',
+  wards: 'kata',
+  nearLandmark: 'Karibu na',
+  searchResults: 'Matokeo',
+  changeArea: 'Badilisha',
+  nearMe: 'Karibu Nami',
 
   // ── Kijachini ──
   footerTagline: 'Nguo safi, maisha mazuri.',

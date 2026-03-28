@@ -21,6 +21,7 @@ import NearbyPage from './pages/NearbyPage';
 import ChatListPage from './pages/ChatListPage';
 import ChatPage from './pages/ChatPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import ReferralPage from './pages/ReferralPage';
 
 // Owner pages
 import OwnerDashboard from './pages/owner/OwnerDashboard';
@@ -118,6 +119,7 @@ function AppRoutes() {
         <Route path="/chats" element={<ProtectedRoute><CustomerLayout><ChatListPage /></CustomerLayout></ProtectedRoute>} />
         <Route path="/chat/:id" element={<ProtectedRoute><CustomerLayout showNav={false}><ChatPage /></CustomerLayout></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><CustomerLayout showFooter><ProfilePage /></CustomerLayout></ProtectedRoute>} />
+        <Route path="/referrals" element={<ProtectedRoute><CustomerLayout showNav={false}><ReferralPage /></CustomerLayout></ProtectedRoute>} />
 
         {/* Owner routes */}
         <Route path="/owner" element={<OwnerRoute><OwnerDashboard /></OwnerRoute>} />

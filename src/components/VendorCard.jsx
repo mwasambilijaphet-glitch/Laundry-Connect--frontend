@@ -1,9 +1,12 @@
 import { useNavigate } from 'react-router-dom';
-import { Star, MapPin, Clock, MessageCircle, Package, CheckCircle2, Truck, AlertCircle } from 'lucide-react';
+import { Star, MapPin, Clock, MessageCircle, Package, CheckCircle2, Truck, AlertCircle, HeartHandshake } from 'lucide-react';
 import { formatTZS } from '../data/mockData';
+import { useLanguage } from '../context/LanguageContext';
+import { apiStartConversation, apiSendMessage } from '../api/client';
 
 export default function VendorCard({ shop }) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const rating = parseFloat(shop.rating_avg) || 0;
   const isOpen = getOpenStatus(shop.operating_hours);
 
@@ -78,7 +81,7 @@ export default function VendorCard({ shop }) {
         )}
         {shop.min_price && (
           <span className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-medium rounded text-price">
-            From {formatTZS(shop.min_price)}
+            {t('startingFrom', formatTZS(shop.min_price))}
           </span>
         )}
       </div>
@@ -86,18 +89,27 @@ export default function VendorCard({ shop }) {
       {/* CTA buttons */}
       <div className="flex gap-2" onClick={e => e.stopPropagation()}>
         <button
-          onClick={() => navigate(`/shop/${shop.id}`)}
-          className="flex-1 py-2.5 bg-white dark:bg-slate-700 border border-primary-500 text-primary-600 dark:text-primary-400 text-[13px] font-bold rounded-md hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-all duration-300 active:scale-[0.97] flex items-center justify-center gap-1.5 min-h-[44px]"
+          onClick={async () => {
+            try {
+              const data = await apiStartConversation(shop.id);
+              const msg = t('negotiateGreeting', shop.name);
+              await apiSendMessage(data.conversation.id, msg);
+              navigate(`/chat/${data.conversation.id}`);
+            } catch (err) {
+              navigate(`/shop/${shop.id}`);
+            }
+          }}
+          className="flex-1 py-2.5 bg-white dark:bg-slate-700 border border-accent-500 text-accent-600 dark:text-accent-400 text-[13px] font-bold rounded-md hover:bg-accent-50 dark:hover:bg-accent-900/30 transition-all duration-300 active:scale-[0.97] flex items-center justify-center gap-1.5 min-h-[44px]"
         >
-          <MessageCircle size={14} />
-          Chat
+          <HeartHandshake size={14} />
+          {t('negotiatePrice')}
         </button>
         <button
           onClick={() => navigate(`/shop/${shop.id}`)}
           className="flex-1 py-2.5 bg-primary-600 dark:bg-primary-500 text-white text-[13px] font-bold rounded-md hover:bg-primary-700 dark:hover:bg-primary-600 transition-all duration-300 active:scale-[0.97] flex items-center justify-center gap-1.5 min-h-[44px]"
         >
           <Package size={14} />
-          Book Now
+          {t('bookNow')}
         </button>
       </div>
     </div>

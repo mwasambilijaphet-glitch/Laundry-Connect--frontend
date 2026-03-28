@@ -6,7 +6,7 @@ import { useLanguage } from '../context/LanguageContext';
 import {
   Phone, Mail, LogOut, ChevronRight, Bell, Shield, HelpCircle, Star,
   Package, MapPin, User, CheckCircle2, Sun, Moon, Camera, Edit3,
-  Globe, Heart, Award, Zap, Settings, Info, CreditCard, Lock
+  Globe, Heart, Award, Zap, Settings, Info, CreditCard, Lock, Gift
 } from 'lucide-react';
 import { LogoIcon } from '../components/Logo';
 import LanguageToggle from '../components/LanguageToggle';
@@ -184,6 +184,23 @@ export default function ProfilePage() {
             ))}
           </div>
         </div>
+
+        {/* Referral banner */}
+        <button
+          onClick={() => navigate('/referrals')}
+          className="card p-4 w-full text-left group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-accent-400 to-accent-600 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+              <Gift size={22} className="text-white" />
+            </div>
+            <div className="flex-1">
+              <p className="font-bold text-sm text-slate-800 dark:text-white">{t('referralTitle')}</p>
+              <p className="text-xs text-slate-400 mt-0.5">{t('referralSubtitle')}</p>
+            </div>
+            <ChevronRight size={18} className="text-slate-300 dark:text-slate-600 group-hover:text-primary-500 group-hover:translate-x-0.5 transition-all" />
+          </div>
+        </button>
 
         {/* Account type badge */}
         <div className="card p-4">

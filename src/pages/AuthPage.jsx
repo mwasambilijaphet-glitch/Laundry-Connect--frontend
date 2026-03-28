@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 import { apiRegister, API_BASE } from '../api/client';
-import { ArrowLeft, Eye, EyeOff, Loader2, Phone, Mail, Lock, User, MessageCircle, Smartphone, Sun, Moon } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, Loader2, Phone, Mail, Lock, User, MessageCircle, Smartphone, Sun, Moon, Gift } from 'lucide-react';
 import { LogoIcon } from '../components/Logo';
 import LanguageToggle from '../components/LanguageToggle';
 
@@ -28,6 +28,7 @@ export default function AuthPage() {
     email: '',
     password: '',
     role: 'customer',
+    referral_code: '',
   });
 
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -498,6 +499,23 @@ export default function AuthPage() {
                 <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5">
                   {t('chooseOtpChannel')}
                 </p>
+              </div>
+
+              {/* Referral code */}
+              <div>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                  <Gift size={14} className="text-accent-500" />
+                  {t('haveReferralCode')}
+                </label>
+                <input
+                  type="text"
+                  placeholder={t('enterReferralCode')}
+                  value={form.referral_code}
+                  onChange={e => handleChange('referral_code', e.target.value.toUpperCase())}
+                  maxLength={10}
+                  className="input-field font-mono tracking-wider uppercase"
+                />
+                <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">{t('referralOptional')}</p>
               </div>
 
               <button type="submit" disabled={loading} className="btn-primary w-full py-4 mt-2">
