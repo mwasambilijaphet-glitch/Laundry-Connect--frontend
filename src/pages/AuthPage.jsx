@@ -2,14 +2,17 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 import { apiRegister, API_BASE } from '../api/client';
 import { ArrowLeft, Eye, EyeOff, Loader2, Phone, Mail, Lock, User, MessageCircle, Smartphone, Sun, Moon } from 'lucide-react';
 import { LogoIcon } from '../components/Logo';
+import LanguageToggle from '../components/LanguageToggle';
 
 export default function AuthPage() {
   const navigate = useNavigate();
   const { login, verifyOTP } = useAuth();
   const { isDark, toggleTheme } = useTheme();
+  const { t } = useLanguage();
   const [mode, setMode] = useState('login'); // login | register | otp | forgot | reset
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -40,7 +43,7 @@ export default function AuthPage() {
     e.preventDefault();
     setError('');
     if (!form.phone || !form.password) {
-      setError('Please fill in all fields');
+      setError(t('fillAllFields'));
       return;
     }
     setLoading(true);
@@ -49,7 +52,7 @@ export default function AuthPage() {
     if (result.success) {
       navigate('/');
     } else {
-      setError(result.message || 'Login failed');
+      setError(result.message || t('loginFailed'));
     }
   };
 
@@ -57,7 +60,7 @@ export default function AuthPage() {
     e.preventDefault();
     setError('');
     if (!form.full_name || !form.phone || !form.email || !form.password) {
-      setError('Please fill in all fields');
+      setError(t('fillAllFields'));
       return;
     }
     setLoading(true);
@@ -69,13 +72,13 @@ export default function AuthPage() {
       setMode('otp');
       setSuccess(
         otpChannel === 'whatsapp'
-          ? 'Check your WhatsApp for the verification code'
+          ? t('checkWhatsapp')
           : otpChannel === 'sms'
-            ? 'Check your phone for the OTP'
-            : data.message || 'Check your email for the OTP'
+            ? t('checkPhone')
+            : data.message || t('checkEmail')
       );
     } catch (err) {
-      setError(err.message || 'Registration failed');
+      setError(err.message || t('registrationFailed'));
     }
     setLoading(false);
   };
@@ -84,7 +87,7 @@ export default function AuthPage() {
     e.preventDefault();
     setError('');
     if (!form.email) {
-      setError('Please enter your email');
+      setError(t('enterEmail'));
       return;
     }
     setLoading(true);
@@ -98,9 +101,9 @@ export default function AuthPage() {
       setOtpPurpose('reset');
       setOtp(['', '', '', '', '', '']);
       setMode('otp');
-      setSuccess('Password reset code sent to your email & phone');
+      setSuccess(t('resetCodeSent'));
     } catch (err) {
-      setError('Failed to send reset code');
+      setError(t('failedSendReset'));
     }
     setLoading(false);
   };
@@ -134,7 +137,7 @@ export default function AuthPage() {
   const handleOTPSubmit = async () => {
     const code = otp.join('');
     if (code.length !== 6) {
-      setError('Please enter the complete 6-digit OTP');
+      setError(t('completeOtp'));
       return;
     }
 
@@ -145,12 +148,12 @@ export default function AuthPage() {
       if (result.success) {
         navigate('/');
       } else {
-        setError(result.message || 'Invalid OTP');
+        setError(result.message || t('completeOtp'));
       }
     } else {
       setMode('reset');
       setError('');
-      setSuccess('OTP verified! Enter your new password.');
+      setSuccess(t('otpVerified'));
     }
   };
 
@@ -158,11 +161,11 @@ export default function AuthPage() {
     e.preventDefault();
     setError('');
     if (!newPassword || newPassword.length < 8) {
-      setError('Password must be at least 8 characters');
+      setError(t('passwordMinLength'));
       return;
     }
     if (!/[A-Z]/.test(newPassword) || !/[a-z]/.test(newPassword) || !/\d/.test(newPassword)) {
-      setError('Password must include uppercase, lowercase, and a number');
+      setError(t('passwordRequirements'));
       return;
     }
     setLoading(true);
@@ -178,14 +181,14 @@ export default function AuthPage() {
       });
       const data = await res.json();
       if (data.success) {
-        setSuccess('Password reset! You can now log in.');
+        setSuccess(t('passwordResetSuccess'));
         setMode('login');
         setForm(prev => ({ ...prev, phone: otpEmail, password: '' }));
       } else {
-        setError(data.message || 'Reset failed');
+        setError(data.message || t('resetFailed'));
       }
     } catch (err) {
-      setError('Failed to reset password');
+      setError(t('failedResetPassword'));
     }
     setLoading(false);
   };
@@ -203,33 +206,33 @@ export default function AuthPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
-      setSuccess('New OTP sent');
+      setSuccess(t('newOtpSent'));
       setOtp(['', '', '', '', '', '']);
     } catch (err) {
-      setError('Failed to resend OTP');
+      setError(t('failedResendOtp'));
     }
     setLoading(false);
   };
 
   const getTitle = () => {
-    if (mode === 'login') return 'Karibu Tena!';
-    if (mode === 'register') return 'Jisajili';
-    if (mode === 'forgot') return 'Forgot Password';
-    if (mode === 'otp') return 'Enter Code';
-    if (mode === 'reset') return 'New Password';
+    if (mode === 'login') return t('welcomeBack');
+    if (mode === 'register') return t('registerTitle');
+    if (mode === 'forgot') return t('forgotPasswordTitle');
+    if (mode === 'otp') return t('enterCodeTitle');
+    if (mode === 'reset') return t('newPasswordTitle');
     return '';
   };
 
   const getSubtitle = () => {
-    if (mode === 'login') return 'Log in to continue';
-    if (mode === 'register') return 'Create your account';
-    if (mode === 'forgot') return 'We\'ll send a reset code to your email & phone';
+    if (mode === 'login') return t('loginSubtitle');
+    if (mode === 'register') return t('registerSubtitle');
+    if (mode === 'forgot') return t('forgotSubtitle');
     if (mode === 'otp') return otpChannel === 'whatsapp'
-      ? `Enter the 6-digit code sent to your WhatsApp`
+      ? t('otpSubtitleWhatsapp')
       : otpChannel === 'sms'
-        ? `Enter the 6-digit code sent via SMS`
-        : `Enter the 6-digit code sent to ${otpEmail}`;
-    if (mode === 'reset') return 'Choose a new password';
+        ? t('otpSubtitleSms')
+        : t('otpSubtitleEmail', otpEmail);
+    if (mode === 'reset') return t('resetSubtitle');
     return '';
   };
 
@@ -251,14 +254,17 @@ export default function AuthPage() {
             }}
             className="text-white/80 hover:text-white flex items-center gap-1 transition-colors"
           >
-            <ArrowLeft size={18} /> Back
+            <ArrowLeft size={18} /> {t('back')}
           </button>
-          <button
-            onClick={toggleTheme}
-            className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center hover:bg-white/20 transition-all active:scale-90"
-          >
-            {isDark ? <Sun size={18} className="text-accent-400" /> : <Moon size={18} className="text-white" />}
-          </button>
+          <div className="flex items-center gap-2">
+            <LanguageToggle variant="header" />
+            <button
+              onClick={toggleTheme}
+              className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center hover:bg-white/20 transition-all active:scale-90"
+            >
+              {isDark ? <Sun size={18} className="text-accent-400" /> : <Moon size={18} className="text-white" />}
+            </button>
+          </div>
         </div>
         <div className="relative flex items-center gap-3 mb-2">
           <LogoIcon size={32} />
@@ -296,12 +302,12 @@ export default function AuthPage() {
                 ))}
               </div>
               <button onClick={handleOTPSubmit} disabled={loading} className="btn-primary w-full py-4">
-                {loading ? <Loader2 className="animate-spin" size={20} /> : (otpPurpose === 'reset' ? 'Verify Code' : 'Verify & Continue')}
+                {loading ? <Loader2 className="animate-spin" size={20} /> : (otpPurpose === 'reset' ? t('verifyCode') : t('verifyContinue'))}
               </button>
               <p className="text-center text-sm text-slate-500 dark:text-slate-400">
-                Didn't receive it?{' '}
+                {t('didntReceive')}{' '}
                 <button onClick={handleResendOTP} disabled={loading} className="text-primary-600 dark:text-primary-400 font-semibold hover:underline">
-                  Resend Code
+                  {t('resendCode')}
                 </button>
               </p>
             </div>
@@ -311,12 +317,12 @@ export default function AuthPage() {
           {mode === 'reset' && (
             <form onSubmit={handleResetPassword} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">New Password</label>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">{t('newPassword')}</label>
                 <div className="relative">
                   <Lock size={18} className="absolute left-3.5 top-3.5 text-slate-400" />
                   <input
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="At least 6 characters"
+                    placeholder={t('passwordPlaceholder')}
                     value={newPassword}
                     onChange={e => { setNewPassword(e.target.value); setError(''); }}
                     className="input-field pl-10 pr-10"
@@ -327,7 +333,7 @@ export default function AuthPage() {
                 </div>
               </div>
               <button type="submit" disabled={loading} className="btn-primary w-full py-4">
-                {loading ? <Loader2 className="animate-spin" size={20} /> : 'Reset Password'}
+                {loading ? <Loader2 className="animate-spin" size={20} /> : t('resetPassword')}
               </button>
             </form>
           )}
@@ -336,12 +342,12 @@ export default function AuthPage() {
           {mode === 'forgot' && (
             <form onSubmit={handleForgotPassword} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">Email Address</label>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">{t('emailAddress')}</label>
                 <div className="relative">
                   <Mail size={18} className="absolute left-3.5 top-3.5 text-slate-400" />
                   <input
                     type="email"
-                    placeholder="you@email.com"
+                    placeholder={t('emailPlaceholder')}
                     value={form.email}
                     onChange={e => handleChange('email', e.target.value)}
                     className="input-field pl-10"
@@ -349,15 +355,15 @@ export default function AuthPage() {
                 </div>
               </div>
               <p className="text-xs text-slate-400 dark:text-slate-500">
-                A reset code will be sent to your email and phone automatically.
+                {t('resetCodeNote')}
               </p>
               <button type="submit" disabled={loading} className="btn-primary w-full py-4">
-                {loading ? <Loader2 className="animate-spin" size={20} /> : 'Send Reset Code'}
+                {loading ? <Loader2 className="animate-spin" size={20} /> : t('sendResetCode')}
               </button>
               <p className="text-center text-sm text-slate-500 dark:text-slate-400">
-                Remember your password?{' '}
+                {t('rememberPassword')}{' '}
                 <button onClick={() => { setMode('login'); setError(''); setSuccess(''); }} className="text-primary-600 dark:text-primary-400 font-semibold hover:underline">
-                  Log In
+                  {t('loginButton')}
                 </button>
               </p>
             </form>
@@ -367,12 +373,12 @@ export default function AuthPage() {
           {mode === 'login' && (
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">Phone Number or Email</label>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">{t('phoneOrEmail')}</label>
                 <div className="relative">
                   <Phone size={18} className="absolute left-3.5 top-3.5 text-slate-400" />
                   <input
                     type="text"
-                    placeholder="0754 123 456 or email"
+                    placeholder={t('phoneOrEmailPlaceholder')}
                     value={form.phone}
                     onChange={e => handleChange('phone', e.target.value)}
                     className="input-field pl-10"
@@ -381,16 +387,16 @@ export default function AuthPage() {
               </div>
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">Password</label>
+                  <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">{t('password')}</label>
                   <button type="button" onClick={() => { setMode('forgot'); setError(''); setSuccess(''); }} className="text-xs text-primary-600 dark:text-primary-400 font-semibold hover:underline">
-                    Forgot Password?
+                    {t('forgotPassword')}
                   </button>
                 </div>
                 <div className="relative">
                   <Lock size={18} className="absolute left-3.5 top-3.5 text-slate-400" />
                   <input
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter password"
+                    placeholder={t('enterPassword')}
                     value={form.password}
                     onChange={e => handleChange('password', e.target.value)}
                     className="input-field pl-10 pr-10"
@@ -401,7 +407,7 @@ export default function AuthPage() {
                 </div>
               </div>
               <button type="submit" disabled={loading} className="btn-primary w-full py-4 mt-2">
-                {loading ? <Loader2 className="animate-spin" size={20} /> : 'Ingia — Log In'}
+                {loading ? <Loader2 className="animate-spin" size={20} /> : t('loginButton')}
               </button>
             </form>
           )}
@@ -410,25 +416,25 @@ export default function AuthPage() {
           {mode === 'register' && (
             <form onSubmit={handleRegister} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">Full Name</label>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">{t('fullName')}</label>
                 <div className="relative">
                   <User size={18} className="absolute left-3.5 top-3.5 text-slate-400" />
-                  <input type="text" placeholder="e.g. Japhet Masanja" value={form.full_name} onChange={e => handleChange('full_name', e.target.value)} className="input-field pl-10" />
+                  <input type="text" placeholder={t('fullNamePlaceholder')} value={form.full_name} onChange={e => handleChange('full_name', e.target.value)} className="input-field pl-10" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">Email</label>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">{t('email')}</label>
                 <div className="relative">
                   <Mail size={18} className="absolute left-3.5 top-3.5 text-slate-400" />
-                  <input type="email" placeholder="you@email.com" value={form.email} onChange={e => handleChange('email', e.target.value)} className="input-field pl-10" />
+                  <input type="email" placeholder={t('emailPlaceholder')} value={form.email} onChange={e => handleChange('email', e.target.value)} className="input-field pl-10" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">I want to...</label>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">{t('iWantTo')}</label>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { value: 'customer', label: 'Get my laundry done', icon: '👕' },
-                    { value: 'owner', label: 'List my laundry shop', icon: '🏪' },
+                    { value: 'customer', label: t('getLaundryDone'), icon: '👕' },
+                    { value: 'owner', label: t('listMyShop'), icon: '🏪' },
                   ].map(opt => (
                     <button key={opt.value} type="button" onClick={() => handleChange('role', opt.value)}
                       className={`p-3 rounded-xl border-2 text-left transition-all ${
@@ -443,17 +449,17 @@ export default function AuthPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">Phone Number</label>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">{t('phoneNumber')}</label>
                 <div className="relative">
                   <Phone size={18} className="absolute left-3.5 top-3.5 text-slate-400" />
-                  <input type="tel" placeholder="0754 123 456" value={form.phone} onChange={e => handleChange('phone', e.target.value)} className="input-field pl-10" />
+                  <input type="tel" placeholder={t('phonePlaceholder')} value={form.phone} onChange={e => handleChange('phone', e.target.value)} className="input-field pl-10" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">Password</label>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">{t('password')}</label>
                 <div className="relative">
                   <Lock size={18} className="absolute left-3.5 top-3.5 text-slate-400" />
-                  <input type={showPassword ? 'text' : 'password'} placeholder="At least 6 characters" value={form.password} onChange={e => handleChange('password', e.target.value)} className="input-field pl-10 pr-10" />
+                  <input type={showPassword ? 'text' : 'password'} placeholder={t('passwordPlaceholder')} value={form.password} onChange={e => handleChange('password', e.target.value)} className="input-field pl-10 pr-10" />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600">
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -462,7 +468,7 @@ export default function AuthPage() {
 
               {/* OTP Channel Selector */}
               <div>
-                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">Get OTP via</label>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">{t('getOtpVia')}</label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
@@ -490,12 +496,12 @@ export default function AuthPage() {
                   </button>
                 </div>
                 <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5">
-                  Choose how you'd like to receive your verification code
+                  {t('chooseOtpChannel')}
                 </p>
               </div>
 
               <button type="submit" disabled={loading} className="btn-primary w-full py-4 mt-2">
-                {loading ? <Loader2 className="animate-spin" size={20} /> : 'Jisajili — Sign Up'}
+                {loading ? <Loader2 className="animate-spin" size={20} /> : t('signUpButton')}
               </button>
             </form>
           )}
@@ -504,9 +510,9 @@ export default function AuthPage() {
           {(mode === 'login' || mode === 'register') && (
             <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-4">
               {mode === 'login' ? (
-                <>Don't have an account? <button onClick={() => { setMode('register'); setError(''); setSuccess(''); }} className="text-primary-600 dark:text-primary-400 font-semibold hover:underline">Sign Up</button></>
+                <>{t('dontHaveAccount')} <button onClick={() => { setMode('register'); setError(''); setSuccess(''); }} className="text-primary-600 dark:text-primary-400 font-semibold hover:underline">{t('signUpButton')}</button></>
               ) : (
-                <>Already have an account? <button onClick={() => { setMode('login'); setError(''); setSuccess(''); }} className="text-primary-600 dark:text-primary-400 font-semibold hover:underline">Log In</button></>
+                <>{t('alreadyHaveAccountQ')} <button onClick={() => { setMode('login'); setError(''); setSuccess(''); }} className="text-primary-600 dark:text-primary-400 font-semibold hover:underline">{t('loginButton')}</button></>
               )}
             </p>
           )}

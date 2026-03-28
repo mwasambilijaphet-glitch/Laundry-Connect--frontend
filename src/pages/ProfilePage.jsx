@@ -2,17 +2,20 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 import {
   Phone, Mail, LogOut, ChevronRight, Bell, Shield, HelpCircle, Star,
   Package, MapPin, User, CheckCircle2, Sun, Moon, Camera, Edit3,
   Globe, Heart, Award, Zap, Settings, Info, CreditCard, Lock
 } from 'lucide-react';
 import { LogoIcon } from '../components/Logo';
+import LanguageToggle from '../components/LanguageToggle';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { isDark, toggleTheme } = useTheme();
+  const { t, lang, toggleLanguage } = useLanguage();
   const [showFullInfo, setShowFullInfo] = useState(false);
 
   const handleLogout = () => {
@@ -27,23 +30,23 @@ export default function ProfilePage() {
     : 'New Member';
 
   const quickActions = [
-    { icon: Package, label: 'My Orders', desc: 'Track & history', path: '/orders', color: 'from-primary-500 to-primary-600', iconColor: 'text-primary-100' },
-    { icon: MapPin, label: 'Nearby', desc: 'Find shops', path: '/nearby', color: 'from-fresh-500 to-fresh-600', iconColor: 'text-fresh-100' },
-    { icon: CreditCard, label: 'Payments', desc: 'Transactions', path: '/orders', color: 'from-accent-500 to-accent-600', iconColor: 'text-accent-100' },
-    { icon: Heart, label: 'Favorites', desc: 'Saved shops', path: '/shops', color: 'from-pink-500 to-pink-600', iconColor: 'text-pink-100' },
+    { icon: Package, label: t('myOrders'), desc: t('trackOrder'), path: '/orders', color: 'from-primary-500 to-primary-600', iconColor: 'text-primary-100' },
+    { icon: MapPin, label: t('nearbyDryCleaners'), desc: t('findShopsNearYou'), path: '/nearby', color: 'from-fresh-500 to-fresh-600', iconColor: 'text-fresh-100' },
+    { icon: CreditCard, label: t('paymentTitle'), desc: t('adminTransactions'), path: '/orders', color: 'from-accent-500 to-accent-600', iconColor: 'text-accent-100' },
+    { icon: Heart, label: t('navExplore'), desc: t('viewAll'), path: '/shops', color: 'from-pink-500 to-pink-600', iconColor: 'text-pink-100' },
   ];
 
   const settingsMenu = [
-    { icon: Bell, label: 'Notifications', desc: 'Manage your alerts & preferences', color: 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400' },
-    { icon: Lock, label: 'Privacy & Security', desc: 'Password, 2FA, data privacy', color: 'bg-fresh-50 dark:bg-fresh-900/30 text-fresh-600 dark:text-fresh-400' },
-    { icon: Globe, label: 'Language', desc: 'English / Kiswahili', color: 'bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400' },
-    { icon: Settings, label: 'App Settings', desc: 'Theme, cache, storage', color: 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400' },
+    { icon: Bell, label: t('notifications'), color: 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400' },
+    { icon: Lock, label: t('profile'), color: 'bg-fresh-50 dark:bg-fresh-900/30 text-fresh-600 dark:text-fresh-400' },
+    { icon: Globe, label: t('language'), desc: lang === 'en' ? 'English → Swahili' : 'Kiswahili → English', color: 'bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400', action: toggleLanguage },
+    { icon: Settings, label: t('darkMode'), color: 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400' },
   ];
 
   const supportMenu = [
-    { icon: HelpCircle, label: 'Help & Support', desc: 'FAQ, chat, contact us', color: 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400' },
-    { icon: Star, label: 'Rate Laundry Connect', desc: 'Share your experience', color: 'bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' },
-    { icon: Info, label: 'About', desc: `v2.0.0 — Built in Dodoma`, color: 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400' },
+    { icon: HelpCircle, label: t('helpSupport'), color: 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400' },
+    { icon: Star, label: 'Rate Laundry Connect', color: 'bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' },
+    { icon: Info, label: t('aboutUs'), desc: 'v2.0.0 — Dodoma, Tanzania', color: 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400' },
   ];
 
   return (
@@ -60,7 +63,7 @@ export default function ProfilePage() {
           <div className="relative flex items-center justify-between mb-8">
             <div className="flex items-center gap-2">
               <LogoIcon size={28} />
-              <span className="text-sm font-bold text-white/80">Profile</span>
+              <span className="text-sm font-bold text-white/80">{t('profile')}</span>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -149,7 +152,7 @@ export default function ProfilePage() {
               {isDark ? <Sun size={18} className="text-white" /> : <Moon size={18} className="text-white" />}
             </div>
             <div>
-              <p className="font-semibold text-sm text-slate-800 dark:text-white">Dark Mode</p>
+              <p className="font-semibold text-sm text-slate-800 dark:text-white">{t('darkMode')}</p>
               <p className="text-xs text-slate-400">{isDark ? 'Enabled — easy on the eyes' : 'Disabled — bright & clean'}</p>
             </div>
           </div>
@@ -210,9 +213,10 @@ export default function ProfilePage() {
         <div>
           <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3 px-1">Settings</h3>
           <div className="card overflow-hidden">
-            {settingsMenu.map(({ icon: Icon, label, desc, color }, i) => (
+            {settingsMenu.map(({ icon: Icon, label, desc, color, action }, i) => (
               <button
                 key={i}
+                onClick={action}
                 className="w-full flex items-center gap-3.5 p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors duration-200 border-b border-slate-50 dark:border-slate-700/50 last:border-0 text-left group"
               >
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${color} transition-transform duration-300 group-hover:scale-105`}>
@@ -256,7 +260,7 @@ export default function ProfilePage() {
           className="w-full flex items-center justify-center gap-2.5 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-bold rounded-2xl hover:bg-red-100 dark:hover:bg-red-900/30 transition-all duration-300 active:scale-[0.97] border border-red-100 dark:border-red-900/30"
         >
           <LogOut size={18} />
-          Ondoka — Log Out
+          {t('logout')}
         </button>
 
         {/* Footer branding */}

@@ -2,18 +2,20 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, Search, MessageCircle, ShoppingBag, User } from 'lucide-react';
 import { apiGetUnreadCount } from '../api/client';
+import { useLanguage } from '../context/LanguageContext';
 
-const navItems = [
-  { path: '/home', icon: Home, label: 'Home' },
-  { path: '/shops', icon: Search, label: 'Explore' },
-  { path: '/chats', icon: MessageCircle, label: 'Chats' },
-  { path: '/orders', icon: ShoppingBag, label: 'Orders' },
-  { path: '/profile', icon: User, label: 'Profile' },
+const navKeys = [
+  { path: '/home', icon: Home, key: 'navHome' },
+  { path: '/shops', icon: Search, key: 'navExplore' },
+  { path: '/chats', icon: MessageCircle, key: 'navChats' },
+  { path: '/orders', icon: ShoppingBag, key: 'navOrders' },
+  { path: '/profile', icon: User, key: 'navProfile' },
 ];
 
 export default function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [unreadCount, setUnreadCount] = useState(0);
 
   // Poll unread count every 15s
@@ -35,7 +37,8 @@ export default function BottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 glass-nav md:hidden z-50 pb-safe">
       <div className="flex items-center justify-around h-16 max-w-lg mx-auto px-2">
-        {navItems.map(({ path, icon: Icon, label }) => {
+        {navKeys.map(({ path, icon: Icon, key }) => {
+          const label = t(key);
           const isActive = location.pathname === path ||
             (path === '/home' && location.pathname === '/home') ||
             (path === '/shops' && location.pathname.startsWith('/shop')) ||

@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 import { apiGetShops } from '../api/client';
 import { formatTZS } from '../data/mockData';
 import { DEMO_SHOPS } from '../data/demoData';
 import StarRating from '../components/StarRating';
 import CitySwitcher from '../components/CitySwitcher';
 import VendorCard from '../components/VendorCard';
+import LanguageToggle from '../components/LanguageToggle';
 import { ScrollReveal } from '../hooks/useScrollReveal';
 import {
   Search, MapPin, Clock, ChevronRight, SlidersHorizontal,
@@ -20,6 +22,7 @@ export default function HomePage() {
   const { user } = useAuth();
   const { itemCount } = useCart();
   const { isDark, toggleTheme } = useTheme();
+  const { t } = useLanguage();
   const [search, setSearch] = useState('');
   const [shops, setShops] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -58,9 +61,11 @@ export default function HomePage() {
     return () => clearTimeout(timer);
   }, [search]);
 
+  const HERO_BANNERS = useHeroBanners();
+
   // Auto-rotate hero banners
   useEffect(() => {
-    const timer = setInterval(() => setHeroBanner(h => (h + 1) % HERO_BANNERS.length), 5000);
+    const timer = setInterval(() => setHeroBanner(h => (h + 1) % 3), 5000);
     return () => clearInterval(timer);
   }, []);
 
@@ -73,13 +78,14 @@ export default function HomePage() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              {new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening'}
+              {new Date().getHours() < 12 ? t('goodMorning') : new Date().getHours() < 17 ? t('goodAfternoon') : t('goodEvening')}
             </p>
             <h1 className="text-lg font-bold text-slate-800 dark:text-white">
-              {user?.full_name?.split(' ')[0] || 'Welcome'}
+              {user?.full_name?.split(' ')[0] || t('welcome')}
             </h1>
           </div>
           <div className="flex items-center gap-1.5">
+            <LanguageToggle variant="icon" />
             <button
               onClick={toggleTheme}
               className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
@@ -127,7 +133,7 @@ export default function HomePage() {
                     onClick={() => navigate('/shops')}
                     className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-full hover:bg-primary-700 transition-colors active:scale-95"
                   >
-                    Book now
+                    {t('bookNow')}
                   </button>
                 </div>
                 <span className="text-5xl ml-4 opacity-80">{banner.emoji}</span>
@@ -155,7 +161,7 @@ export default function HomePage() {
           <Search size={18} className="absolute left-4 top-3.5 text-slate-400" />
           <input
             type="text"
-            placeholder="Search laundry shops..."
+            placeholder={t('searchPlaceholder')}
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="input-field pl-11"
@@ -167,14 +173,14 @@ export default function HomePage() {
       {search && searchResults !== null && (
         <div className="px-5 mb-5">
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3">
-            Results for "{search}"
+            {t('resultsFor', search)}
           </h2>
           {searchResults.length === 0 ? (
-            <p className="text-center py-8 text-slate-400 text-sm">No shops found.</p>
+            <p className="text-center py-8 text-slate-400 text-sm">{t('noShopsFound')}</p>
           ) : (
             <div className="space-y-3">
               {searchResults.map(shop => (
-                <ShopListItem key={shop.id} shop={shop} onClick={() => navigate(`/shop/${shop.id}`)} />
+                <ShopListItem key={shop.id} shop={shop} onClick={() => navigate(`/shop/${shop.id}`)} t={t} />
               ))}
             </div>
           )}
@@ -189,32 +195,32 @@ export default function HomePage() {
           <ScrollReveal>
             <div>
               <h2 className="text-base font-bold text-slate-800 dark:text-white mb-3">
-                Laundry shops close to you
+                {t('shopsCloseToYou')}
               </h2>
 
               {loading ? (
                 <div className="flex flex-col items-center py-10 gap-3">
                   <Loader2 size={24} className="text-primary-500 animate-spin" />
-                  <p className="text-sm text-slate-400">Finding shops near you...</p>
+                  <p className="text-sm text-slate-400">{t('findingShops')}</p>
                 </div>
               ) : error ? (
                 <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg text-red-600 dark:text-red-400 text-sm">{error}</div>
               ) : topRated.length === 0 ? (
                 <div className="text-center py-10">
                   <span className="text-4xl block mb-3">🧺</span>
-                  <p className="text-slate-400 text-sm">No shops found in your area yet.</p>
+                  <p className="text-slate-400 text-sm">{t('noShopsInArea')}</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {topRated.slice(0, 5).map(shop => (
-                    <ShopListItem key={shop.id} shop={shop} onClick={() => navigate(`/shop/${shop.id}`)} />
+                    <ShopListItem key={shop.id} shop={shop} onClick={() => navigate(`/shop/${shop.id}`)} t={t} />
                   ))}
                   {topRated.length > 5 && (
                     <button
                       onClick={() => navigate('/shops')}
                       className="w-full py-3 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:underline flex items-center justify-center gap-1"
                     >
-                      View all {topRated.length} shops <ChevronRight size={14} />
+                      {t('viewAllShops', topRated.length)} <ChevronRight size={14} />
                     </button>
                   )}
                 </div>
@@ -231,13 +237,13 @@ export default function HomePage() {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                    <Star size={16} className="text-amber-500" /> Top rated vendors
+                    <Star size={16} className="text-amber-500" /> {t('topRatedVendors')}
                   </h2>
                   <button
                     onClick={() => navigate('/shops')}
                     className="text-sm text-primary-600 dark:text-primary-400 font-semibold flex items-center gap-0.5"
                   >
-                    All <ChevronRight size={14} />
+                    {t('all')} <ChevronRight size={14} />
                   </button>
                 </div>
                 <div className="space-y-3">
@@ -255,14 +261,17 @@ export default function HomePage() {
 }
 
 // ── Hero banner data ──────────────────────────────────────
-const HERO_BANNERS = [
-  { title: 'Your Clothes, Our Care!', subtitle: 'Drop your clothes, we handle the rest.', icon: '🧺', emoji: '👔' },
-  { title: 'Same-Day Delivery', subtitle: 'Get your clothes back within 6 hours.', icon: '🚀', emoji: '🛵' },
-  { title: '20% Off This Week', subtitle: 'Premium dry cleaning at amazing prices.', icon: '💎', emoji: '✨' },
-];
+function useHeroBanners() {
+  const { t } = useLanguage();
+  return [
+    { title: t('heroBanner1Title'), subtitle: t('heroBanner1Subtitle'), icon: '🧺', emoji: '👔' },
+    { title: t('heroBanner2Title'), subtitle: t('heroBanner2Subtitle'), icon: '🚀', emoji: '🛵' },
+    { title: t('heroBanner3Title'), subtitle: t('heroBanner3Subtitle'), icon: '💎', emoji: '✨' },
+  ];
+}
 
 // ── Shop list item (Tim Designer style) ───────────────────
-function ShopListItem({ shop, onClick }) {
+function ShopListItem({ shop, onClick, t }) {
   const rating = parseFloat(shop.rating_avg) || 0;
   const hours = shop.operating_hours;
   const hoursText = hours ? `Open ${hours.open || '8am'} - ${hours.close || '8pm'}` : 'Open 8am - 8pm';
@@ -298,10 +307,10 @@ function ShopListItem({ shop, onClick }) {
         {shop.phone && (
           <div className="flex items-center gap-2 mt-2">
             <a href={`tel:${shop.phone}`} onClick={e => e.stopPropagation()} className="inline-flex items-center gap-1 px-2.5 py-1 bg-fresh-50 dark:bg-fresh-900/30 text-fresh-600 dark:text-fresh-400 rounded-lg text-xs font-semibold hover:bg-fresh-100 transition-colors">
-              <Phone size={10} /> Call
+              <Phone size={10} /> {t ? t('call') : 'Call'}
             </a>
             <a href={`sms:${shop.phone}`} onClick={e => e.stopPropagation()} className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-lg text-xs font-semibold hover:bg-primary-100 transition-colors">
-              <MessageSquare size={10} /> SMS
+              <MessageSquare size={10} /> {t ? t('sms') : 'SMS'}
             </a>
           </div>
         )}
