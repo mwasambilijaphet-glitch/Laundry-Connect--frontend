@@ -115,7 +115,7 @@ export default function ChatListPage() {
               return (
                 <div key={conv.id} className="card-hover flex items-center gap-3.5 p-3.5 group">
                   <button
-                    onClick={() => navigate(`/chat/${conv.id}`)}
+                    onClick={() => navigate(user?.role === 'owner' ? `/owner/chat/${conv.id}` : `/chat/${conv.id}`)}
                     className="flex-1 flex items-center gap-3.5 text-left min-w-0"
                   >
                     <div className="relative flex-shrink-0">

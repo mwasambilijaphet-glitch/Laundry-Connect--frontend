@@ -132,6 +132,8 @@ function AppRoutes() {
         <Route path="/owner/orders" element={<OwnerRoute><OwnerOrders /></OwnerRoute>} />
         <Route path="/owner/earnings" element={<OwnerRoute><OwnerEarnings /></OwnerRoute>} />
         <Route path="/owner/settings" element={<OwnerRoute><OwnerSettings /></OwnerRoute>} />
+        <Route path="/owner/chats" element={<OwnerRoute><ChatListPage /></OwnerRoute>} />
+        <Route path="/owner/chat/:id" element={<OwnerRoute><ChatPage /></OwnerRoute>} />
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />

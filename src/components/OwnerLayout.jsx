@@ -1,12 +1,13 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, Tag, ClipboardList, TrendingUp, Settings, LogOut, Sparkles } from 'lucide-react';
+import { LayoutDashboard, Tag, ClipboardList, TrendingUp, Settings, LogOut, Sparkles, MessageCircle } from 'lucide-react';
 
 const navItems = [
   { path: '/owner', icon: LayoutDashboard, label: 'Dashboard' },
   { path: '/owner/services', icon: Tag, label: 'Services & Prices' },
   { path: '/owner/orders', icon: ClipboardList, label: 'Orders' },
   { path: '/owner/earnings', icon: TrendingUp, label: 'Earnings' },
+  { path: '/owner/chats', icon: MessageCircle, label: 'Messages' },
   { path: '/owner/settings', icon: Settings, label: 'Shop Settings' },
 ];
 
