@@ -161,12 +161,12 @@
   background: white;
 }
 .dark .input-field {
-  background: #0f172a;
-  border-color: #334155;
-  color: #e2e8f0;
+  background: #1e293b;
+  border-color: #475569;
+  color: #f1f5f9;
 }
 .dark .input-field::placeholder {
-  color: #64748b;
+  color: #94a3b8;
 }
 .dark .input-field:focus {
   background: #1e293b;
