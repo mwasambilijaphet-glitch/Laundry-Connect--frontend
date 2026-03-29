@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiOwnerGetServices, apiOwnerAddService, apiOwnerDeleteService } from '../../api/client';
-import { CLOTHING_TYPES, SERVICE_TYPES, formatTZS, getClothingIcon, getServiceLabel } from '../../data/mockData';
+import { CLOTHING_TYPES, SERVICE_TYPES, formatTZS, getClothingIcon, getServiceLabel, getClothingCategories } from '../../data/mockData';
 import { Plus, Trash2, Loader2, Save, X } from 'lucide-react';
 
 export default function OwnerServices() {
@@ -77,7 +77,13 @@ export default function OwnerServices() {
               <label className="block text-sm font-medium text-slate-600 mb-1">Clothing Type</label>
               <select value={form.clothing_type} onChange={e => setForm(prev => ({ ...prev, clothing_type: e.target.value }))} className="input-field">
                 <option value="">Select clothing...</option>
-                {CLOTHING_TYPES.map(c => <option key={c.id} value={c.id}>{c.icon} {c.label}</option>)}
+                {getClothingCategories().map(cat => (
+                  <optgroup key={cat} label={cat}>
+                    {CLOTHING_TYPES.filter(c => c.category === cat).map(c => (
+                      <option key={c.id} value={c.id}>{c.icon} {c.label}</option>
+                    ))}
+                  </optgroup>
+                ))}
               </select>
             </div>
             <div>
