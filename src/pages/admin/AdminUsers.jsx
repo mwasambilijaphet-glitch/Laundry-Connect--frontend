@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiAdminGetUsers, apiAdminUpdateUser, apiAdminDeleteUser } from '../../api/client';
-import { Loader2, Users, Store, Shield, Search, Pencil, Trash2, X, Check, AlertTriangle } from 'lucide-react';
+import { Loader2, Users, Store, Shield, Search, Pencil, Trash2, X, Check, AlertTriangle, Ban, ShieldOff, ShieldCheck } from 'lucide-react';
 
 const ROLE_FILTERS = [
   { value: '', label: 'All Users', icon: Users },
@@ -26,6 +26,9 @@ export default function AdminUsers() {
   // Delete state
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [deleting, setDeleting] = useState(false);
+
+  // Status change
+  const [statusLoading, setStatusLoading] = useState(null);
 
   // Toast
   const [toast, setToast] = useState('');
@@ -101,6 +104,21 @@ export default function AdminUsers() {
     }
   }
 
+  // ── Status change handler ───────────────────────────────
+  async function changeStatus(userId, newStatus) {
+    try {
+      setStatusLoading(userId);
+      const data = await apiAdminUpdateUser(userId, { status: newStatus });
+      setUsers(prev => prev.map(u => u.id === userId ? data.user : u));
+      const labels = { active: 'activated', suspended: 'suspended', blocked: 'blocked' };
+      showToast(`User ${labels[newStatus]}`);
+    } catch (err) {
+      showToast(err.message || 'Failed to update status');
+    } finally {
+      setStatusLoading(null);
+    }
+  }
+
   const filtered = search
     ? users.filter(u =>
         (u.full_name || '').toLowerCase().includes(search.toLowerCase()) ||
@@ -119,6 +137,12 @@ export default function AdminUsers() {
     if (role === 'admin') return '🛡️';
     if (role === 'owner') return '🏪';
     return '👤';
+  };
+
+  const statusBadge = (status) => {
+    if (status === 'blocked') return 'inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
+    if (status === 'suspended') return 'inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
+    return '';
   };
 
   return (
@@ -316,6 +340,11 @@ export default function AdminUsers() {
                           ? <span className="inline-flex px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">✓</span>
                           : <span className="inline-flex px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">✗</span>
                         }
+                        {(user.status === 'suspended' || user.status === 'blocked') && (
+                          <span className={statusBadge(user.status)}>
+                            {user.status === 'blocked' ? '⛔ Blocked' : '⏸ Suspended'}
+                          </span>
+                        )}
                       </div>
                       <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                         <span>{user.phone}</span>
@@ -326,6 +355,36 @@ export default function AdminUsers() {
                   </div>
 
                   <div className="flex items-center gap-1 flex-shrink-0 ml-2">
+                    {/* Status actions */}
+                    {(!user.status || user.status === 'active') ? (
+                      <>
+                        <button
+                          onClick={() => changeStatus(user.id, 'suspended')}
+                          disabled={statusLoading === user.id}
+                          className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30 transition-colors"
+                          title="Suspend user"
+                        >
+                          {statusLoading === user.id ? <Loader2 size={15} className="animate-spin" /> : <ShieldOff size={15} />}
+                        </button>
+                        <button
+                          onClick={() => changeStatus(user.id, 'blocked')}
+                          disabled={statusLoading === user.id}
+                          className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
+                          title="Block user"
+                        >
+                          <Ban size={15} />
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        onClick={() => changeStatus(user.id, 'active')}
+                        disabled={statusLoading === user.id}
+                        className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30 transition-colors"
+                        title="Activate user"
+                      >
+                        {statusLoading === user.id ? <Loader2 size={15} className="animate-spin" /> : <ShieldCheck size={15} />}
+                      </button>
+                    )}
                     <button
                       onClick={() => startEdit(user)}
                       className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors"
