@@ -169,22 +169,79 @@ export default function OrderTrackingPage() {
           </p>
         </div>
 
-        {/* Progress Timeline */}
+        {/* Progress Steps — All Procedures */}
         <div>
-          <h2 className="text-sm font-bold text-slate-800 dark:text-white mb-3">Order Progress</h2>
-          <div className="flex items-center gap-1">
+          <h2 className="text-sm font-bold text-slate-800 dark:text-white mb-4">Order Progress</h2>
+
+          {/* Horizontal pill bar (like screenshot) */}
+          <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-3 -mx-1 px-1">
             {ORDER_STATUSES.map((status, index) => {
               const isPast = index <= currentStatusIndex;
+              const isCurrent = index === currentStatusIndex;
               return (
-                <div key={status.id} className="flex-1 flex flex-col items-center gap-1.5">
-                  <div className={`w-full h-1.5 rounded-full transition-all duration-500 ${
-                    isPast ? 'bg-primary-500' : 'bg-slate-200 dark:bg-slate-700'
-                  }`} />
-                  <span className={`text-[10px] font-medium text-center leading-tight ${
-                    isPast ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400'
-                  }`}>
-                    {status.label}
-                  </span>
+                <div
+                  key={status.id}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 border transition-all duration-300 ${
+                    isCurrent
+                      ? 'bg-primary-600 text-white border-primary-600 shadow-md shadow-primary-500/30 scale-105'
+                      : isPast
+                        ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800'
+                        : 'bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700'
+                  }`}
+                >
+                  <span className="text-sm">{status.icon}</span>
+                  {status.label}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Vertical timeline with details */}
+          <div className="mt-4 space-y-0">
+            {ORDER_STATUSES.map((status, index) => {
+              const isPast = index <= currentStatusIndex;
+              const isCurrent = index === currentStatusIndex;
+              const isLast = index === ORDER_STATUSES.length - 1;
+
+              return (
+                <div key={status.id} className="flex gap-3">
+                  {/* Timeline line + circle */}
+                  <div className="flex flex-col items-center">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-all duration-500 ${
+                      isCurrent
+                        ? 'bg-primary-600 border-primary-600 text-white shadow-md shadow-primary-500/30 animate-pulse'
+                        : isPast
+                          ? 'bg-green-500 border-green-500 text-white'
+                          : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-300'
+                    }`}>
+                      {isPast && !isCurrent ? (
+                        <CheckCircle2 size={16} />
+                      ) : (
+                        <span className="text-sm">{status.icon}</span>
+                      )}
+                    </div>
+                    {!isLast && (
+                      <div className={`w-0.5 h-8 transition-all duration-500 ${
+                        isPast && index < currentStatusIndex ? 'bg-green-400' : 'bg-slate-200 dark:bg-slate-700'
+                      }`} />
+                    )}
+                  </div>
+                  {/* Label */}
+                  <div className={`pt-1 pb-3 ${isCurrent ? '' : ''}`}>
+                    <p className={`text-sm font-semibold ${
+                      isCurrent ? 'text-primary-600 dark:text-primary-400' : isPast ? 'text-slate-700 dark:text-slate-200' : 'text-slate-400 dark:text-slate-500'
+                    }`}>
+                      {status.label}
+                    </p>
+                    {isCurrent && (
+                      <p className="text-xs text-primary-500 dark:text-primary-400 mt-0.5 animate-fade-in">
+                        Current status
+                      </p>
+                    )}
+                    {isPast && !isCurrent && (
+                      <p className="text-[11px] text-slate-400 mt-0.5">Completed</p>
+                    )}
+                  </div>
                 </div>
               );
             })}
