@@ -285,6 +285,21 @@ export default function PaymentPage() {
           </div>
         </div>
 
+        {/* Minimum amount warning for electronic payments */}
+        {totalAmount < 500 && method !== 'cash' && (
+          <div className="flex items-start gap-3 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl">
+            <AlertCircle size={18} className="text-amber-500 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-sm text-amber-700 dark:text-amber-300 font-medium">
+                Minimum amount for electronic payments is 500 TZS
+              </p>
+              <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                Your order total is {formatTZS(totalAmount)}. Please select Cash payment instead.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Cash payment info */}
         {method === 'cash' && (
           <div className="card p-4 border-2 border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-900/10">
@@ -341,7 +356,7 @@ export default function PaymentPage() {
 
       {/* Bottom pay button */}
       <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 px-6 py-4 z-20">
-        <button onClick={handlePay} disabled={status === 'processing'} className={`w-full py-4 text-base font-bold rounded-2xl disabled:opacity-50 transition-colors ${method === 'cash' ? 'bg-green-600 hover:bg-green-700 text-white' : 'btn-fresh'}`}>
+        <button onClick={handlePay} disabled={status === 'processing' || (totalAmount < 500 && method !== 'cash')} className={`w-full py-4 text-base font-bold rounded-2xl disabled:opacity-50 transition-colors ${method === 'cash' ? 'bg-green-600 hover:bg-green-700 text-white' : 'btn-fresh'}`}>
           {status === 'processing' ? (
             <Loader2 className="animate-spin mx-auto" size={20} />
           ) : method === 'cash' ? (
