@@ -1,10 +1,12 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, Store, Users, ClipboardList, CreditCard, Wallet, LogOut, Sparkles, MessageCircle } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import LanguageToggle from './LanguageToggle';
+import { LayoutDashboard, Store, Users, ClipboardList, CreditCard, Wallet, LogOut, Sparkles, MessageCircle, Sun, Moon } from 'lucide-react';
 
 const navItems = [
   { path: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
-  { path: '/admin/shops', icon: Store, label: 'Shop Approvals' },
+  { path: '/admin/shops', icon: Store, label: 'Shops' },
   { path: '/admin/users', icon: Users, label: 'Users' },
   { path: '/admin/orders', icon: ClipboardList, label: 'Orders' },
   { path: '/admin/transactions', icon: CreditCard, label: 'Transactions' },
@@ -16,6 +18,7 @@ export default function AdminLayout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
 
   const handleLogout = () => {
     logout();
@@ -23,9 +26,9 @@ export default function AdminLayout({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex">
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex md:w-64 flex-col bg-slate-900 fixed h-full z-30">
+      <aside className="hidden md:flex md:w-64 flex-col bg-slate-900 dark:bg-slate-950 fixed h-full z-30">
         <div className="p-5 border-b border-slate-800">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-primary-600/20 rounded-xl flex items-center justify-center">
@@ -35,7 +38,16 @@ export default function AdminLayout({ children }) {
               Laundry<span className="text-fresh-400">Connect</span>
             </h1>
           </div>
-          <p className="text-xs text-slate-500 mt-1 ml-10">Admin Panel</p>
+          <div className="flex items-center justify-between mt-2 ml-10">
+            <p className="text-xs text-slate-500">Admin Panel</p>
+            <div className="flex items-center gap-1">
+              <LanguageToggle variant="icon" />
+              <button onClick={toggleTheme}
+                className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors">
+                {isDark ? <Sun size={16} /> : <Moon size={16} />}
+              </button>
+            </div>
+          </div>
         </div>
 
         <nav className="flex-1 p-3 space-y-1">
@@ -77,13 +89,20 @@ export default function AdminLayout({ children }) {
       </aside>
 
       {/* Mobile top nav */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-slate-900/95 backdrop-blur-xl">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-slate-900/95 dark:bg-slate-950/95 backdrop-blur-xl">
         <div className="flex items-center gap-2 px-4 py-3">
           <Sparkles size={16} className="text-primary-400" />
           <h1 className="font-bold text-sm text-white font-display">
             Laundry<span className="text-fresh-400">Connect</span>
           </h1>
           <span className="badge text-[10px] bg-red-500/20 text-red-300 ring-1 ring-red-500/20 ml-1">Admin</span>
+          <div className="ml-auto flex items-center gap-1">
+            <LanguageToggle variant="icon" />
+            <button onClick={toggleTheme}
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors">
+              {isDark ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+          </div>
         </div>
         <div className="flex overflow-x-auto no-scrollbar px-2 pb-2.5 gap-1.5">
           {navItems.map(({ path, icon: Icon, label }) => {
