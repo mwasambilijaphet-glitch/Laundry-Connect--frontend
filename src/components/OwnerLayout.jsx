@@ -1,9 +1,11 @@
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, Tag, ClipboardList, TrendingUp, Settings, LogOut, Sparkles, MessageCircle } from 'lucide-react';
+import { apiOwnerGetShop } from '../api/client';
+import { LayoutDashboard, Tag, ClipboardList, TrendingUp, Settings, LogOut, Sparkles, MessageCircle, Lock } from 'lucide-react';
 
 const navItems = [
-  { path: '/owner', icon: LayoutDashboard, label: 'Dashboard' },
+  { path: '/owner', icon: LayoutDashboard, label: 'Dashboard', alwaysEnabled: true },
   { path: '/owner/services', icon: Tag, label: 'Services & Prices' },
   { path: '/owner/orders', icon: ClipboardList, label: 'Orders' },
   { path: '/owner/earnings', icon: TrendingUp, label: 'Earnings' },
@@ -15,6 +17,13 @@ export default function OwnerLayout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const [hasShop, setHasShop] = useState(true); // default true to avoid flash
+
+  useEffect(() => {
+    apiOwnerGetShop()
+      .then(res => setHasShop(!!res.shop))
+      .catch(() => setHasShop(false));
+  }, [location.pathname]);
 
   const handleLogout = () => {
     logout();
@@ -38,21 +47,26 @@ export default function OwnerLayout({ children }) {
         </div>
 
         <nav className="flex-1 p-3 space-y-1">
-          {navItems.map(({ path, icon: Icon, label }) => {
+          {navItems.map(({ path, icon: Icon, label, alwaysEnabled }) => {
             const isActive = location.pathname === path ||
               (path !== '/owner' && location.pathname.startsWith(path));
+            const disabled = !hasShop && !alwaysEnabled;
             return (
               <button
                 key={path}
-                onClick={() => navigate(path)}
+                onClick={() => !disabled && navigate(path)}
+                disabled={disabled}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
-                  isActive
+                  disabled
+                    ? 'opacity-35 cursor-not-allowed text-slate-400'
+                    : isActive
                     ? 'bg-primary-50 text-primary-700 font-semibold shadow-sm'
                     : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
                 }`}
               >
                 <Icon size={18} />
                 {label}
+                {disabled && <Lock size={12} className="ml-auto text-slate-300" />}
               </button>
             );
           })}
@@ -85,15 +99,19 @@ export default function OwnerLayout({ children }) {
           <span className="badge-blue text-[10px] ml-1">Owner</span>
         </div>
         <div className="flex overflow-x-auto no-scrollbar px-2 pb-2.5 gap-1.5">
-          {navItems.map(({ path, icon: Icon, label }) => {
+          {navItems.map(({ path, icon: Icon, label, alwaysEnabled }) => {
             const isActive = location.pathname === path ||
               (path !== '/owner' && location.pathname.startsWith(path));
+            const disabled = !hasShop && !alwaysEnabled;
             return (
               <button
                 key={path}
-                onClick={() => navigate(path)}
+                onClick={() => !disabled && navigate(path)}
+                disabled={disabled}
                 className={`flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-medium transition-all duration-200 ${
-                  isActive
+                  disabled
+                    ? 'opacity-35 cursor-not-allowed bg-slate-100 text-slate-400'
+                    : isActive
                     ? 'bg-primary-600 text-white shadow-sm'
                     : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
                 }`}
