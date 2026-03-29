@@ -120,6 +120,8 @@ export default function OwnerDashboard() {
 function RegisterShopForm({ onSuccess }) {
   const [step, setStep] = useState(0); // 0=intro, 1=business info, 2=photos, 3=services, 4=review
   const [form, setForm] = useState({ name: '', address: '', region: '', phone: '', description: '', tin_number: '' });
+  const [tinDocument, setTinDocument] = useState(null); // URL of uploaded TIN doc
+  const [tinUploading, setTinUploading] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [services, setServices] = useState([]);
   const [svcForm, setSvcForm] = useState({ clothing_type: '', service_type: '', price: '' });
@@ -127,10 +129,24 @@ function RegisterShopForm({ onSuccess }) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const fileInputRef = useRef(null);
+  const tinInputRef = useRef(null);
 
   const regions = ['Dar es Salaam', 'Dodoma', 'Arusha', 'Mwanza', 'Mbeya', 'Morogoro', 'Tanga', 'Zanzibar', 'Iringa', 'Kilimanjaro'];
   const categories = getClothingCategories();
   const inputClass = "w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500";
+
+  async function handleTinUpload(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) { setError('TIN document must be under 10MB'); return; }
+    setTinUploading(true);
+    setError('');
+    try {
+      const data = await apiUploadImage(file);
+      setTinDocument(data.url);
+    } catch (err) { setError(err.message || 'Upload failed'); }
+    finally { setTinUploading(false); if (tinInputRef.current) tinInputRef.current.value = ''; }
+  }
 
   async function handlePhotoUpload(e) {
     const files = Array.from(e.target.files);
@@ -184,7 +200,7 @@ function RegisterShopForm({ onSuccess }) {
     setSubmitting(true);
     setError('');
     try {
-      await apiCreateShop({ ...form, photos, services });
+      await apiCreateShop({ ...form, tin_document: tinDocument, photos, services });
       onSuccess();
     } catch (err) {
       setError(err.message || 'Failed to register shop');
@@ -276,6 +292,25 @@ function RegisterShopForm({ onSuccess }) {
                 <input type="text" value={form.tin_number} onChange={e => setForm({ ...form, tin_number: e.target.value })}
                   placeholder="e.g. 123-456-789" className={inputClass} />
                 <p className="text-[11px] text-slate-400 mt-1">Tax Identification Number (optional but recommended)</p>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                  <Upload size={14} className="inline mr-1.5 text-slate-400" />TIN Certificate (Picture or PDF)
+                </label>
+                {tinDocument ? (
+                  <div className="flex items-center gap-3 p-3 bg-fresh-50 dark:bg-fresh-900/20 border border-fresh-200 dark:border-fresh-800 rounded-xl">
+                    <Check size={16} className="text-fresh-600" />
+                    <span className="text-sm text-fresh-700 dark:text-fresh-400 font-medium flex-1">TIN document uploaded</span>
+                    <button onClick={() => setTinDocument(null)} className="text-red-400 hover:text-red-600"><X size={14} /></button>
+                  </div>
+                ) : (
+                  <button onClick={() => tinInputRef.current?.click()} disabled={tinUploading}
+                    className="w-full py-3 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl text-sm text-slate-500 dark:text-slate-400 hover:border-primary-400 hover:text-primary-500 transition-colors flex items-center justify-center gap-2">
+                    {tinUploading ? <Loader2 size={16} className="animate-spin" /> : <><Upload size={16} /> Upload TIN Certificate</>}
+                  </button>
+                )}
+                <input ref={tinInputRef} type="file" accept="image/*,.pdf" onChange={handleTinUpload} className="hidden" />
+                <p className="text-[11px] text-slate-400 mt-1">JPG, PNG, or PDF. Max 10MB.</p>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
@@ -446,6 +481,7 @@ function RegisterShopForm({ onSuccess }) {
                   <div className="flex justify-between"><span className="text-slate-500">Region</span><span className="font-medium text-slate-800 dark:text-white">{form.region}</span></div>
                   <div className="flex justify-between"><span className="text-slate-500">Phone</span><span className="font-medium text-slate-800 dark:text-white">{form.phone}</span></div>
                   {form.tin_number && <div className="flex justify-between"><span className="text-slate-500">TIN</span><span className="font-medium text-slate-800 dark:text-white">{form.tin_number}</span></div>}
+                  {tinDocument && <div className="flex justify-between"><span className="text-slate-500">TIN Doc</span><span className="font-medium text-fresh-600 dark:text-fresh-400">Uploaded</span></div>}
                 </div>
               </div>
 

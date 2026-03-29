@@ -290,6 +290,15 @@ export async function apiAdminGetPendingShops() {
   return request('/admin/shops/pending');
 }
 
+export async function apiAdminGetShops(status) {
+  const qs = status ? `?status=${status}` : '';
+  return request(`/admin/shops${qs}`);
+}
+
+export async function apiAdminGetShop(id) {
+  return request(`/admin/shops/${id}`);
+}
+
 export async function apiAdminApproveShop(id, approved) {
   return request(`/admin/shops/${id}/approve`, {
     method: 'PATCH',
