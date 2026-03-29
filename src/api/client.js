@@ -298,6 +298,14 @@ export async function apiAdminGetUsers(role) {
   return request(`/admin/users${qs}`);
 }
 
+export async function apiAdminUpdateUser(id, data) {
+  return request(`/admin/users/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
+}
+
+export async function apiAdminDeleteUser(id) {
+  return request(`/admin/users/${id}`, { method: 'DELETE' });
+}
+
 export async function apiAdminGetOrders() {
   return request('/admin/orders');
 }
