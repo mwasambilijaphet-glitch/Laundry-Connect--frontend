@@ -198,6 +198,10 @@ export async function apiOwnerGetShop() {
   return request('/owner/shop');
 }
 
+export async function apiCreateShop(data) {
+  return request('/shops', { method: 'POST', body: JSON.stringify(data) });
+}
+
 export async function apiOwnerGetDashboard() {
   return request('/owner/dashboard');
 }

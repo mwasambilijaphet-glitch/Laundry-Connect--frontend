@@ -4,16 +4,42 @@
 // ============================================================
 
 export const CLOTHING_TYPES = [
-  { id: 'shirt', label: 'Shirt', icon: '👔' },
-  { id: 'trousers', label: 'Trousers', icon: '👖' },
-  { id: 'dress', label: 'Dress', icon: '👗' },
-  { id: 'suit', label: 'Suit (2pc)', icon: '🤵' },
-  { id: 'bedsheet', label: 'Bedsheet', icon: '🛏️' },
-  { id: 'curtain', label: 'Curtain (pair)', icon: '🪟' },
-  { id: 'blanket', label: 'Blanket', icon: '🧶' },
-  { id: 'kitenge', label: 'Kitenge/Kanga', icon: '🎨' },
-  { id: 'shoes', label: 'Shoes (pair)', icon: '👟' },
-  { id: 'underwear', label: 'Underwear', icon: '🩲' },
+  // Shirts
+  { id: 'shirt_regular', label: 'Shirt (Regular)', icon: '👔', category: 'Shirts' },
+  { id: 'shirt_formal', label: 'Shirt (Formal/Office)', icon: '👔', category: 'Shirts' },
+  { id: 'shirt_polo', label: 'Polo Shirt', icon: '👕', category: 'Shirts' },
+  { id: 'shirt_tshirt', label: 'T-Shirt', icon: '👕', category: 'Shirts' },
+  // Trousers
+  { id: 'trousers_regular', label: 'Trousers (Regular)', icon: '👖', category: 'Trousers' },
+  { id: 'trousers_jeans', label: 'Jeans', icon: '👖', category: 'Trousers' },
+  { id: 'trousers_formal', label: 'Trousers (Formal)', icon: '👖', category: 'Trousers' },
+  { id: 'trousers_shorts', label: 'Shorts', icon: '🩳', category: 'Trousers' },
+  // Dresses & Skirts
+  { id: 'dress', label: 'Dress', icon: '👗', category: 'Dresses' },
+  { id: 'skirt', label: 'Skirt', icon: '👗', category: 'Dresses' },
+  { id: 'gown', label: 'Gown / Evening Dress', icon: '👗', category: 'Dresses' },
+  // Suits & Formal
+  { id: 'suit_2pc', label: 'Suit (2-piece)', icon: '🤵', category: 'Formal' },
+  { id: 'suit_3pc', label: 'Suit (3-piece)', icon: '🤵', category: 'Formal' },
+  { id: 'blazer', label: 'Blazer / Jacket', icon: '🧥', category: 'Formal' },
+  { id: 'coat', label: 'Coat / Overcoat', icon: '🧥', category: 'Formal' },
+  // Traditional
+  { id: 'kitenge', label: 'Kitenge/Kanga', icon: '🎨', category: 'Traditional' },
+  { id: 'kanzu', label: 'Kanzu', icon: '🎨', category: 'Traditional' },
+  // Bedding & Home
+  { id: 'bedsheet', label: 'Bedsheet', icon: '🛏️', category: 'Home' },
+  { id: 'duvet_cover', label: 'Duvet Cover', icon: '🛏️', category: 'Home' },
+  { id: 'pillow_case', label: 'Pillow Case', icon: '🛏️', category: 'Home' },
+  { id: 'curtain', label: 'Curtain (pair)', icon: '🪟', category: 'Home' },
+  { id: 'blanket', label: 'Blanket', icon: '🧶', category: 'Home' },
+  { id: 'towel', label: 'Towel', icon: '🧴', category: 'Home' },
+  // Other
+  { id: 'shoes', label: 'Shoes (pair)', icon: '👟', category: 'Other' },
+  { id: 'sneakers', label: 'Sneakers (pair)', icon: '👟', category: 'Other' },
+  { id: 'underwear', label: 'Underwear', icon: '🩲', category: 'Other' },
+  { id: 'socks', label: 'Socks (pair)', icon: '🧦', category: 'Other' },
+  { id: 'hoodie', label: 'Hoodie / Sweater', icon: '🧥', category: 'Other' },
+  { id: 'scarf', label: 'Scarf / Shawl', icon: '🧣', category: 'Other' },
 ];
 
 export const SERVICE_TYPES = [
@@ -359,11 +385,20 @@ export function formatTZSExact(amount) {
 }
 
 export function getClothingLabel(id) {
-  return CLOTHING_TYPES.find(c => c.id === id)?.label || id;
+  return CLOTHING_TYPES.find(c => c.id === id)?.label || CLOTHING_TYPES.find(c => c.id.startsWith(id + '_'))?.label || id;
 }
 
 export function getClothingIcon(id) {
-  return CLOTHING_TYPES.find(c => c.id === id)?.icon || '👕';
+  return CLOTHING_TYPES.find(c => c.id === id)?.icon || CLOTHING_TYPES.find(c => c.id.startsWith(id + '_'))?.icon || '👕';
+}
+
+// Get unique categories for grouping
+export function getClothingCategories() {
+  const cats = [];
+  CLOTHING_TYPES.forEach(c => {
+    if (!cats.includes(c.category)) cats.push(c.category);
+  });
+  return cats;
 }
 
 export function getServiceLabel(id) {
