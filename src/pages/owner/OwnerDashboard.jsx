@@ -126,12 +126,16 @@ export default function OwnerDashboard() {
 }
 
 function StatCard({ icon: Icon, label, value, color }) {
-  const colors = { primary: 'bg-primary-50 text-primary-600', fresh: 'bg-fresh-50 text-fresh-600', amber: 'bg-amber-50 text-amber-600' };
+  const colors = {
+    primary: 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400',
+    fresh: 'bg-fresh-50 dark:bg-fresh-900/30 text-fresh-600 dark:text-fresh-400',
+    amber: 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400',
+  };
   return (
-    <div className="card p-4">
-      <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-2 ${colors[color]}`}><Icon size={18} /></div>
-      <p className="text-lg font-bold text-slate-800 text-price">{value}</p>
-      <p className="text-xs text-slate-400">{label}</p>
+    <div className="card p-5">
+      <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${colors[color]}`}><Icon size={18} /></div>
+      <p className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">{value}</p>
+      <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">{label}</p>
     </div>
   );
 }
