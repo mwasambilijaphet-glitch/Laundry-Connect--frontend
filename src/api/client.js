@@ -212,7 +212,7 @@ export async function apiOwnerGetOrders(status) {
 }
 
 export async function apiOwnerUpdateOrderStatus(orderId, status) {
-  return request(`/owner/orders/${orderId}/status`, {
+  return request(`/orders/${orderId}/status`, {
     method: 'PATCH',
     body: JSON.stringify({ status }),
   });
@@ -265,10 +265,10 @@ export async function apiGetMessages(conversationId) {
   return request(`/messages/${conversationId}`);
 }
 
-export async function apiSendMessage(conversationId, content) {
+export async function apiSendMessage(conversationId, content, { message_type, attachment_url } = {}) {
   return request(`/messages/${conversationId}`, {
     method: 'POST',
-    body: JSON.stringify({ content }),
+    body: JSON.stringify({ content, message_type: message_type || 'text', attachment_url }),
   });
 }
 
@@ -349,6 +349,23 @@ export async function apiApplyReferralCode(code) {
     method: 'POST',
     body: JSON.stringify({ code }),
   });
+}
+
+// ── NOTIFICATIONS API ──────────────────────────────────────
+export async function apiGetNotifications() {
+  return request('/notifications');
+}
+
+export async function apiGetNotificationCount() {
+  return request('/notifications/unread-count');
+}
+
+export async function apiMarkNotificationRead(id) {
+  return request(`/notifications/${id}/read`, { method: 'PATCH' });
+}
+
+export async function apiMarkAllNotificationsRead() {
+  return request('/notifications/read-all', { method: 'PATCH' });
 }
 
 // ── PROFILE API ───────────────────────────────────────────

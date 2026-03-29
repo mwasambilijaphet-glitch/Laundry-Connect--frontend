@@ -6,7 +6,7 @@ import { CLOTHING_TYPES, SERVICE_TYPES, formatTZS, getClothingIcon, getServiceLa
 import { getDemoShop } from '../data/demoData';
 import StarRating from '../components/StarRating';
 import { apiStartConversation } from '../api/client';
-import { ArrowLeft, MapPin, Clock, Phone, Star, ShoppingBag, Plus, Truck, ChevronDown, ChevronUp, Loader2, MessageCircle, HeartHandshake } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, Phone, Star, ShoppingBag, Plus, Truck, ChevronDown, ChevronUp, Loader2, MessageCircle, HeartHandshake, Home } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { apiSendMessage } from '../api/client';
 
@@ -102,6 +102,12 @@ export default function ShopDetailPage() {
           className="absolute top-12 left-4 w-10 h-10 bg-black/30 backdrop-blur-sm rounded-xl flex items-center justify-center text-white hover:bg-black/50 transition-colors"
         >
           <ArrowLeft size={20} />
+        </button>
+        <button
+          onClick={() => navigate('/home')}
+          className="absolute top-12 left-16 w-10 h-10 bg-black/30 backdrop-blur-sm rounded-xl flex items-center justify-center text-white hover:bg-black/50 transition-colors"
+        >
+          <Home size={20} />
         </button>
       </div>
 

@@ -138,6 +138,12 @@ export default function OrderTrackingPage() {
         >
           <ArrowLeft size={20} />
         </button>
+        <button
+          onClick={() => navigate('/home')}
+          className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        >
+          <Home size={20} />
+        </button>
         <h1 className="text-lg font-bold text-slate-800 dark:text-white">Order Details</h1>
       </div>
 

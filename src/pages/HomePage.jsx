@@ -11,6 +11,7 @@ import StarRating from '../components/StarRating';
 import CitySwitcher from '../components/CitySwitcher';
 import VendorCard from '../components/VendorCard';
 import LanguageToggle from '../components/LanguageToggle';
+import NotificationBell from '../components/NotificationBell';
 import AreaPicker from '../components/AreaPicker';
 import { ScrollReveal } from '../hooks/useScrollReveal';
 import {
@@ -128,6 +129,7 @@ export default function HomePage() {
           </div>
           <div className="flex items-center gap-1.5">
             <LanguageToggle variant="icon" />
+            <NotificationBell />
             <button
               onClick={toggleTheme}
               className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"

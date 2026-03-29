@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { apiGetMessages, apiSendMessage } from '../api/client';
+import { apiGetMessages, apiSendMessage, apiUploadImage } from '../api/client';
 import { DEMO_CONVERSATIONS, DEMO_MESSAGES } from '../data/demoData';
-import { ArrowLeft, Send, Phone, Loader2, CheckCheck, Clock, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, Send, Phone, Loader2, CheckCheck, Clock, ShoppingBag, Paperclip, Image, FileText, X } from 'lucide-react';
 
 export default function ChatPage() {
   const { id } = useParams();
@@ -16,6 +16,8 @@ export default function ChatPage() {
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const [attachment, setAttachment] = useState(null); // { file, preview, type }
+  const fileInputRef = useRef(null);
 
   const isCustomer = user?.role === 'customer';
 
@@ -48,10 +50,12 @@ export default function ChatPage() {
 
   async function handleSend(e) {
     e.preventDefault();
-    if (!newMessage.trim() || sending) return;
+    if ((!newMessage.trim() && !attachment) || sending) return;
 
     const content = newMessage.trim();
+    const currentAttachment = attachment;
     setNewMessage('');
+    setAttachment(null);
     setSending(true);
 
     // Optimistic update
@@ -60,8 +64,9 @@ export default function ChatPage() {
       sender_id: user.id,
       sender_role: isCustomer ? 'customer' : 'owner',
       sender_name: user.full_name,
-      content,
-      message_type: 'text',
+      content: content || (currentAttachment ? `📎 ${currentAttachment.name}` : ''),
+      message_type: currentAttachment ? currentAttachment.type : 'text',
+      attachment_url: currentAttachment?.preview || null,
       is_read: false,
       created_at: new Date().toISOString(),
       _pending: true,
@@ -69,19 +74,55 @@ export default function ChatPage() {
     setMessages(prev => [...prev, optimisticMsg]);
 
     try {
-      const data = await apiSendMessage(id, content);
-      // Replace optimistic message with real one
+      let attachmentUrl = null;
+      if (currentAttachment) {
+        const uploadResult = await apiUploadImage(currentAttachment.file);
+        attachmentUrl = uploadResult.url;
+      }
+      const data = await apiSendMessage(id, content || `📎 ${currentAttachment?.name || 'Attachment'}`, {
+        message_type: currentAttachment ? currentAttachment.type : 'text',
+        attachment_url: attachmentUrl,
+      });
       setMessages(prev =>
         prev.map(m => m.id === optimisticMsg.id ? data.message : m)
       );
     } catch (err) {
-      // Remove optimistic message on failure
       setMessages(prev => prev.filter(m => m.id !== optimisticMsg.id));
-      setNewMessage(content); // Restore the message
+      setNewMessage(content);
     } finally {
       setSending(false);
       inputRef.current?.focus();
+      if (currentAttachment?.preview) URL.revokeObjectURL(currentAttachment.preview);
     }
+  }
+
+  function handleAttachment(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const isImage = file.type.startsWith('image/');
+    const isPDF = file.type === 'application/pdf';
+
+    if (!isImage && !isPDF) {
+      alert('Only images and PDF files are supported');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File too large (max 10MB)');
+      return;
+    }
+
+    setAttachment({
+      file,
+      preview: isImage ? URL.createObjectURL(file) : null,
+      type: isImage ? 'image' : 'document',
+      name: file.name,
+    });
+  }
+
+  function removeAttachment() {
+    if (attachment?.preview) URL.revokeObjectURL(attachment.preview);
+    setAttachment(null);
   }
 
   function scrollToBottom() {
@@ -213,7 +254,20 @@ export default function ChatPage() {
                     {item.sender_name}
                   </p>
                 )}
-                <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{item.content}</p>
+                {item.attachment_url && (
+                  item.message_type === 'image' ? (
+                    <a href={item.attachment_url} target="_blank" rel="noopener noreferrer" className="block mb-1">
+                      <img src={item.attachment_url} alt="Attachment" className="max-w-full rounded-lg max-h-48 object-cover" loading="lazy" />
+                    </a>
+                  ) : item.message_type === 'document' ? (
+                    <a href={item.attachment_url} target="_blank" rel="noopener noreferrer" className={`flex items-center gap-2 mb-1 px-3 py-2 rounded-lg text-xs font-medium ${isMine ? 'bg-white/10 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200'}`}>
+                      <FileText size={16} /> View Document
+                    </a>
+                  ) : null
+                )}
+                {item.content && !item.content.startsWith('📎') && (
+                  <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{item.content}</p>
+                )}
                 <div className={`flex items-center justify-end gap-1 mt-1 ${isMine ? 'text-white/60' : 'text-slate-400'}`}>
                   <span className="text-[10px]">{formatTime(item.created_at)}</span>
                   {isMine && (
@@ -232,35 +286,67 @@ export default function ChatPage() {
 
       {/* Message Input */}
       <div className="sticky bottom-0 bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 px-4 py-3 z-20">
-        <form onSubmit={handleSend} className="flex items-end gap-2">
-          <div className="flex-1">
-            <textarea
-              ref={inputRef}
-              value={newMessage}
-              onChange={e => setNewMessage(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSend(e);
-                }
-              }}
-              placeholder="Type a message..."
-              rows={1}
-              className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-700 rounded-2xl text-sm text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500/50 resize-none max-h-32"
-              style={{ minHeight: '44px' }}
+        <form onSubmit={handleSend} className="space-y-2">
+          {/* Attachment preview */}
+          {attachment && (
+            <div className="flex items-center gap-2 p-2 bg-slate-100 dark:bg-slate-700 rounded-xl">
+              {attachment.preview ? (
+                <img src={attachment.preview} alt="Preview" className="w-12 h-12 rounded-lg object-cover" />
+              ) : (
+                <div className="w-12 h-12 bg-primary-50 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
+                  <FileText size={20} className="text-primary-600 dark:text-primary-400" />
+                </div>
+              )}
+              <span className="text-xs text-slate-600 dark:text-slate-300 flex-1 truncate">{attachment.name}</span>
+              <button type="button" onClick={removeAttachment} className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-600 flex items-center justify-center">
+                <X size={12} className="text-slate-500 dark:text-slate-300" />
+              </button>
+            </div>
+          )}
+          <div className="flex items-end gap-2">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleAttachment}
+              accept="image/*,.pdf"
+              className="hidden"
             />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="w-11 h-11 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-2xl flex items-center justify-center transition-colors flex-shrink-0"
+            >
+              <Paperclip size={18} className="text-slate-500 dark:text-slate-400" />
+            </button>
+            <div className="flex-1">
+              <textarea
+                ref={inputRef}
+                value={newMessage}
+                onChange={e => setNewMessage(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend(e);
+                  }
+                }}
+                placeholder="Type a message..."
+                rows={1}
+                className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-700 rounded-2xl text-sm text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500/50 resize-none max-h-32"
+                style={{ minHeight: '44px' }}
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={(!newMessage.trim() && !attachment) || sending}
+              className="w-11 h-11 bg-primary-600 hover:bg-primary-700 disabled:bg-slate-300 dark:disabled:bg-slate-600 text-white rounded-2xl flex items-center justify-center transition-all active:scale-90 flex-shrink-0"
+            >
+              {sending ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <Send size={18} />
+              )}
+            </button>
           </div>
-          <button
-            type="submit"
-            disabled={!newMessage.trim() || sending}
-            className="w-11 h-11 bg-primary-600 hover:bg-primary-700 disabled:bg-slate-300 dark:disabled:bg-slate-600 text-white rounded-2xl flex items-center justify-center transition-all active:scale-90 flex-shrink-0"
-          >
-            {sending ? (
-              <Loader2 size={18} className="animate-spin" />
-            ) : (
-              <Send size={18} />
-            )}
-          </button>
         </form>
       </div>
     </div>
