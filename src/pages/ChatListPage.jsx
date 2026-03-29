@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { apiGetConversations } from '../api/client';
 import { DEMO_CONVERSATIONS } from '../data/demoData';
-import { MessageCircle, Search, Loader2, ChevronRight, Phone } from 'lucide-react';
+import LanguageToggle from '../components/LanguageToggle';
+import { MessageCircle, Search, Loader2, ChevronRight, Phone, Sun, Moon } from 'lucide-react';
 
 export default function ChatListPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -57,13 +60,21 @@ export default function ChatListPage() {
       {/* Header */}
       <div className="bg-gradient-to-br from-primary-600 to-primary-700 dark:from-slate-800 dark:to-slate-900 pt-12 pb-5 px-6 rounded-b-[28px] relative overflow-hidden">
         <div className="absolute -top-20 -right-20 w-60 h-60 bg-white/5 rounded-full" />
-        <div className="relative">
-          <h1 className="text-xl font-bold text-white font-display flex items-center gap-2">
-            <MessageCircle size={22} /> Mazungumzo — Chats
-          </h1>
-          <p className="text-primary-200 dark:text-slate-400 text-sm mt-1">
-            {isCustomer ? 'Chat with shop owners' : 'Chat with customers'}
-          </p>
+        <div className="relative flex items-start justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-white font-display flex items-center gap-2">
+              <MessageCircle size={22} /> Mazungumzo — Chats
+            </h1>
+            <p className="text-primary-200 dark:text-slate-400 text-sm mt-1">
+              {isCustomer ? 'Chat with shop owners' : 'Chat with customers'}
+            </p>
+          </div>
+          <div className="flex items-center gap-1">
+            <LanguageToggle variant="icon" />
+            <button onClick={toggleTheme} className="w-9 h-9 rounded-xl flex items-center justify-center text-white/70 hover:bg-white/10 transition-colors">
+              {isDark ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+          </div>
         </div>
 
         <div className="relative mt-4">

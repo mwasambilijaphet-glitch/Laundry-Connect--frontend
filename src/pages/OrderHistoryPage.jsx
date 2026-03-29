@@ -3,10 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { apiGetOrders } from '../api/client';
 import { formatTZS, getStatusInfo, getClothingIcon } from '../data/mockData';
 import { DEMO_ORDERS } from '../data/demoData';
-import { Package, ChevronRight, Loader2 } from 'lucide-react';
+import LanguageToggle from '../components/LanguageToggle';
+import { Package, ChevronRight, Loader2, Sun, Moon } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 export default function OrderHistoryPage() {
   const navigate = useNavigate();
+  const { isDark, toggleTheme } = useTheme();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,9 +35,19 @@ export default function OrderHistoryPage() {
   return (
     <div className="animate-fade-in">
       {/* Header */}
-      <div className="bg-white border-b border-slate-100 px-6 pt-12 pb-4">
-        <h1 className="text-xl font-bold text-slate-800 font-display">Oda Zangu — My Orders</h1>
-        <p className="text-sm text-slate-500 mt-0.5">{orders.length} orders total</p>
+      <div className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-6 pt-12 pb-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-slate-800 dark:text-white font-display">Oda Zangu — My Orders</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{orders.length} orders total</p>
+          </div>
+          <div className="flex items-center gap-1">
+            <LanguageToggle variant="icon" />
+            <button onClick={toggleTheme} className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+              {isDark ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="px-6 py-4 space-y-6">
@@ -72,9 +85,9 @@ export default function OrderHistoryPage() {
 
             {orders.length === 0 && (
               <div className="flex flex-col items-center justify-center py-16">
-                <Package size={48} className="text-slate-300 mb-4" />
-                <h3 className="text-lg font-bold text-slate-800 mb-1">No orders yet</h3>
-                <p className="text-slate-500 text-sm mb-4">Start by finding a laundry shop</p>
+                <Package size={48} className="text-slate-300 dark:text-slate-600 mb-4" />
+                <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-1">No orders yet</h3>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">Start by finding a laundry shop</p>
                 <button onClick={() => navigate('/shops')} className="btn-primary">
                   Find Shops
                 </button>
@@ -103,7 +116,7 @@ function OrderCard({ order, onClick }) {
     <button onClick={onClick} className={`card-hover w-full p-4 text-left ${isActive ? 'ring-2 ring-primary-100' : ''}`}>
       <div className="flex items-start justify-between mb-3">
         <div>
-          <p className="font-bold text-sm text-slate-800">{order.order_number}</p>
+          <p className="font-bold text-sm text-slate-800 dark:text-white">{order.order_number}</p>
           <p className="text-xs text-slate-400">
             {new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
           </p>
@@ -114,8 +127,8 @@ function OrderCard({ order, onClick }) {
       </div>
 
       <div className="flex items-center gap-2 mb-2">
-        <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center text-sm">🧺</div>
-        <span className="text-sm font-medium text-slate-700">{order.shop_name}</span>
+        <div className="w-8 h-8 bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center text-sm">🧺</div>
+        <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{order.shop_name}</span>
       </div>
 
       <div className="flex gap-1 mb-3">
