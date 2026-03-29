@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { apiOwnerGetOrders, apiOwnerUpdateOrderStatus } from '../../api/client';
 import { formatTZS, getStatusInfo, getClothingLabel, getClothingIcon, getServiceLabel, ORDER_STATUSES } from '../../data/mockData';
-import { Loader2, Phone, ChevronDown, Check, X, MapPin } from 'lucide-react';
+import { Loader2, Phone, ChevronDown, Check, CheckCircle2, X, MapPin } from 'lucide-react';
 
 const STATUS_FILTERS = [
   { value: '', label: 'All' },
@@ -133,6 +133,26 @@ function OrderCard({ order, updating, onUpdateStatus }) {
             <div className="pt-2 border-t border-slate-100 flex justify-between text-sm font-bold">
               <span>Total</span>
               <span className="text-primary-600 text-price">{formatTZS(order.total_amount)}</span>
+            </div>
+          </div>
+
+          {/* Order Progress Steps */}
+          <div className="px-4 pb-3">
+            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Progress</p>
+            <div className="flex gap-1 overflow-x-auto no-scrollbar">
+              {ORDER_STATUSES.map((s, i) => {
+                const ci = ORDER_STATUSES.findIndex(st => st.id === order.status);
+                const isPast = i <= ci;
+                const isCurrent = i === ci;
+                return (
+                  <div key={s.id} className={`flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-semibold whitespace-nowrap flex-shrink-0 border ${
+                    isCurrent ? 'bg-primary-600 text-white border-primary-600' : isPast ? 'bg-green-50 text-green-700 border-green-200' : 'bg-slate-50 text-slate-400 border-slate-200'
+                  }`}>
+                    {isPast && !isCurrent ? <CheckCircle2 size={10} /> : <span>{s.icon}</span>}
+                    {s.label}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
